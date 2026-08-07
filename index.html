@@ -120,7 +120,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
     repeating-linear-gradient(90deg,transparent 0 25px,var(--grid) 25px 26px),
     linear-gradient(163deg,var(--surface-2) 0%,var(--surface) 46%,var(--bg) 100%)}
 
-.frame.fog{opacity:.32;filter:blur(1.8px)}
+/* .fog frames stay clickable (you navigate by clicking what you see in the
+   periphery) so they may NOT carry `filter` — see the rule above. Opacity
+   alone still reads as "distant". .passed already has pointer-events:none,
+   so filter is safe there; it's not a click target any more. */
+.frame.fog{opacity:.32}
 .frame.passed{opacity:0;filter:blur(12px);pointer-events:none}
 .frame.here::before{background:var(--ax)}
 .frame.here::after{animation:arrive 1.1s .8s both}
@@ -196,8 +200,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
 .certs{margin-top:16px;display:flex;gap:5px;flex-wrap:wrap}
 .cert{font-family:'Red Hat Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--dim);border:1px solid var(--line);padding:5px 8px;
-  transition:color .2s,border-color .2s,background .2s}
-.cert:hover{color:var(--ax);border-color:var(--ax);background:var(--ax-10)}
+  transition:color .2s,border-color .2s,background .2s,box-shadow .2s,transform .2s}
+.cert:hover{color:var(--ax);border-color:var(--ax);background:var(--ax-10);
+  box-shadow:0 0 0 1px var(--ax),0 6px 14px var(--ax-18);transform:translateY(-2px)}
 
 /* ── DOSSIERS ── */
 .deep .pad{padding:30px 32px 28px}
@@ -229,8 +234,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
 .ph{flex:1;aspect-ratio:4/3;border:1px solid var(--line);background:var(--raise);border-radius:0 0 14px 0;
   display:flex;align-items:center;justify-content:center;font-family:'Red Hat Mono',monospace;
   font-size:7.5px;color:var(--dimmer);text-transform:uppercase;letter-spacing:.14em;
-  transition:border-color .2s,color .2s,box-shadow .2s}
-.ph:hover{border-color:var(--ax);color:var(--ax);box-shadow:0 0 0 1px var(--ax-18)}
+  transition:border-color .2s,color .2s,box-shadow .2s,transform .2s}
+.ph:hover{border-color:var(--ax);color:var(--ax);box-shadow:0 0 0 1px var(--ax-18);transform:translateY(-2px)}
 .arts{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .d-side .arts{flex-direction:column;align-items:stretch}
 .art{font-family:'Red Hat Mono',monospace;font-size:9.5px;border:1px solid var(--line);padding:9px 12px;
@@ -289,6 +294,19 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
 .cbtn.primary:hover .ci,.cbtn.primary:hover .ca{color:var(--bg)}
 .cbtn.primary:hover .ct span{color:var(--bg);opacity:.75}
 .cbtn.primary:hover .ca{transform:translateY(3px)}
+
+/* ═══════════ CONNECTION GRAPH (overview only) ═══════════
+   Obsidian-style — lines between related frames, screen-space SVG overlay.
+   Positioned with getBoundingClientRect(), the same technique geoHit()
+   already relies on because it's the one proven to report correct boxes
+   for 3D-transformed content (see the filter/clip-path rule above). Lines
+   are computed once after the camera settles, never per-frame — every
+   other perf rule in this file forbids getBoundingClientRect in a loop,
+   this follows the same discipline. */
+#graphLines{position:fixed;inset:0;width:100%;height:100%;z-index:50;
+  pointer-events:none;opacity:0;transition:opacity .5s}
+.glink{stroke:var(--line-2);stroke-width:1}
+.glink-cross{stroke:var(--ax);stroke-width:1.2;stroke-dasharray:2 5;opacity:.6}
 
 /* ═══════════ HUD ═══════════ */
 .hud{position:fixed;z-index:100;font-family:'Red Hat Mono',monospace}
@@ -416,6 +434,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
   <div id="crumb"></div>
 </div>
 <div class="hud tr">
+  <button class="hbtn" onclick="flyTo('f-home')">⌂ Home</button>
   <button class="hbtn" onclick="overview()">⊙ Map</button>
   <button class="hbtn" onclick="toggleDrawer()">☰ Index</button>
   <button class="hbtn" id="themeBtn" onclick="toggleTheme()">☾ Dark</button>
@@ -950,6 +969,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-ser
   </div>
 </div>
 
+<svg id="graphLines"></svg>
+
 <script>
 /* ═══════════ 3D CAMERA ENGINE ═══════════ */
 const P=1400, world=document.getElementById('world');
@@ -1004,6 +1025,7 @@ function flyTo(id,replay){
   if(id===current)return;
   const f=document.getElementById(id);
   if(!f)return;
+  hideGraph();clearTimeout(graphTimer);
   if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
   current=id;
   const cz=czFor(f), [cx,cy]=centerOf(f);
@@ -1016,6 +1038,7 @@ function overview(replay){
   if(current==='overview')return;
   if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
   current='overview';
+  hideGraph();clearTimeout(graphTimer);
   const b=safeBox();
   const S=Math.min(b.w/WORLD_W,b.h/WORLD_H)*.94;
   const cz=P*(1-1/S);
@@ -1023,6 +1046,7 @@ function overview(replay){
   setPhases(null,cz); setCtx(null);
   cam(WORLD_W/2,WORLD_H/2,cz,0);
   updateMinimap(null); chrome();
+  graphTimer=setTimeout(renderGraph,1350);   // after the 1.3s world transition + margin
 }
 function goBack(){
   if(!hist.length)return;
@@ -1144,6 +1168,35 @@ function updateMinimap(f){
     mmCam.style.left='-1px';mmCam.style.top='-1px';
     mmCam.style.width=(MMW+2)+'px';mmCam.style.height=(MMH+2)+'px';
   }
+}
+
+/* ═══════════ CONNECTION GRAPH ═══════════
+   Overview-only, Obsidian-style web: a line for every data-parent edge
+   (the hierarchy) plus a dashed accent line for every .xlink cross-link
+   (role ⇄ project). Built from attributes already on the DOM — nothing
+   hardcoded, so it can't drift if content changes. */
+const graphSvg=document.getElementById('graphLines');
+let graphTimer;
+function hideGraph(){graphSvg.style.opacity='0'}
+function renderGraph(){
+  if(current!=='overview')return;
+  const ns='http://www.w3.org/2000/svg', edges=[], seen=new Set();
+  const add=(a,b,cls)=>{const k=cls+':'+[a,b].sort().join('|');if(seen.has(k))return;seen.add(k);edges.push([a,b,cls])};
+  frames.forEach(f=>{if(f.dataset.parent)add(f.id,f.dataset.parent,'glink-hier')});
+  document.querySelectorAll('.xlink[data-fly]').forEach(x=>{
+    const src=x.closest('.frame'); if(src)add(src.id,x.dataset.fly,'glink-cross')});
+  graphSvg.innerHTML='';
+  edges.forEach(([a,b,cls])=>{
+    const fa=document.getElementById(a), fb=document.getElementById(b);
+    if(!fa||!fb)return;
+    const ra=fa.getBoundingClientRect(), rb=fb.getBoundingClientRect();
+    const ln=document.createElementNS(ns,'line');
+    ln.setAttribute('x1',ra.left+ra.width/2); ln.setAttribute('y1',ra.top+ra.height/2);
+    ln.setAttribute('x2',rb.left+rb.width/2); ln.setAttribute('y2',rb.top+rb.height/2);
+    ln.setAttribute('class','glink '+cls);
+    graphSvg.appendChild(ln);
+  });
+  graphSvg.style.opacity='1';
 }
 
 /* ═══════════ MOUSE PARALLAX TILT ═══════════ */
