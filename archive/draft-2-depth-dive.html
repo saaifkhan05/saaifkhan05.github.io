@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saaif Khan — Draft 2: Depth Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,800&family=Hanken+Grotesk:wght@300;400;600&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070608; --panel:rgba(18,15,20,.82); --line:#262030; --ink:#f0ebf2; --dim:#8b8395;
+  --accent:#ff3b57; --accent2:#57e6c4;
+}
+[data-theme="light"]{
+  --bg:#f2eff4; --panel:rgba(255,255,255,.88); --line:#d9d2e0; --ink:#171220; --dim:#6b6377;
+  --accent:#c9143a; --accent2:#0a8a6e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',sans-serif;overflow:hidden;transition:background .4s}
+::selection{background:var(--accent);color:#fff}
+#stars{position:fixed;inset:0;z-index:0}
+
+/* ===== 3D SCENE ===== */
+.scene{position:fixed;inset:0;perspective:1100px;z-index:10}
+#zworld{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.15s cubic-bezier(.6,.05,.15,1);will-change:transform}
+.layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  transform-style:preserve-3d;pointer-events:none}
+.layer>.plate{pointer-events:auto}
+.layer.inactive>.plate{pointer-events:none}
+/* depth fog: layers far away fade */
+.plate{background:var(--panel);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(14px);
+  box-shadow:0 40px 120px rgba(0,0,0,.5);transition:opacity .9s,filter .9s}
+.layer.behind .plate{opacity:0;filter:blur(10px)}
+.layer.ahead .plate{opacity:.35;filter:blur(2px)}
+.layer.here .plate{opacity:1;filter:none}
+
+/* ===== LAYER CONTENT ===== */
+.mono{font-family:'Red Hat Mono',monospace}
+.tag{font-family:'Red Hat Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.24em;color:var(--accent)}
+
+/* L0 gate */
+.gate{width:min(860px,92vw);padding:64px 56px;text-align:center}
+.gate h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(52px,9vw,120px);
+  line-height:.92;letter-spacing:-.04em;margin:20px 0 14px}
+.gate h1 .thin{font-weight:300;display:block;font-size:.5em;letter-spacing:-.01em;color:var(--dim)}
+.gate .sub{color:var(--dim);font-weight:300;font-size:17px;max-width:480px;margin:0 auto}
+.gate .dive{margin-top:38px;display:inline-flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;color:var(--ink);cursor:pointer}
+.gate .dive .ring{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:var(--accent);transition:.3s;animation:breathe 2.6s infinite}
+.gate .dive:hover .ring{background:var(--accent);color:#fff;transform:scale(1.1)}
+.gate .dive .lab{font-family:'Red Hat Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--dim)}
+@keyframes breathe{50%{box-shadow:0 0 0 14px rgba(255,59,87,.08)}}
+
+/* L1 split */
+.split{display:flex;gap:20px;width:min(980px,94vw)}
+.half{flex:1;padding:48px 40px;border-radius:24px;background:var(--panel);border:1px solid var(--line);
+  cursor:pointer;transition:.35s;backdrop-filter:blur(14px);text-align:left}
+.half:hover{border-color:var(--accent);transform:translateY(-6px)}
+.half h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,4vw,48px);letter-spacing:-.03em;margin:14px 0 8px}
+.half p{color:var(--dim);font-weight:300;font-size:14.5px;line-height:1.6}
+.half .depth-hint{margin-top:26px;font-family:'Red Hat Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.16em}
+.half.alt:hover{border-color:var(--accent2)}
+
+/* L2 index */
+.index{width:min(900px,94vw);padding:52px 48px}
+.index h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,4.4vw,52px);letter-spacing:-.03em;margin:12px 0 26px}
+.rows{display:flex;flex-direction:column}
+.rrow{display:grid;grid-template-columns:110px 1fr auto;gap:20px;align-items:center;padding:20px 10px;
+  border-top:1px solid var(--line);cursor:pointer;transition:.25s;text-align:left;background:none;border-left:none;border-right:none;border-bottom:none;color:var(--ink);font-family:inherit}
+.rrow:last-child{border-bottom:1px solid var(--line)}
+.rrow:hover{padding-left:22px;background:linear-gradient(90deg,rgba(255,59,87,.06),transparent)}
+.rrow .when{font-family:'Red Hat Mono',monospace;font-size:11px;color:var(--dim)}
+.rrow .name{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;letter-spacing:-.01em}
+.rrow:hover .name{color:var(--accent)}
+.rrow .sub{font-size:13px;color:var(--dim);font-weight:300;margin-top:2px}
+.rrow .z{font-family:'Red Hat Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.14em}
+
+/* L3 dossier */
+.dossier{width:min(880px,94vw);max-height:82vh;overflow-y:auto;padding:56px 52px}
+.dossier::-webkit-scrollbar{width:4px}.dossier::-webkit-scrollbar-thumb{background:var(--line)}
+.dossier h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(36px,5vw,62px);letter-spacing:-.035em;line-height:.98;margin:14px 0 8px}
+.dossier h2 i{color:var(--accent);font-style:normal}
+.dossier .meta{display:flex;flex-wrap:wrap;gap:22px;margin:20px 0 8px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dossier .m .k{font-family:'Red Hat Mono',monospace;font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.16em}
+.dossier .m .v{font-size:14px;font-weight:600;margin-top:3px}
+.dossier h5{font-family:'Red Hat Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--accent2);margin:30px 0 12px}
+.dossier p{font-size:15px;font-weight:300;line-height:1.75;color:var(--dim);margin-bottom:12px}
+.dossier p b{color:var(--ink);font-weight:600}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gal .g{aspect-ratio:4/3;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-family:'Red Hat Mono',monospace;font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;transition:.3s}
+.gal .g:hover{border-color:var(--accent);transform:scale(1.04)}
+.arts{display:flex;gap:10px;flex-wrap:wrap}
+.art{border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:.25s;background:none;color:var(--ink);font-family:inherit;display:flex;align-items:center;gap:10px}
+.art:hover{border-color:var(--accent);transform:translateY(-2px)}
+.art .k{font-family:'Red Hat Mono',monospace;font-size:9px;color:var(--dim);text-transform:uppercase}
+
+/* ===== HUD ===== */
+.hud{position:fixed;z-index:100}
+.hud.tl{top:26px;left:30px;display:flex;align-items:center;gap:16px}
+.brand{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px}
+.brand i{color:var(--accent);font-style:normal}
+#crumb{font-family:'Red Hat Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.16em}
+#crumb b{color:var(--ink);font-weight:500}
+.hud.tr{top:26px;right:30px;display:flex;gap:10px}
+.hbtn{background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:'Red Hat Mono',monospace;
+  font-size:10px;padding:10px 16px;border-radius:99px;cursor:pointer;transition:.25s;text-transform:uppercase;letter-spacing:.12em;backdrop-filter:blur(10px)}
+.hbtn:hover{border-color:var(--accent);color:var(--accent)}
+/* depth gauge (right edge) */
+.gauge{position:fixed;right:30px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;align-items:center;gap:6px}
+.gauge .seg{width:3px;height:34px;background:var(--line);border-radius:99px;transition:background .4s}
+.gauge .seg.lit{background:var(--accent)}
+.gauge .lab{font-family:'Red Hat Mono',monospace;font-size:9px;color:var(--dim);writing-mode:vertical-rl;letter-spacing:.2em;text-transform:uppercase;margin-top:6px}
+.hud.bl{bottom:26px;left:30px;font-family:'Red Hat Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em}
+.hud.bl kbd{border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin:0 2px}
+
+@media(max-width:760px){.split{flex-direction:column}.gauge{display:none}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<div class="hud tl"><span class="brand">SK<i>/</i></span><span id="crumb">surface / <b>gate</b></span></div>
+<div class="hud tr">
+  <button class="hbtn" onclick="surface()">↑ Surface</button>
+  <button class="hbtn" id="themeBtn" onclick="toggleTheme()">☾ dark</button>
+</div>
+<div class="gauge" id="gauge"></div>
+<div class="hud bl"><kbd>Esc</kbd> rise one level · <kbd>Scroll</kbd> dive / rise</div>
+
+<div class="scene">
+  <div id="zworld">
+
+    <!-- L0 : GATE -->
+    <div class="layer" data-z="0" id="L0">
+      <div class="plate gate">
+        <span class="tag">saaifkhan.com — est. [year]</span>
+        <h1>SAAIF KHAN<span class="thin">[placeholder tagline in one line]</span></h1>
+        <p class="sub">This site has depth. Every click takes you one layer further in.</p>
+        <button class="dive" onclick="goTo('L1')"><span class="ring">↓</span><span class="lab">begin the dive</span></button>
+      </div>
+    </div>
+
+    <!-- L1 : SPLIT -->
+    <div class="layer inactive" data-z="1" id="L1">
+      <div class="plate" style="background:none;border:none;box-shadow:none;backdrop-filter:none">
+        <div class="split">
+          <button class="half" onclick="goTo('L2P')">
+            <span class="tag">Layer 01 · A</span>
+            <h2>The Person</h2>
+            <p>Hobbies, obsessions, the free hours. [Placeholder — one honest line.]</p>
+            <span class="depth-hint">2 more layers below ↓</span>
+          </button>
+          <button class="half alt" onclick="goTo('L2W')">
+            <span class="tag" style="color:var(--accent2)">Layer 01 · B</span>
+            <h2>The Professional</h2>
+            <p>UT Dallas → IBM → [next]. The record, each entry a full dossier.</p>
+            <span class="depth-hint">2 more layers below ↓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 : WORK INDEX -->
+    <div class="layer inactive" data-z="2" id="L2W">
+      <div class="plate index">
+        <span class="tag" style="color:var(--accent2)">Layer 02 · The record</span>
+        <h2>Choose a dossier</h2>
+        <div class="rows">
+          <button class="rrow" onclick="goTo('L3I')">
+            <span class="when">SUMMER [YR]</span>
+            <div><div class="name">IBM — [Position Title]</div><div class="sub">[One-line hook: the team, the mission, the outcome]</div></div>
+            <span class="z">dive ↓</span></button>
+          <button class="rrow" onclick="goTo('L3U')">
+            <span class="when">[YR]–[YR]</span>
+            <div><div class="name">UT Dallas — [Degree]</div><div class="sub">Coursework, orgs, honors — the full account</div></div>
+            <span class="z">dive ↓</span></button>
+          <button class="rrow" onclick="goTo('L3I')">
+            <span class="when">[DATES]</span>
+            <div><div class="name">[Company] — [Role]</div><div class="sub">[placeholder]</div></div>
+            <span class="z">dive ↓</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 : PERSONAL INDEX -->
+    <div class="layer inactive" data-z="2" id="L2P">
+      <div class="plate index">
+        <span class="tag">Layer 02 · Off the clock</span>
+        <h2>Pick a thread</h2>
+        <div class="rows">
+          <button class="rrow" onclick="goTo('L3H')">
+            <span class="when">SINCE [YR]</span>
+            <div><div class="name">[Hobby One]</div><div class="sub">[one-line placeholder]</div></div>
+            <span class="z">dive ↓</span></button>
+          <button class="rrow" onclick="goTo('L3H')">
+            <span class="when">SINCE [YR]</span>
+            <div><div class="name">[Hobby Two]</div><div class="sub">[one-line placeholder]</div></div>
+            <span class="z">dive ↓</span></button>
+          <button class="rrow" onclick="goTo('L3H')">
+            <span class="when">NOW</span>
+            <div><div class="name">[Currently Into]</div><div class="sub">[books / shows / side quests]</div></div>
+            <span class="z">dive ↓</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 : IBM DOSSIER -->
+    <div class="layer inactive" data-z="3" id="L3I">
+      <div class="plate dossier">
+        <span class="tag" style="color:var(--accent2)">Layer 03 · Dossier</span>
+        <h2>A SUMMER<br>AT <i>IBM</i></h2>
+        <div class="meta">
+          <div class="m"><div class="k">Role</div><div class="v">[Position Title]</div></div>
+          <div class="m"><div class="k">Team</div><div class="v">[Team / Org]</div></div>
+          <div class="m"><div class="k">Where</div><div class="v">[City, ST]</div></div>
+          <div class="m"><div class="k">When</div><div class="v">[Mon–Mon YYYY]</div></div>
+        </div>
+        <h5>The story</h5>
+        <p>[Placeholder — narrative, not bullets. What the team was building, the problem you were handed, how the summer unfolded. <b>Names, numbers, specifics.</b>]</p>
+        <p>[Second paragraph — the hard part, the turn, what you'd tell the next intern.]</p>
+        <h5>In pictures</h5>
+        <div class="gal"><div class="g">photo</div><div class="g">photo</div><div class="g">photo</div></div>
+        <h5>Artifacts</h5>
+        <div class="arts">
+          <button class="art">▤ [Final presentation]<span class="k">deck</span></button>
+          <button class="art">▶ [Demo]<span class="k">video</span></button>
+          <button class="art">✎ [Write-up]<span class="k">doc</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 : UTD DOSSIER -->
+    <div class="layer inactive" data-z="3" id="L3U">
+      <div class="plate dossier">
+        <span class="tag" style="color:var(--accent2)">Layer 03 · Dossier</span>
+        <h2>THE <i>UTD</i><br>YEARS</h2>
+        <div class="meta">
+          <div class="m"><div class="k">Degree</div><div class="v">[Degree] in [Major]</div></div>
+          <div class="m"><div class="k">Years</div><div class="v">[Start]–[Grad]</div></div>
+          <div class="m"><div class="k">GPA</div><div class="v">[optional]</div></div>
+        </div>
+        <h5>What it entailed</h5>
+        <p>[Placeholder — the degree as prose: why, focus areas, what it built in you.]</p>
+        <h5>Coursework</h5>
+        <p class="mono" style="font-size:12px">[CS 1234] · [CS 2345] · [CS 3456] · [CS 4567] · [XX 111] — each expands in the real build</p>
+        <h5>Orgs & honors</h5>
+        <div class="arts"><button class="art">[Org]</button><button class="art">[Honor]</button><button class="art">[Activity]</button></div>
+        <h5>In pictures</h5>
+        <div class="gal"><div class="g">org photo</div><div class="g">event</div><div class="g">campus</div></div>
+      </div>
+    </div>
+
+    <!-- L3 : HOBBY -->
+    <div class="layer inactive" data-z="3" id="L3H">
+      <div class="plate dossier">
+        <span class="tag">Layer 03 · Personal file</span>
+        <h2>[HOBBY <i>NAME</i>]</h2>
+        <div class="meta">
+          <div class="m"><div class="k">Since</div><div class="v">[Year]</div></div>
+          <div class="m"><div class="k">Context</div><div class="v">[frequency]</div></div>
+        </div>
+        <h5>The story</h5>
+        <p>[Placeholder — how it started, what it means, a favorite memory. Same depth as the professional side.]</p>
+        <div class="gal"><div class="g">photo</div><div class="g">photo</div><div class="g">photo</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== depth engine ===== */
+const GAP=1500;
+const zworld=document.getElementById('zworld');
+const layers=[...document.querySelectorAll('.layer')];
+let stack=['L0'];
+const PARENT={L1:'L0',L2W:'L1',L2P:'L1',L3I:'L2W',L3U:'L2W',L3H:'L2P'};
+
+layers.forEach(l=>l.style.transform=`translateZ(${-l.dataset.z*GAP}px)`);
+
+function apply(){
+  const curId=stack[stack.length-1];
+  const cur=document.getElementById(curId);
+  const z=+cur.dataset.z;
+  zworld.style.transform=`translateZ(${z*GAP}px)`;
+  layers.forEach(l=>{
+    const lz=+l.dataset.z;
+    const onPath=stack.includes(l.id);
+    l.classList.toggle('inactive',l.id!==curId);
+    l.classList.remove('behind','here','ahead');
+    if(l.id===curId)l.classList.add('here');
+    else if(lz<z)l.classList.add('behind');
+    else l.classList.add('ahead');
+    // hide sibling branches at same depth or deeper that aren't on path/children of current
+    if(lz>z){
+      const isChild=PARENT[l.id]===curId;
+      l.style.visibility=isChild?'visible':'hidden';
+    }else{
+      l.style.visibility=onPath||lz<z?'visible':'hidden';
+    }
+  });
+  crumb();gauge();warp(z);
+}
+function goTo(id){stack=chain(id);apply()}
+function chain(id){const c=[];let n=id;while(n){c.unshift(n);n=PARENT[n]}return c}
+function rise(){if(stack.length>1){stack.pop();apply()}}
+function surface(){stack=['L0'];apply()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')rise()});
+
+/* crumb + gauge */
+const NAMES={L0:'gate',L1:'paths',L2W:'the record',L2P:'off the clock',L3I:'ibm dossier',L3U:'utd dossier',L3H:'[hobby]'};
+function crumb(){
+  document.getElementById('crumb').innerHTML=
+    stack.map((s,i)=>i===stack.length-1?`<b>${NAMES[s]}</b>`:NAMES[s]).join(' / ');
+}
+function gauge(){
+  const g=document.getElementById('gauge');g.innerHTML='';
+  const z=+document.getElementById(stack[stack.length-1]).dataset.z;
+  for(let i=0;i<4;i++){const s=document.createElement('span');s.className='seg'+(i<=z?' lit':'');g.appendChild(s)}
+  const lab=document.createElement('span');lab.className='lab';lab.textContent='depth '+z;g.appendChild(lab);
+}
+
+/* scroll dive/rise */
+let lock=false;
+addEventListener('wheel',e=>{
+  if(lock)return;
+  const cur=stack[stack.length-1];
+  if(e.deltaY<-60){lock=true;rise();setTimeout(()=>lock=false,900)}
+  else if(e.deltaY>60){
+    // dive into the first child if unambiguous
+    const kids=Object.keys(PARENT).filter(k=>PARENT[k]===cur);
+    if(kids.length===1){lock=true;goTo(kids[0]);setTimeout(()=>lock=false,900)}
+    else if(cur==='L0'){lock=true;goTo('L1');setTimeout(()=>lock=false,900)}
+  }
+},{passive:true});
+
+/* ===== starfield with warp on transition ===== */
+const cv=document.getElementById('stars'),ctx=cv.getContext('2d');
+let W,H,stars=[],speed=0.4,targetSpeed=0.4;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+resize();addEventListener('resize',resize);
+for(let i=0;i<260;i++)stars.push({x:Math.random()*2-1,y:Math.random()*2-1,z:Math.random()});
+function warp(){targetSpeed=6;setTimeout(()=>targetSpeed=0.4,900)}
+function tick(){
+  speed+=(targetSpeed-speed)*.06;
+  const dark=document.documentElement.dataset.theme==='dark';
+  ctx.fillStyle=dark?'rgba(7,6,8,.5)':'rgba(242,239,244,.5)';
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=dark?'#cfc8d8':'#5a5266';
+  stars.forEach(s=>{
+    s.z-=speed*.004;
+    if(s.z<=0.02){s.x=Math.random()*2-1;s.y=Math.random()*2-1;s.z=1}
+    const px=W/2+s.x/s.z*W*.5, py=H/2+s.y/s.z*H*.5, r=(1-s.z)*2.2;
+    if(px>=0&&px<=W&&py>=0&&py<=H){ctx.beginPath();ctx.arc(px,py,r,0,7);ctx.fill()}
+  });
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* theme */
+function toggleTheme(){
+  const r=document.documentElement;
+  r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';
+  document.getElementById('themeBtn').textContent=r.dataset.theme==='dark'?'☾ dark':'☀ light';
+}
+
+apply();
+</script>
+</body>
+</html>

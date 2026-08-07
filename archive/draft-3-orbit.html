@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saaif Khan — Draft 3: Orbit</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08; --panel:#121109; --line:#2a2619; --ink:#f0ead9; --dim:#948d78;
+  --gold:#e8c15a; --ember:#c96f3a; --halo:rgba(232,193,90,.12);
+}
+[data-theme="light"]{
+  --bg:#f4efe2; --panel:#fdfaf1; --line:#ddd3ba; --ink:#241f12; --dim:#7a7259;
+  --gold:#9a7515; --ember:#a34e1a; --halo:rgba(154,117,21,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Jost',sans-serif;overflow:hidden;transition:background .4s}
+::selection{background:var(--gold);color:var(--bg)}
+#sky{position:fixed;inset:0;z-index:0}
+
+/* ===== HUD ===== */
+.hud{position:fixed;z-index:200;font-family:'Spline Sans Mono',monospace}
+.hud.tl{top:26px;left:32px}
+.brand{font-family:'Marcellus',serif;font-size:19px;letter-spacing:.06em}
+.brand i{color:var(--gold);font-style:normal}
+.hud.tr{top:26px;right:32px;display:flex;gap:10px}
+.hbtn{background:none;border:1px solid var(--line);color:var(--dim);font-family:'Spline Sans Mono',monospace;
+  font-size:10px;padding:9px 16px;border-radius:99px;cursor:pointer;transition:.25s;text-transform:uppercase;letter-spacing:.14em}
+.hbtn:hover{border-color:var(--gold);color:var(--gold)}
+.hud.bc{bottom:26px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.18em;text-align:center}
+
+/* ===== ORBITAL SYSTEM ===== */
+.system{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;
+  transition:opacity .5s,transform .6s cubic-bezier(.4,0,.2,1)}
+.system.dimmed{opacity:0;transform:scale(1.25);pointer-events:none}
+
+/* rings */
+.ring{position:absolute;border:1px solid var(--line);border-radius:50%;opacity:.6}
+.r1{width:min(46vw,460px);height:min(46vw,460px)}
+.r2{width:min(72vw,720px);height:min(72vw,720px);opacity:.4}
+.r3{width:min(96vw,960px);height:min(96vw,960px);opacity:.25}
+
+/* center star */
+.star{position:relative;z-index:5;text-align:center;width:min(320px,80vw)}
+.star .halo{position:absolute;inset:-60px;border-radius:50%;background:radial-gradient(circle,var(--halo),transparent 65%);
+  animation:haloBreathe 4s infinite}
+@keyframes haloBreathe{50%{transform:scale(1.12);opacity:.7}}
+.star .portrait{width:130px;height:130px;border-radius:50%;border:1.5px solid var(--gold);margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;font-family:'Spline Sans Mono',monospace;font-size:9px;
+  color:var(--dim);text-transform:uppercase;letter-spacing:.14em;background:var(--panel);position:relative}
+.star h1{font-family:'Marcellus',serif;font-size:clamp(30px,4.4vw,44px);letter-spacing:.04em}
+.star .tt{font-size:14px;color:var(--dim);font-weight:300;margin-top:6px;letter-spacing:.02em}
+.star .hintline{margin-top:14px;font-family:'Spline Sans Mono',monospace;font-size:9px;color:var(--gold);
+  text-transform:uppercase;letter-spacing:.22em;animation:haloBreathe 3s infinite}
+
+/* orbiting satellites — wrapper rotates, content counter-rotates */
+.orbit{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.orbit .arm{position:absolute;animation:spin linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sat{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);pointer-events:auto;
+  animation:spinBack linear infinite;cursor:pointer;text-align:center}
+@keyframes spinBack{to{transform:translate(-50%,-50%) rotate(-360deg)}}
+.sat .node{width:88px;height:88px;border-radius:50%;background:var(--panel);border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:.3s;position:relative}
+.sat .node .glyph{font-family:'Marcellus',serif;font-size:24px;color:var(--gold)}
+.sat .node .nm{font-family:'Spline Sans Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+.sat:hover .node{border-color:var(--gold);transform:scale(1.18);box-shadow:0 0 40px var(--halo)}
+.sat.small .node{width:66px;height:66px}
+.sat.small .node .glyph{font-size:17px}
+body.paused .arm,body.paused .sat{animation-play-state:paused}
+
+/* ===== PANEL SYSTEM (radial expand) ===== */
+.veil{position:fixed;inset:0;z-index:50;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .5s}
+.veil.on{opacity:.86;pointer-events:auto}
+.panel{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:70px 24px 40px}
+.panel.open{display:flex}
+.panel .sheet{width:min(860px,94vw);max-height:84vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);
+  border-radius:20px;padding:52px 54px;clip-path:circle(0% at var(--ox,50%) var(--oy,50%));transition:clip-path .7s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 40px 120px rgba(0,0,0,.5)}
+.panel.open .sheet{clip-path:circle(140% at var(--ox,50%) var(--oy,50%))}
+.sheet::-webkit-scrollbar{width:4px}.sheet::-webkit-scrollbar-thumb{background:var(--line)}
+.sheet .p-tag{font-family:'Spline Sans Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.26em}
+.sheet h2{font-family:'Marcellus',serif;font-size:clamp(32px,5vw,54px);letter-spacing:.02em;margin:14px 0 6px;line-height:1.05}
+.sheet .p-meta{font-family:'Spline Sans Mono',monospace;font-size:10.5px;color:var(--dim);letter-spacing:.08em;margin-bottom:26px;
+  padding-bottom:18px;border-bottom:1px solid var(--line)}
+.sheet h5{font-family:'Marcellus',serif;font-size:19px;color:var(--gold);margin:30px 0 10px;letter-spacing:.03em}
+.sheet p{font-size:15px;font-weight:300;line-height:1.75;color:var(--dim);margin-bottom:12px}
+.sheet p b{color:var(--ink);font-weight:500}
+/* constellation list — entries as stars on a line */
+.constellation{margin:16px 0}
+.c-entry{display:flex;align-items:center;gap:18px;padding:16px 4px;border:none;background:none;width:100%;
+  text-align:left;color:var(--ink);font-family:inherit;cursor:pointer;position:relative;transition:.25s}
+.c-entry:not(:last-child)::after{content:"";position:absolute;left:7px;top:calc(50% + 16px);width:1px;height:24px;
+  background:linear-gradient(var(--gold),transparent)}
+.c-entry .dot{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--gold);flex-shrink:0;transition:.25s;position:relative}
+.c-entry:hover .dot{background:var(--gold);box-shadow:0 0 18px var(--halo)}
+.c-entry:hover{transform:translateX(8px)}
+.c-entry .ce-name{font-family:'Marcellus',serif;font-size:20px;letter-spacing:.02em}
+.c-entry .ce-sub{font-size:12.5px;color:var(--dim);font-weight:300;margin-top:2px}
+.c-entry .ce-go{margin-left:auto;font-family:'Spline Sans Mono',monospace;font-size:9px;color:var(--gold);
+  text-transform:uppercase;letter-spacing:.16em;opacity:0;transition:.25s}
+.c-entry:hover .ce-go{opacity:1}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.gal .g{aspect-ratio:4/3;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-family:'Spline Sans Mono',monospace;font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;transition:.3s}
+.gal .g:hover{border-color:var(--gold);transform:scale(1.03)}
+.relics{display:flex;flex-wrap:wrap;gap:10px}
+.relic{border:1px solid var(--line);border-radius:99px;padding:11px 20px;font-size:13px;cursor:pointer;transition:.25s;
+  background:none;color:var(--ink);font-family:'Jost',sans-serif;font-weight:400}
+.relic:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.p-close{position:fixed;top:26px;left:50%;transform:translateX(-50%);z-index:70;display:none;
+  font-family:'Spline Sans Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--panel);color:var(--dim);border:1px solid var(--line);border-radius:99px;padding:10px 22px;cursor:pointer;transition:.25s}
+.p-close:hover{color:var(--gold);border-color:var(--gold)}
+.p-close.on{display:block}
+
+@media(max-width:640px){.sheet{padding:38px 26px}.gal{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<div class="hud tl"><span class="brand">Saaif <i>·</i> Khan</span></div>
+<div class="hud tr">
+  <button class="hbtn" onclick="togglePause()" id="pauseBtn">❚❚ pause</button>
+  <button class="hbtn" onclick="toggleTheme()" id="themeBtn">☾ dark</button>
+</div>
+<div class="hud bc" id="hint">Click a body in orbit — <span style="color:var(--gold)">everything opens</span></div>
+<button class="p-close" id="pClose" onclick="closeAll()">✕ return to orbit</button>
+
+<!-- ===== THE SYSTEM ===== -->
+<div class="system" id="system">
+  <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+
+  <div class="star">
+    <div class="halo"></div>
+    <div class="portrait">[ your photo ]</div>
+    <h1>Saaif Khan</h1>
+    <div class="tt">[Placeholder — one-line identity]</div>
+    <div class="hintline">the system revolves around this</div>
+  </div>
+
+  <!-- inner ring satellites -->
+  <div class="orbit">
+    <div class="arm" style="width:min(46vw,460px);height:min(46vw,460px);animation-duration:52s">
+      <div class="sat" style="animation-duration:52s" onclick="openPanel('p-personal',event)">
+        <div class="node"><span class="glyph">☾</span><span class="nm">Person</span></div>
+      </div>
+    </div>
+    <div class="arm" style="width:min(46vw,460px);height:min(46vw,460px);animation-duration:52s;transform:rotate(180deg)">
+      <div class="sat" style="animation-duration:52s" onclick="openPanel('p-pro',event)">
+        <div class="node"><span class="glyph">☗</span><span class="nm">Career</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- outer ring satellites -->
+  <div class="orbit">
+    <div class="arm" style="width:min(72vw,720px);height:min(72vw,720px);animation-duration:88s;transform:rotate(60deg)">
+      <div class="sat small" style="animation-duration:88s" onclick="openPanel('p-ibm',event)">
+        <div class="node"><span class="glyph">✦</span><span class="nm">IBM</span></div>
+      </div>
+    </div>
+    <div class="arm" style="width:min(72vw,720px);height:min(72vw,720px);animation-duration:88s;transform:rotate(180deg)">
+      <div class="sat small" style="animation-duration:88s" onclick="openPanel('p-utd',event)">
+        <div class="node"><span class="glyph">♦</span><span class="nm">UTD</span></div>
+      </div>
+    </div>
+    <div class="arm" style="width:min(72vw,720px);height:min(72vw,720px);animation-duration:88s;transform:rotate(300deg)">
+      <div class="sat small" style="animation-duration:88s" onclick="openPanel('p-contact',event)">
+        <div class="node"><span class="glyph">✉</span><span class="nm">Contact</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="veil" id="veil" onclick="closeAll()"></div>
+
+<!-- ===== PANELS ===== -->
+<div class="panel" id="p-personal"><div class="sheet">
+  <span class="p-tag">The Person</span>
+  <h2>Off the Clock</h2>
+  <div class="p-meta">what the free hours look like</div>
+  <p>[Placeholder — a warm intro line in your voice.]</p>
+  <div class="constellation">
+    <button class="c-entry" onclick="openPanel('p-hobby',event)">
+      <span class="dot"></span><div><div class="ce-name">[Hobby One]</div><div class="ce-sub">[one-line placeholder]</div></div><span class="ce-go">open →</span></button>
+    <button class="c-entry" onclick="openPanel('p-hobby',event)">
+      <span class="dot"></span><div><div class="ce-name">[Hobby Two]</div><div class="ce-sub">[one-line placeholder]</div></div><span class="ce-go">open →</span></button>
+    <button class="c-entry" onclick="openPanel('p-hobby',event)">
+      <span class="dot"></span><div><div class="ce-name">[Currently Into]</div><div class="ce-sub">[books / shows / side quests]</div></div><span class="ce-go">open →</span></button>
+  </div>
+</div></div>
+
+<div class="panel" id="p-pro"><div class="sheet">
+  <span class="p-tag">The Career</span>
+  <h2>On the Record</h2>
+  <div class="p-meta">[headline] · [current status placeholder]</div>
+  <p>[Placeholder — the 3-sentence summary that tells them everything at a glance.]</p>
+  <div class="constellation">
+    <button class="c-entry" onclick="openPanel('p-ibm',event)">
+      <span class="dot"></span><div><div class="ce-name">IBM — [Position Title]</div><div class="ce-sub">Summer [Year] · the full story</div></div><span class="ce-go">open →</span></button>
+    <button class="c-entry" onclick="openPanel('p-utd',event)">
+      <span class="dot"></span><div><div class="ce-name">UT Dallas — [Degree]</div><div class="ce-sub">coursework · orgs · honors</div></div><span class="ce-go">open →</span></button>
+    <button class="c-entry" onclick="openPanel('p-ibm',event)">
+      <span class="dot"></span><div><div class="ce-name">[Company] — [Role]</div><div class="ce-sub">[placeholder]</div></div><span class="ce-go">open →</span></button>
+  </div>
+</div></div>
+
+<div class="panel" id="p-ibm"><div class="sheet">
+  <span class="p-tag">Career · Chronicle</span>
+  <h2>A Summer at IBM</h2>
+  <div class="p-meta">[Position Title] · [Team] · [City, ST] · [Mon–Mon YYYY]</div>
+  <h5>The story</h5>
+  <p>[Placeholder — the internship as a narrative, never bullets. The team, the mission, how the summer unfolded. <b>Specifics make it real.</b>]</p>
+  <p>[Second paragraph — the turn: what got hard, what you figured out.]</p>
+  <h5>In pictures</h5>
+  <div class="gal"><div class="g">photo</div><div class="g">photo</div><div class="g">photo</div></div>
+  <h5>Artifacts</h5>
+  <div class="relics"><button class="relic">▤ [Final deck]</button><button class="relic">▶ [Demo video]</button><button class="relic">✎ [Write-up]</button></div>
+</div></div>
+
+<div class="panel" id="p-utd"><div class="sheet">
+  <span class="p-tag">Career · Chronicle</span>
+  <h2>The UTD Years</h2>
+  <div class="p-meta">[Degree] in [Major] · [Start]–[Grad] · [GPA optional]</div>
+  <h5>What it entailed</h5>
+  <p>[Placeholder — the degree as prose.]</p>
+  <h5>Coursework</h5>
+  <p style="font-family:'Spline Sans Mono',monospace;font-size:12px">[CS 1234] · [CS 2345] · [CS 3456] · [CS 4567] — each expandable in the real build</p>
+  <h5>Orgs & honors</h5>
+  <div class="relics"><button class="relic">[Org]</button><button class="relic">[Honor]</button><button class="relic">[Activity]</button></div>
+  <h5>In pictures</h5>
+  <div class="gal"><div class="g">org photo</div><div class="g">event</div><div class="g">campus</div></div>
+</div></div>
+
+<div class="panel" id="p-hobby"><div class="sheet">
+  <span class="p-tag">Person · Story</span>
+  <h2>[Hobby Name]</h2>
+  <div class="p-meta">since [year] · [context]</div>
+  <h5>The story</h5>
+  <p>[Placeholder — how it started, what it means, a favorite memory.]</p>
+  <div class="gal"><div class="g">photo</div><div class="g">photo</div><div class="g">photo</div></div>
+</div></div>
+
+<div class="panel" id="p-contact"><div class="sheet">
+  <span class="p-tag">Signal</span>
+  <h2>Get in Touch</h2>
+  <div class="p-meta">always open to a conversation</div>
+  <div class="relics">
+    <button class="relic" onclick="location.href='mailto:saaifkhan05@gmail.com'">✉ saaifkhan05@gmail.com</button>
+    <button class="relic">in — /[handle]</button>
+    <button class="relic">▤ resume.pdf</button>
+  </div>
+</div></div>
+
+<script>
+/* panel stack with radial reveal from click point */
+let pstack=[];
+function openPanel(id,e){
+  const p=document.getElementById(id);
+  const sheet=p.querySelector('.sheet');
+  if(e){sheet.style.setProperty('--ox',e.clientX+'px');sheet.style.setProperty('--oy',e.clientY+'px')}
+  // close current top visually (keep in stack for back-nav)
+  pstack.forEach(pid=>{const el=document.getElementById(pid);el.style.zIndex=60})
+  pstack.push(id);
+  p.classList.add('open');p.style.zIndex=60+pstack.length;
+  document.getElementById('veil').classList.add('on');
+  document.getElementById('system').classList.add('dimmed');
+  document.getElementById('pClose').classList.add('on');
+  document.getElementById('hint').style.opacity=0;
+  sheet.scrollTop=0;
+}
+function closeTop(){
+  if(!pstack.length)return;
+  const id=pstack.pop();
+  document.getElementById(id).classList.remove('open');
+  if(!pstack.length)restore();
+}
+function closeAll(){
+  pstack.forEach(id=>document.getElementById(id).classList.remove('open'));
+  pstack=[];restore();
+}
+function restore(){
+  document.getElementById('veil').classList.remove('on');
+  document.getElementById('system').classList.remove('dimmed');
+  document.getElementById('pClose').classList.remove('on');
+  document.getElementById('hint').style.opacity=1;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTop()});
+
+/* pause orbits */
+function togglePause(){
+  document.body.classList.toggle('paused');
+  document.getElementById('pauseBtn').textContent=document.body.classList.contains('paused')?'▶ resume':'❚❚ pause';
+}
+/* theme */
+function toggleTheme(){
+  const r=document.documentElement;
+  r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';
+  document.getElementById('themeBtn').textContent=r.dataset.theme==='dark'?'☾ dark':'☀ light';
+}
+
+/* twinkling sky */
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
+let W,H,tw=[];
+function rz(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+rz();addEventListener('resize',rz);
+for(let i=0;i<160;i++)tw.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.3,p:Math.random()*7,s:.008+Math.random()*.02});
+function tick(t){
+  ctx.clearRect(0,0,W,H);
+  const dark=document.documentElement.dataset.theme==='dark';
+  tw.forEach(s=>{
+    s.p+=s.s;
+    const a=.15+Math.abs(Math.sin(s.p))*.6;
+    ctx.fillStyle=dark?`rgba(232,193,90,${a*.55})`:`rgba(120,95,20,${a*.3})`;
+    ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,7);ctx.fill();
+  });
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>
