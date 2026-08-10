@@ -534,7 +534,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 .rbtn.ghost:hover{border-color:var(--ax);background:none}
 .rbtn small{margin-left:auto;font-weight:400;color:rgba(255,255,255,.75);font-size:12px}
 .rbtn.ghost small{color:var(--dim)}
-.tb-btn.hire{color:var(--ax);font-weight:600}
+.tb-btn.hire{background:var(--ax);color:var(--bg);font-weight:600}
+.tb-btn.hire:hover{background:var(--ax);opacity:.88;color:var(--bg)}
+.brand-btn{background:none;border-top:none;border-bottom:none;border-left:none;font:inherit;color:inherit;cursor:pointer}
+.brand-btn:hover{color:var(--ax)}
+.tb-btn.theme-btn{padding:0 14px;font-size:15px}
 
 
 @media(max-width:760px){#crumb{display:none}}
@@ -550,15 +554,14 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 <div class="boot"><div class="b1">Saaif Khan<i>.</i></div><div class="bbar"></div><div class="b2">Entering the map</div></div>
 
 <header class="topbar">
-  <span class="brand">Saaif Khan<i>.</i></span>
+  <button class="brand brand-btn" onclick="flyTo('f-home')" aria-label="Go home">Saaif Khan<i>.</i></button>
   <button class="tb-btn" id="railToggle" onclick="toggleRail()">☰ Index</button>
   <button class="tb-btn" id="backBtn" onclick="goBack()"><span class="arr">←</span><span id="bpLabel">Back</span></button>
   <nav id="crumb" aria-label="Breadcrumb"></nav>
   <div class="tb-right">
-    <button class="tb-btn" onclick="flyTo('f-home')">Home</button>
     <button class="tb-btn" onclick="openTourStart()">▶ Tour</button>
     <button class="tb-btn hire" onclick="openRec()">Hiring?</button>
-    <button class="tb-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">Theme</button>
+    <button class="tb-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">☀</button>
   </div>
 </header>
 
@@ -1903,7 +1906,7 @@ function rz(){
   cv.style.width=W+'px';cv.style.height=H+'px';
   g.setTransform(DPR,0,0,DPR,0,0);g.lineCap='round';
 }
-rz();setFieldTheme();
+rz();setFieldTheme();syncThemeBtn();
 function warp(dist){
   if(reduce)return;
   targetSpeed=Math.min(1.5+dist/160,10);
@@ -1984,9 +1987,14 @@ function toggleRail(force){
     if(c){current='';flyTo(c,true)}
   }
 }
+function syncThemeBtn(){
+  const b=document.getElementById('themeBtn');
+  if(b)b.textContent=root.dataset.theme==='light'?'☾':'☀';
+}
 function toggleTheme(){
   root.dataset.theme=root.dataset.theme==='light'?'dark':'light';
   setFieldTheme();
+  syncThemeBtn();
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
   rz();rectsStale=true;applyRail();
