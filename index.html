@@ -56,20 +56,20 @@
   --ax:#0f62fe;
   --gridln:color-mix(in srgb,var(--dimmer) 16%,transparent);
 }
-.ax-ibm{--ax:#78a9ff}     .ax-workiva{--ax:#42be65} .ax-cisco{--ax:#ff7eb6}
-.ax-usrc{--ax:#33b1ff}    .ax-ebay{--ax:#fa4d56}    .ax-utd{--ax:#ff832b}
+.ax-ibm{--ax:#78a9ff}     .ax-workiva{--ax:#66cc66} .ax-cisco{--ax:#ff7a33}
+.ax-usrc{--ax:#33b1ff}    .ax-ebay{--ax:#ff6f68}    .ax-utd{--ax:#ff9a54}
 .ax-akpsi{--ax:#f1c21b}   .ax-contact{--ax:#be95ff} .ax-person{--ax:#3ddbd9}
-[data-theme="light"] .ax-ibm{--ax:#0f62fe}     [data-theme="light"] .ax-workiva{--ax:#198038}
-[data-theme="light"] .ax-cisco{--ax:#d02670}   [data-theme="light"] .ax-usrc{--ax:#0072c3}
-[data-theme="light"] .ax-ebay{--ax:#da1e28}    [data-theme="light"] .ax-utd{--ax:#ba4e00}
+[data-theme="light"] .ax-ibm{--ax:#0f62fe}     [data-theme="light"] .ax-workiva{--ax:#2e7d32}
+[data-theme="light"] .ax-cisco{--ax:#cc5200}   [data-theme="light"] .ax-usrc{--ax:#0072c3}
+[data-theme="light"] .ax-ebay{--ax:#e53238}    [data-theme="light"] .ax-utd{--ax:#c25f10}
 [data-theme="light"] .ax-akpsi{--ax:#8e6a00}   [data-theme="light"] .ax-contact{--ax:#8a3ffc}
 [data-theme="light"] .ax-person{--ax:#007d79}
-[data-ctx="ibm"]{--ctx:#78a9ff}     [data-ctx="workiva"]{--ctx:#42be65} [data-ctx="cisco"]{--ctx:#ff7eb6}
-[data-ctx="usrc"]{--ctx:#33b1ff}    [data-ctx="ebay"]{--ctx:#fa4d56}    [data-ctx="utd"]{--ctx:#ff832b}
+[data-ctx="ibm"]{--ctx:#78a9ff}     [data-ctx="workiva"]{--ctx:#66cc66} [data-ctx="cisco"]{--ctx:#ff7a33}
+[data-ctx="usrc"]{--ctx:#33b1ff}    [data-ctx="ebay"]{--ctx:#ff6f68}    [data-ctx="utd"]{--ctx:#ff9a54}
 [data-ctx="akpsi"]{--ctx:#f1c21b}   [data-ctx="contact"]{--ctx:#be95ff} [data-ctx="person"]{--ctx:#3ddbd9}
-[data-theme="light"][data-ctx="ibm"]{--ctx:#0f62fe}     [data-theme="light"][data-ctx="workiva"]{--ctx:#198038}
-[data-theme="light"][data-ctx="cisco"]{--ctx:#d02670}   [data-theme="light"][data-ctx="usrc"]{--ctx:#0072c3}
-[data-theme="light"][data-ctx="ebay"]{--ctx:#da1e28}    [data-theme="light"][data-ctx="utd"]{--ctx:#ba4e00}
+[data-theme="light"][data-ctx="ibm"]{--ctx:#0f62fe}     [data-theme="light"][data-ctx="workiva"]{--ctx:#2e7d32}
+[data-theme="light"][data-ctx="cisco"]{--ctx:#cc5200}   [data-theme="light"][data-ctx="usrc"]{--ctx:#0072c3}
+[data-theme="light"][data-ctx="ebay"]{--ctx:#e53238}    [data-theme="light"][data-ctx="utd"]{--ctx:#c25f10}
 [data-theme="light"][data-ctx="akpsi"]{--ctx:#8e6a00}   [data-theme="light"][data-ctx="contact"]{--ctx:#8a3ffc}
 [data-theme="light"][data-ctx="person"]{--ctx:#007d79}
 
@@ -89,7 +89,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
    silently die. Zero clip-path in this file; filter only on .passed. */
 .viewport{position:fixed;inset:0;overflow:hidden;z-index:10;perspective:1400px;perspective-origin:50% 50%}
 #tilt{position:absolute;inset:0;transform-style:preserve-3d}
-#world{position:absolute;top:0;left:0;width:9000px;height:6400px;transform-style:preserve-3d;
+#world{position:absolute;top:0;left:0;width:7800px;height:5600px;transform-style:preserve-3d;
   transform-origin:0 0;transition:transform 1.3s cubic-bezier(.6,.03,.13,1)}
 
 /* PERF: `background` and `box-shadow` transitions here fired on all 17
@@ -98,7 +98,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
    (cheap, 1px) are animated now. */
 .frame{position:absolute;background:var(--surface);border:1px solid var(--line);
   transition:opacity .8s,border-color .3s}
-.frame .pad{padding:38px 42px}
+/* No height cap and no internal scrolling: every tile is sized so the
+   camera's zoom-to-fit can show it whole. See MIN_S in the script. */
+.frame .pad{padding:32px 38px}
 .frame.focusable{cursor:pointer}
 .frame.focusable:hover{border-color:var(--ax);box-shadow:0 0 0 1px var(--ax)}
 .frame.here.focusable:hover{box-shadow:none}
@@ -234,6 +236,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
   transition:color .15s,border-color .15s,background .15s}
 .arts:not(.d-side .arts) .art{width:auto;display:inline-block}
 .art:hover{color:var(--ax);border-color:var(--ax);background:var(--ax-tint)}
+.orgtag{font-size:12px;font-weight:500;border:1px solid var(--line-2);padding:10px 12px;
+  color:var(--dim);background:none;display:block;text-align:left;width:100%;cursor:default}
 .xlink{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
   border:1px solid var(--ax);background:var(--ax-tint);color:var(--ink);
   padding:13px 14px;margin-top:6px;
@@ -274,10 +278,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .cbtn.primary:hover{background:var(--blue-hover);border-color:var(--blue-hover)}
 .cbtn.primary:hover .ca{transform:translateY(3px)}
 
-#graphLines{position:absolute;top:0;left:0;z-index:50;
-  pointer-events:none;opacity:0;transition:opacity .5s;overflow:visible}
-.glink{stroke:var(--line-2);stroke-width:8;opacity:.6}
-.glink-cross{stroke:var(--blue);stroke-width:6;stroke-dasharray:18 28;opacity:.55}
 
 /* ═══════════ HEADER BAR (8A) ═══════════ */
 .topbar{position:fixed;top:0;left:0;right:0;height:48px;z-index:100;
@@ -505,7 +505,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <nav id="crumb" aria-label="Breadcrumb"></nav>
   <div class="tb-right">
     <button class="tb-btn" onclick="flyTo('f-home')">Home</button>
-    <button class="tb-btn" onclick="overview()">Map</button>
     <button class="tb-btn" onclick="openTourStart()">▶ Tour</button>
     <button class="tb-btn hire" onclick="openRec()">Hiring?</button>
     <button class="tb-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">Theme</button>
@@ -518,7 +517,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 <nav class="rail" id="rail" aria-label="Site index">
   <div class="g">Start</div>
   <button class="ritem" data-jump="f-home"><span class="rd" style="background:var(--blue)"></span><span class="rt">Home</span></button>
-  <button class="ritem" data-jump="overview"><span class="rd" style="background:var(--blue)"></span><span class="rt">Overview — the whole map</span></button>
   <div class="g">01 · Roles</div>
   <button class="ritem" data-jump="f-career"><span class="rd" style="background:var(--blue)"></span><span class="rt">All roles</span></button>
   <button class="ritem sub ax-ibm"     data-jump="f-ibm"><span class="rd"></span><span class="rt">Brand Sales Specialist<em>IBM</em></span></button>
@@ -536,9 +534,14 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="ritem sub ax-akpsi"   data-jump="f-valor"><span class="rd"></span><span class="rt">Valor<em>IBM watsonx · Bank of America</em></span></button>
   <div class="g">03 · Personal</div>
   <button class="ritem ax-person" data-jump="f-person"><span class="rd"></span><span class="rt">Off the Clock</span></button>
-  <button class="ritem sub ax-person" data-jump="f-hobby"><span class="rd"></span><span class="rt">Pickleball<em>Men's Pickleball Club, UTD</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-hobby"><span class="rd"></span><span class="rt">Pickleball<em>Ace Pickleball Club</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-f1"><span class="rd"></span><span class="rt">Formula 1 Racing<em>Sim racing · go-karting</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-travel"><span class="rd"></span><span class="rt">Travel<em>Tokyo · Bali · Istanbul · Dubai</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-gaming"><span class="rd"></span><span class="rt">Video Games<em>GTA V · lifelong gamer</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-eats"><span class="rd"></span><span class="rt">Food &amp; Coffee<em>New cuisines · coffee · matcha</em></span></button>
+  <button class="ritem sub ax-person" data-jump="f-community"><span class="rd"></span><span class="rt">Community<em>MSA · Islamic Relief · Alpha Kappa Psi</em></span></button>
   <div class="g">04 · Reach me</div>
-  <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Contact &amp; resume</span></button>
+  <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Get in touch</span></button>
 </nav>
 
 <div class="viewport" id="viewport">
@@ -547,7 +550,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <!-- ══ HOME · L1 — editorial hero + console stat strip ══ -->
     <div class="frame" id="f-home" data-fz="0" data-depth="1" data-parent="" data-ctx=""
-      style="left:4000px;top:2950px;transform:translateZ(0px)">
+      style="left:3600px;top:1700px;transform:translateZ(0px)">
       <div class="pad">
         <h1>Saaif Khan<i>.</i></h1>
         <p class="rotline">I <span class="rotwrap"><span class="rot" id="rotWord">discover</span></span> solutions.</p>
@@ -569,7 +572,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <!-- ══ L2 · z = -750 ══ -->
     <div class="frame cluster-frame focusable kind-hub" id="f-career" data-fz="-750" data-depth="2"
       data-parent="f-home" data-ctx="" data-fly="f-career"
-      style="width:720px;left:6300px;top:1350px;transform:translateZ(-750px)">
+      style="width:720px;left:200px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">01</span><h2>Roles</h2></div>
         <div class="items">
@@ -587,16 +590,20 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div><div class="i-name"><span class="i-dot"></span>UT Dallas — BS, Management Information Systems</div><div class="i-sub">Richardson, TX · Graduating Dec 2026</div></div><span class="i-go">Open →</span></button>
         </div>
         <div class="certs">
-          <span class="cert">Splunk Core Power User</span><span class="cert">Splunk Enterprise Admin</span>
-          <span class="cert">Splunk Cloud Admin</span><span class="cert">AWS Cloud Practitioner (in progress)</span>
-          <span class="cert">IBM watsonx Challenge 2026</span>
+          <a class="cert" href="https://www.credly.com/badges/7a3fbe6e-6128-496a-b8fd-ed9fe6d4fcdf/linked_in_profile" target="_blank" rel="noopener">IBMer watsonx Challenge 2026</a>
+          <a class="cert" href="https://www.credly.com/badges/49c93d8a-b29e-43ac-8579-f95949a45abf/linked_in_profile" target="_blank" rel="noopener">Splunk Core Power User</a>
+          <a class="cert" href="https://www.credly.com/badges/4d76d810-6293-49c0-86e9-814e45d55167/linked_in_profile" target="_blank" rel="noopener">Splunk Enterprise Admin</a>
+          <a class="cert" href="https://www.credly.com/badges/ef7c7bf8-3718-4ea7-9ddd-741666d082bc/linked_in_profile" target="_blank" rel="noopener">Splunk Cloud Admin</a>
+          <span class="cert" style="cursor:default">AWS Cloud Practitioner (in progress)</span>
+          <a class="cert" href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/PepsiCo/2HLNLMsC4TWo72csu_PepsiCo_5ffJdYM3sG9sXX7r6_1729802973837_completion_certificate.pdf" target="_blank" rel="noopener">PepsiCo — Sales Job Simulation</a>
+          <a class="cert" href="https://certificates.simplicdn.net/share/4842780_1706824978.pdf" target="_blank" rel="noopener">Product Management 101</a>
         </div>
       </div>
     </div>
 
     <div class="frame cluster-frame focusable kind-hub" id="f-projects" data-fz="-750" data-depth="2"
       data-parent="f-home" data-ctx="" data-fly="f-projects"
-      style="width:700px;left:6350px;top:4300px;transform:translateZ(-750px)">
+      style="width:700px;left:1100px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">02</span><h2>Projects</h2></div>
         <div class="items">
@@ -616,27 +623,33 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame cluster-frame focusable kind-hub ax-person" id="f-person" data-fz="-750"
       data-depth="2" data-parent="f-home" data-ctx="person" data-fly="f-person"
-      style="width:600px;left:1500px;top:1400px;transform:translateZ(-750px)">
+      style="width:600px;left:2000px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">03</span><h2>Off the Clock</h2></div>
-        <p class="lede">[Placeholder — one line in your voice about what you're like when nobody's buying anything.]</p>
+        <p class="lede">When something grabs me, I go all in — pickleball, sim racing, travel, and showing up for the people around me, no half measures.</p>
         <div class="items">
           <button class="item ax-person" data-fly="f-hobby">
-            <div><div class="i-name"><span class="i-dot"></span>Pickleball</div><div class="i-sub">Men's Pickleball Club, UTD</div></div><span class="i-go">Open →</span></button>
-          <button class="item ax-person" data-fly="f-hobby">
-            <div><div class="i-name"><span class="i-dot"></span>[Hobby Two]</div><div class="i-sub">[one line]</div></div><span class="i-go">Open →</span></button>
-          <button class="item ax-person" data-fly="f-hobby">
-            <div><div class="i-name"><span class="i-dot"></span>Community</div><div class="i-sub">MSA · Islamic Relief · Pakistani Student Association</div></div><span class="i-go">Open →</span></button>
+            <div><div class="i-name"><span class="i-dot"></span>Pickleball</div><div class="i-sub">Ace Pickleball Club · Men's Pickleball Club, UTD</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-person" data-fly="f-f1">
+            <div><div class="i-name"><span class="i-dot"></span>Formula 1 Racing</div><div class="i-sub">Sim racing league · go-karting</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-person" data-fly="f-travel">
+            <div><div class="i-name"><span class="i-dot"></span>Travel</div><div class="i-sub">Tokyo · Bali · Istanbul · Dubai</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-person" data-fly="f-gaming">
+            <div><div class="i-name"><span class="i-dot"></span>Video Games</div><div class="i-sub">GTA V · lifelong gamer</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-person" data-fly="f-eats">
+            <div><div class="i-name"><span class="i-dot"></span>Food &amp; Coffee</div><div class="i-sub">New cuisines · coffee · matcha</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-person" data-fly="f-community">
+            <div><div class="i-name"><span class="i-dot"></span>Community</div><div class="i-sub">MSA · Islamic Relief · Alpha Kappa Psi</div></div><span class="i-go">Open →</span></button>
         </div>
       </div>
     </div>
 
     <div class="frame deep focusable kind-hub ax-contact" id="f-contact" data-fz="-750" data-depth="2"
       data-parent="f-home" data-ctx="contact" data-fly="f-contact"
-      style="width:560px;left:1550px;top:4400px;transform:translateZ(-750px)">
+      style="width:560px;left:2800px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">04</span><h2>Get in touch</h2></div>
-        <div class="meta">Graduating December 2026 · open to full-time SE &amp; AE roles</div>
+        <div class="meta">Graduating December 2026 · always open to a conversation</div>
         <a class="cbtn" href="mailto:saaifkhan05@gmail.com">
           <span class="ci">✉</span><span class="ct"><span>Email</span><b>saaifkhan05@gmail.com</b></span><span class="ca">→</span></a>
         <a class="cbtn" href="tel:+14695161440">
@@ -651,7 +664,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <!-- ══ L3 · ROLE DOSSIERS · z = -1500 ══ -->
     <div class="frame deep two focusable kind-role ax-ibm" id="f-ibm" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="ibm" data-fly="f-ibm"
-      style="width:760px;left:6100px;top:250px;transform:translateZ(-1500px)">
+      style="width:1040px;left:200px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Role</span><span class="w">Current · New York, NY</span></div>
         <div class="d-top">
@@ -661,11 +674,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The story</h5>
-          <p>IBM handed me five public sector agencies inside the New York State enterprise account — a book spanning <b>150+ agencies</b> — and left the rest to me. I partnered with an Account Executive across her 47-agency portfolio on relationship mapping, outreach strategy, and QBR preparation. Between us we moved <b>six active opportunities</b> forward.</p>
-          <p>Three of those came out of rooms I stood up in: financial models, business value assessments, and IBM client-zero stories, translated into the ROI language a public-sector buyer will actually act on. Two produced follow-up meetings.</p>
-          <p>The territory work is the part I'd want to be asked about. I read the <b>New York State 2026–27 budget</b> against agentic AI adoption trends, pulled five target use cases out of it, worked six-plus industry events across NYC, and sent 30+ personalised executive emails that put net-new attendees in our client workshops.</p>
+          <p>My mentor — a Technical Sales Leader (IBM's version of an Account Executive) covering <b>Core 2</b>, a mid-revenue slice of ~<b>40+ agencies</b> inside a New York State enterprise account spanning <b>150+ agencies</b> total — handed me the reins to engage five of them directly. For each, I drafted an engagement game plan: researched the key stakeholders, figured out what the agency was actually working on, and ran outreach through tools like ZoomInfo and LinkedIn Sales Navigator. I worked across opportunities sitting in different stages of the deal cycle and tracked all of it through our CRM. Between the two of us, we moved <b>six active opportunities</b> forward.</p>
+          <p>Three of those came out of rooms I stood up myself. What I'm proudest of here is the client-facing work — presenting in person, whether clients came to our New York City office, we visited a client site, or we hosted them at our Yorktown facility. I built the financial models and ROI mock-ups behind those pitches, ran the business value assessments, and presented IBM client-zero stories translated into language a public-sector buyer will actually act on. Two produced follow-up meetings.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">add photo</div></div>
+          <div class="strip"><div class="ph">Yorktown presentation photo</div></div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -674,31 +686,31 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <h5>By the numbers</h5>
           <div class="metrics">
             <div class="metric"><b>6</b><span>opportunities advanced</span></div>
+            <div class="metric"><b>40+</b><span>agency portfolio (Core 2)</span></div>
             <div class="metric"><b>150+</b><span>agency account</span></div>
-            <div class="metric"><b>30+</b><span>exec emails sent</span></div>
           </div>
           <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▤ [client deck]</button></div>
+          <div class="arts"><button class="art">▤ client deck 1</button><button class="art">▤ client deck 2</button></div>
         </div>
       </div>
     </div>
 
     <div class="frame deep two focusable kind-role ax-workiva" id="f-workiva" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="workiva" data-fly="f-workiva"
-      style="width:760px;left:6900px;top:2400px;transform:translateZ(-1500px)">
+      style="width:1040px;left:1400px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
-        <div class="kindbar"><span class="k">Role</span><span class="w">Dallas, TX · returned Aug 2026</span></div>
+        <div class="kindbar"><span class="k">Role</span><span class="w">Dallas, TX · incoming Aug 2026</span></div>
         <div class="d-top">
           <div class="co"><span class="co-mark">Workiva</span><span class="f-tag">Sales Engineer Enablement Intern</span></div>
           <h2>The platform <i>nobody opened</i></h2>
-          <div class="meta">Global SE Enablement · Dallas, TX · Jan – Jun 2026 · returned Aug 2026</div>
+          <div class="meta">Global Solutions Value Consulting · Dallas, TX · Jan – Jun 2026 · incoming Aug 2026</div>
         </div>
         <div class="d-main">
           <h5>The story</h5>
           <p>Workiva's Highspot enablement platform served <b>230+ Sales Engineers</b> globally, and adoption was failing. My job was to find out why with evidence, not opinion. I designed a <b>50-question behavioural survey</b>, analysed the failure quantitatively, and produced the baseline metrics that defined the redesign's scope and business case.</p>
           <p>The data gave me five distinct personas, and every architecture decision after that traced back to one of them. I built an <b>18-page information architecture</b> from scratch with a tagging taxonomy standard and a governance framework covering content ownership, expiration enforcement, and migration rules for <b>259 audited assets</b>. Then I demoed V2 to <b>90+ Sales Engineers</b>, anchoring each decision to a specific pain point from discovery — the only way a room full of SEs will believe you.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">add photo</div></div>
+          <div class="strip"><div class="ph">Highspot V2 homepage screenshot</div></div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -721,7 +733,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame deep two focusable kind-role ax-cisco" id="f-cisco" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="cisco" data-fly="f-cisco"
-      style="width:760px;left:7900px;top:1400px;transform:translateZ(-1500px)">
+      style="width:1040px;left:2600px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Role</span><span class="w">Boulder, CO · Summer 2025</span></div>
         <div class="d-top">
@@ -731,10 +743,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The story</h5>
-          <p>Boulder is where I learned what the job actually is. I shadowed <b>60+ discovery calls</b>, demos, and workshops alongside AEs and Sales Engineers, and the pattern recognition that came out of it — the same technical pain surfacing across unrelated customers — fed into <b>$1M+ of pipeline</b>.</p>
-          <p>I co-led four customer enablement workshops, three-hour hands-on sessions with clients and prospects, and built a predictive flight delay dashboard on Splunk MLTK that reached <b>89% accuracy</b>. I demoed it live to 30+ senior leaders. Cutting manual forecasting effort by 35% was the number; getting a room of directors to see an AI use case they hadn't considered was the point.</p>
+          <p>Boulder is where I learned what the job actually is. I shadowed <b>60+ discovery calls</b>, demos, and workshops alongside AEs and Sales Engineers, ran live chat support during customer workshops answering questions in real time, and helped a full-time Solutions Engineer put together an RFP response for a client opportunity worth <b>$1M+</b> in pipeline.</p>
+          <p>I co-led four customer enablement workshops, three-hour hands-on sessions with clients and prospects, and built a predictive flight delay dashboard on Splunk MLTK that reached <b>89% accuracy</b> — a real solution to a problem a lot of people deal with. Demoing it live to 30+ senior leaders was where value selling and storytelling mattered as much as the model: showing the technical build and the business case in the same breath.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">add photo</div></div>
+          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">FlightFlow screenshot</div></div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -759,7 +771,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame deep two focusable kind-role ax-usrc" id="f-usrc" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="usrc" data-fly="f-usrc"
-      style="width:680px;left:4800px;top:200px;transform:translateZ(-1500px)">
+      style="width:1040px;left:3800px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Role</span><span class="w">Contract · Plano, TX</span></div>
         <div class="d-top">
@@ -769,25 +781,22 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The story</h5>
-          <p>A contract engagement driving Microsoft Copilot adoption inside supply chain management. The technology was the easy part. The work was change management: finding the people whose day Copilot could measurably shorten, showing them in their own workflow, and getting them to keep using it after the demo ended.</p>
-          <p>It's the same motion as pre-sales run against internal stakeholders instead of a buying committee — discovery, a narrow first use case, a visible win, then expansion.</p>
-          <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div></div>
+          <p>A contract engagement inside U.S. Renal Care's supply chain management team, brought in as what I called myself going in: an AI Solutions Consultant. The team had just picked up Microsoft Copilot enterprise licenses and had real use cases waiting — Smartsheet workflows that were still entirely manual — but an older, less AI-native workforce that didn't know where to start.</p>
+          <p>My team and I ran discovery interviews to find out what people were actually confused by and what they needed, then built documentation covering Copilot adoption from complete beginner to advanced. We tied the final product directly back to the pain points from those interviews before presenting it — the same motion as pre-sales run against internal stakeholders instead of a buying committee.</p>
         </div>
         <div class="d-side">
           <h5>By the numbers</h5>
           <div class="metrics">
-            <div class="metric"><b>[00]</b><span>[users onboarded]</span></div>
-            <div class="metric"><b>[00%]</b><span>[adoption lift]</span></div>
+            <div class="metric"><b>86%</b><span>adoption lift</span></div>
+            <div class="metric"><b>~30</b><span>team members onboarded</span></div>
           </div>
-          <span class="tbd">↑ fill these in — the only dossier without hard numbers</span>
         </div>
       </div>
     </div>
 
     <div class="frame deep two focusable kind-role ax-ebay" id="f-ebay" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="ebay" data-fly="f-ebay"
-      style="width:760px;left:5400px;top:1500px;transform:translateZ(-1500px)">
+      style="width:1040px;left:5000px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Role</span><span class="w">Founder · Sole proprietorship</span></div>
         <div class="d-top">
@@ -797,10 +806,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The story</h5>
-          <p>Two years, <b>2,500+ transactions</b>, a sustained <b>98% satisfaction rate</b>, and roughly <b>$100k in annual revenue</b> — run alone, alongside a full course load. Revenue grew <b>568% year over year</b> because I got good at finding demand before it was obvious: identifying niches, pricing against the market, and reading conversion data like a sales funnel, because that's what it was.</p>
-          <p>I expanded the catalogue 800% and lifted monthly sales 45% through targeted campaigns, placement optimisation, and upselling, ending with 300+ repeat customers. Nobody set me a quota and nobody covered a bad month. It's the closest thing to owning a P&amp;L I could get at nineteen, and it taught me more about how buyers actually decide than any course did.</p>
-          <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">add photo</div></div>
+          <p>I grew up around people who loved business — friends in the jewelry trade, friends flipping used electronics — and it rubbed off. I sourced a product line from a manufacturer to resell on eBay, tested a few categories, ran the numbers, and landed on headphones and microphones. From sample orders and market research, I built the business from the ground up to roughly <b>$100k in annual revenue</b>, run alone alongside a full course load.</p>
+          <p>Two years, <b>2,500+ transactions</b>, a sustained <b>98% satisfaction rate</b>. Revenue grew <b>568% year over year</b> because I got good at finding demand before it was obvious: identifying niches, pricing against the market, and reading conversion data like a sales funnel, because that's what it was. I expanded the catalogue 800% and lifted monthly sales 45% through targeted campaigns, placement optimisation, and upselling, ending with 300+ repeat customers. Nobody set me a quota and nobody covered a bad month — the closest thing to owning a P&amp;L I could get at nineteen. Eventually I realized the more interesting question was how sales actually works, which is what pushed me toward technical sales in the first place.</p>
         </div>
         <div class="d-side">
           <h5>By the numbers</h5>
@@ -816,7 +823,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame deep two focusable kind-role ax-utd" id="f-utd" data-fz="-1500"
       data-depth="3" data-parent="f-career" data-ctx="utd" data-fly="f-utd"
-      style="width:760px;left:3700px;top:200px;transform:translateZ(-1500px)">
+      style="width:1040px;left:6200px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Education</span><span class="w">Richardson, TX · Dec 2026</span></div>
         <div class="d-top">
@@ -826,16 +833,16 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>Why this degree</h5>
-          <p>MIS on the IT Sales Engineering track is a degree built for exactly one job: technical enough to earn credibility in the room, commercial enough to know what to do once you have it. Half the curriculum is cloud, code, and security; the other half is discovery, solution selling, and business finance.</p>
+          <p>Management Information Systems — UT Dallas calls it Computer Information Systems and Technology — on the IT Sales Engineering track is a degree built for exactly one job: technical enough to earn credibility in the room, commercial enough to know what to do once you have it. Half the curriculum is cloud, code, and security; the other half is discovery, solution selling, and business finance. I'm graduating a semester early, in December 2026, and I'm planning to pursue an MBA down the line as my career develops.</p>
           <h5>Coursework</h5>
           <p style="font-size:12.5px;line-height:2">Cloud Computing (AWS) · Object-Oriented Programming (Python) · Foundations of Business Intelligence · Systems Analysis &amp; Design · Database Fundamentals · Network &amp; Information Security · Quantitative Business Analysis · Advanced Solution Selling · Digital Prospecting · Business Finance</p>
         </div>
         <div class="d-side">
           <h5>Orgs &amp; involvement</h5>
           <div class="arts">
-            <button class="art">Alpha Kappa Psi</button><button class="art">Center for Professional Sales</button>
-            <button class="art">Muslim Student Association</button><button class="art">Islamic Relief</button>
-            <button class="art">Pakistani Student Association</button><button class="art">Men's Pickleball Club</button>
+            <span class="orgtag">Alpha Kappa Psi</span><span class="orgtag">Center for Professional Sales</span>
+            <span class="orgtag">Muslim Student Association</span><span class="orgtag">Islamic Relief</span>
+            <span class="orgtag">Pakistani Student Association</span><span class="orgtag">Men's Pickleball Club</span>
           </div>
         </div>
       </div>
@@ -844,7 +851,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <!-- ══ L3 · PROJECT DOSSIERS · z = -1500 ══ -->
     <div class="frame deep two focusable kind-project ax-ibm" id="f-kdr" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="ibm" data-fly="f-kdr"
-      style="width:760px;left:7900px;top:3500px;transform:translateZ(-1500px)">
+      style="width:1040px;left:200px;top:3000px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Project</span><span class="w">Built at IBM · Jun – Aug 2026</span></div>
         <div class="d-top">
@@ -854,11 +861,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The problem</h5>
-          <p>Sellers were spending up to three hours assembling a single close plan. I built a full-stack AI application on <b>IBM Bob (Claude Sonnet 4.6)</b> that turns raw seller notes into a complete 12-stage NYS OGS close plan in under thirty seconds — a <b>60× reduction</b>.</p>
+          <p>Built for the IBM watsonx Challenge, on a team with a full-time technical seller and a managing director for the State of New York — I led the initiative and built it myself. Sellers were spending up to three hours assembling a single Key Deal Review (KDR) deck and timeline for their seniority manager before every cadence meeting, almost all of it manual. I built a full-stack AI application on <b>IBM Bob (Claude Sonnet 4.6)</b> that turns raw seller notes into a complete 12-stage NYS OGS close plan in under thirty seconds — a <b>60× reduction</b>.</p>
           <h5>How it works</h5>
           <p>Four distinct AI workflows underneath: structured deal extraction, skeleton inference, conversational plan patching, and deal narrative generation. Each emits strict JSON with a regex-based fallback so production never goes down. It validates against a <b>5,000+ SKU IBM OGS pricelist</b> in real time, authenticates against @ibm.com, and routes email and in-app notifications through a milestone tagging system to whoever owns the next step.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">demo screenshot</div><div class="ph">demo screenshot</div></div>
+          <div class="strip"><div class="ph">demo screenshot</div></div>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -871,14 +878,14 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>5,000+</b><span>SKUs validated</span></div>
           </div>
           <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▶ [demo video]</button></div>
+          <div class="arts"><button class="art">▶ demo video</button></div>
         </div>
       </div>
     </div>
 
     <div class="frame deep two focusable kind-project ax-workiva" id="f-highspot" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="workiva" data-fly="f-highspot"
-      style="width:760px;left:7700px;top:4600px;transform:translateZ(-1500px)">
+      style="width:1040px;left:1400px;top:3000px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Project</span><span class="w">Built at Workiva · Jan – May 2026</span></div>
         <div class="d-top">
@@ -888,7 +895,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The problem</h5>
-          <p>A platform for 230+ Solution Consultants that people worked around instead of through. Rather than guess at fixes, I diagnosed the adoption failure: a 50-question behavioural survey, quantitative analysis, and a <b>5-persona segmentation model</b> built from the raw responses.</p>
+          <p>Workiva had recently adopted a V1 of the Highspot enablement platform, and it wasn't landing — a platform for 230+ Solution Consultants that people worked around instead of through. I was brought in alongside another intern to rebuild it into a V2. Rather than guess at fixes, I diagnosed the adoption failure first: a 50-question behavioural survey, quantitative analysis, and a <b>5-persona segmentation model</b> built from the raw responses.</p>
           <h5>What I designed</h5>
           <p>An <b>18-page information architecture</b> from scratch — tagging taxonomy, governance policy framework, content migration rules, and a zero-training-required navigation system replacing a disorganised V1. Recommendations targeted a <b>40% reduction in Slack reliance</b> and a projected <b>30%+ improvement in asset time-to-find</b>, validated through survey correlation analysis.</p>
           <h5>See it</h5>
@@ -910,7 +917,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame deep two focusable kind-project ax-cisco" id="f-flightflow" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="cisco" data-fly="f-flightflow"
-      style="width:760px;left:6300px;top:5000px;transform:translateZ(-1500px)">
+      style="width:1040px;left:2600px;top:3000px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Project</span><span class="w">Built at Splunk · May – Aug 2025</span></div>
         <div class="d-top">
@@ -937,14 +944,14 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>32+</b><span>leaders demoed to</span></div>
           </div>
           <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▶ [demo video]</button></div>
+          <div class="arts"><button class="art">▶ demo video</button></div>
         </div>
       </div>
     </div>
 
     <div class="frame deep two focusable kind-project ax-cisco" id="f-food" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="cisco" data-fly="f-food"
-      style="width:680px;left:6100px;top:3700px;transform:translateZ(-1500px)">
+      style="width:1040px;left:3800px;top:3000px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Project</span><span class="w">Built at Splunk · May – Aug 2025</span></div>
         <div class="d-top">
@@ -974,7 +981,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
     <div class="frame deep two focusable kind-project ax-akpsi" id="f-valor" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="akpsi" data-fly="f-valor"
-      style="width:680px;left:4600px;top:4700px;transform:translateZ(-1500px)">
+      style="width:1040px;left:5000px;top:3000px;transform:translateZ(-1500px)">
       <div class="pad">
         <div class="kindbar"><span class="k">Project</span><span class="w">Alpha Kappa Psi · Oct – Nov 2024</span></div>
         <div class="d-top">
@@ -984,10 +991,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         </div>
         <div class="d-main">
           <h5>The brief</h5>
-          <p>Five people, a Bank of America brief, and IBM watsonx. We built <b>Valor</b>, an AI chatbot aimed at veteran engagement and financial literacy, ran a competitive analysis, and pitched it client-style to a panel of four judges — projecting a <b>20% lift in veteran engagement</b> and measurable cost savings.</p>
-          <p>My first real attempt at mapping a technology's capabilities onto a client's actual business objectives, which turned out to be the entire job description.</p>
+          <p>A 5-member team, a Bank of America brief, and IBM watsonx. We built <b>Valor</b>, an AI-driven chatbot leveraging IBM watsonx to enhance veteran engagement and financial literacy for Bank of America. I helped conduct competitive analysis, define customer-centric solutions, and deliver a client-ready pitch showcasing projected improvements in customer satisfaction and cost efficiency — a panel of four judges, projecting a <b>20% lift in veteran engagement</b>.</p>
+          <p>The focus throughout was aligning AI capabilities with actual business objectives to drive client and end-user value — my first real attempt at mapping a technology's capabilities onto a client's business goals, which turned out to be the entire job description.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">pitch deck</div><div class="ph">solution slide</div></div>
+          <div class="strip"><div class="ph">pitch deck homepage screenshot</div></div>
         </div>
         <div class="d-side">
           <h5>By the numbers</h5>
@@ -1003,19 +1010,82 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <!-- ══ L3 · PERSONAL ══ -->
     <div class="frame deep focusable kind-role ax-person" id="f-hobby" data-fz="-1500"
       data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-hobby"
-      style="width:600px;left:700px;top:400px;transform:translateZ(-1500px)">
+      style="width:720px;left:200px;top:4400px;transform:translateZ(-1500px)">
       <div class="pad">
-        <div class="kindbar"><span class="k">Personal</span><span class="w">[context]</span></div>
+        <div class="kindbar"><span class="k">Personal</span><span class="w">Since May 2025 · competitive</span></div>
         <span class="f-tag">Off the clock</span>
-        <h2>[Hobby <i>name</i>]</h2>
-        <div class="meta">Since [year] · [context]</div>
+        <h2>Pickleball</h2>
+        <div class="meta">Ace Pickleball Club · MSA tournaments · Men's Pickleball Club, UTD</div>
         <h5>The story</h5>
-        <p>[Placeholder — how it started, what it means, a favourite memory. This is the one frame recruiters remember, so make it specific.]</p>
-        <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div></div>
+        <p>It started with a cheap net set in a friend's driveway one summer in high school. I'd played football growing up, and once life got busier, pickleball became the way I stayed in a physical sport without needing ten other people to coordinate a Sunday. I started playing seriously in May 2025 — singles and doubles against strangers at Ace Pickleball Club, plus tournaments there and through MSA. Favorite memory so far: running into an intern I'd met last summer at Splunk and playing with a group of full-timers after work.</p>
       </div>
     </div>
 
-  <svg id="graphLines"></svg>
+    <div class="frame deep focusable kind-role ax-person" id="f-f1" data-fz="-1500"
+      data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-f1"
+      style="width:720px;left:1100px;top:4400px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Personal</span><span class="w">Sim racing · go-karting</span></div>
+        <span class="f-tag">Off the clock</span>
+        <h2>Formula 1 <i>Racing</i></h2>
+        <div class="meta">Sim racing league · go-karting</div>
+        <h5>The story</h5>
+        <p>Once I got into watching Formula 1, I didn't stop at watching. I picked up a racing simulator rig and now compete in virtual leagues on F1 26, and I've taken it off-screen with real go-karting too. It's the same pattern as pickleball — once something clicks with me, I go all in.</p>
+      </div>
+    </div>
+
+    <div class="frame deep focusable kind-role ax-person" id="f-travel" data-fz="-1500"
+      data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-travel"
+      style="width:720px;left:2000px;top:4400px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Personal</span><span class="w">Domestic &amp; international</span></div>
+        <span class="f-tag">Off the clock</span>
+        <h2>Travel</h2>
+        <div class="meta">Always taking recommendations for what's next</div>
+        <h5>The story</h5>
+        <p>I've been chasing new cities for years. Domestically: California, Alabama, Memphis, Nashville, Houston, Austin, San Antonio, New York City, Boulder, Florida, and Toronto. The international trips are the ones I'd talk about first — Tokyo, Kyoto, and Osaka in Japan, Bali in Indonesia, Istanbul in Turkey, and Dubai in the UAE, most of them with a couple of close friends. Always open to where to go next.</p>
+      </div>
+    </div>
+
+    <div class="frame deep focusable kind-role ax-person" id="f-gaming" data-fz="-1500"
+      data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-gaming"
+      style="width:720px;left:2900px;top:4400px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Personal</span><span class="w">Lifelong gamer</span></div>
+        <span class="f-tag">Off the clock</span>
+        <h2>Video Games</h2>
+        <div class="meta">GTA V · Call of Duty · Minecraft · Fortnite · Madden · FIFA</div>
+        <h5>The story</h5>
+        <p>I've played video games my whole life — Call of Duty, Minecraft, Fortnite, Madden, FIFA. Grand Theft Auto V is my favorite of all time, and I'm counting down to GTA VI like everyone else. I don't have as much time to play these days, but it's never really left.</p>
+      </div>
+    </div>
+
+    <div class="frame deep focusable kind-role ax-person" id="f-eats" data-fz="-1500"
+      data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-eats"
+      style="width:720px;left:3800px;top:4400px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Personal</span><span class="w">Always trying somewhere new</span></div>
+        <span class="f-tag">Off the clock</span>
+        <h2>Food &amp; Coffee</h2>
+        <div class="meta">New cuisines · coffee · matcha</div>
+        <h5>The story</h5>
+        <p>I love eating out and trying new cuisines — I'd rather try somewhere I haven't been than go back to a place I already know is good. Coffee and matcha are a constant.</p>
+      </div>
+    </div>
+
+    <div class="frame deep focusable kind-role ax-person" id="f-community" data-fz="-1500"
+      data-depth="3" data-parent="f-person" data-ctx="person" data-fly="f-community"
+      style="width:720px;left:4700px;top:4400px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Personal</span><span class="w">MSA · Islamic Relief · Alpha Kappa Psi</span></div>
+        <span class="f-tag">Off the clock</span>
+        <h2>Community</h2>
+        <div class="meta">Service committees · event coordination · fundraising</div>
+        <h5>The story</h5>
+        <p>Giving back isn't a once-a-year thing for me. On Islamic Relief's service committee, I helped plan and host charity events — including ones for kids with special needs, giving their parents a day to themselves — plus a run of fundraisers. In Alpha Kappa Psi, I served as lead event coordinator for the service committee: running our charity basketball tournament, where teams paid to compete and the proceeds went to charity, and organizing volunteer events like nursing home visits and donation drives. I'm also part of the Muslim Student Association at UT Dallas.</p>
+      </div>
+    </div>
+
   </div>
   </div>
 </div>
@@ -1148,7 +1218,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 const P=1400, world=document.getElementById('world');
 const frames=[...document.querySelectorAll('.frame')];
 const root=document.documentElement;
-const WORLD_W=world.offsetWidth, WORLD_H=world.offsetHeight;
 let current='f-home', lastCz=0;
 
 /* SAFE AREA — header owns the top; the rail reserves the left only
@@ -1198,7 +1267,13 @@ function endFlight(){
 world.addEventListener('transitionend',e=>{
   if(e.target===world&&e.propertyName==='transform')endFlight();
 });
-const MIN_S=.94, MAX_S=1.5, PAD=1.06;
+/* MIN_S used to be .94, which stopped the camera from ever zooming out
+   far enough for a tall tile — that floor is exactly what clipped the
+   dense dossiers top and bottom. It's now low enough that fitScale()
+   always wins, so every tile lands fully on screen; the dossiers were
+   also widened (1040px) so they're shorter and the zoom-out stays mild
+   enough to keep text readable. */
+const MIN_S=.45, MAX_S=1.5, PAD=1.06;
 function fitScale(f){
   const b=safeBox();
   return Math.min(b.w/(f.offsetWidth*PAD), b.h/(f.offsetHeight*PAD), MAX_S);
@@ -1216,7 +1291,7 @@ function flyTo(id,replay){
   if(id===current)return;
   const f=document.getElementById(id);
   if(!f)return;
-  hideGraph();clearTimeout(graphTimer);setHover(null);
+  setHover(null);
   if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
   current=id;
   const cz=czFor(f), [cx,cy]=centerOf(f);
@@ -1225,24 +1300,9 @@ function flyTo(id,replay){
   cam(cx,cy,cz);
   chrome();
 }
-function overview(replay){
-  if(current==='overview')return;
-  if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
-  current='overview';
-  hideGraph();clearTimeout(graphTimer);setHover(null);
-  const b=safeBox();
-  const S=Math.min(b.w/WORLD_W,b.h/WORLD_H)*.94;
-  const cz=P*(1-1/S);
-  warp(Math.abs(cz-lastCz)); lastCz=cz;
-  setPhases(null,cz); setCtx(null);
-  cam(WORLD_W/2,WORLD_H/2,cz);
-  chrome();
-  graphTimer=setTimeout(renderGraph,1350);
-}
 function goBack(){
   if(!hist.length)return;
-  const prev=hist.pop();
-  if(prev==='overview')overview(true); else flyTo(prev,true);
+  flyTo(hist.pop(),true);
 }
 function setPhases(targetId,cz){
   frames.forEach(f=>{
@@ -1256,7 +1316,7 @@ function setPhases(targetId,cz){
 }
 function jump(id){
   if(innerWidth<=1080)toggleRail(false);   // desktop rail stays open across jumps
-  if(id==='overview')overview();else flyTo(id)
+  flyTo(id)
 }
 document.addEventListener('keydown',e=>{
   /* overlay keyboard layers, top-most first */
@@ -1421,13 +1481,15 @@ document.addEventListener('mouseleave',()=>setHover(null),{passive:true});
 
 /* ═══════════ CHROME — back label, breadcrumb, rail highlight ═══════════ */
 const NAMES={'f-home':'Home','f-career':'Roles','f-projects':'Projects','f-person':'Off the Clock',
-  'f-contact':'Contact','f-ibm':'IBM','f-workiva':'Workiva','f-cisco':'Cisco (Splunk)',
+  'f-contact':'Get in touch','f-ibm':'IBM','f-workiva':'Workiva','f-cisco':'Cisco (Splunk)',
   'f-usrc':'U.S. Renal Care','f-ebay':'eBay','f-utd':'UT Dallas','f-kdr':'KDR Generator',
   'f-highspot':'SE Highspot V2','f-flightflow':'FlightFlow','f-food':'U.S. Food Access Risk',
-  'f-valor':'Valor','f-hobby':'Pickleball','overview':'Overview'};
+  'f-valor':'Valor','f-hobby':'Pickleball','f-f1':'Formula 1 Racing','f-travel':'Travel',
+  'f-gaming':'Video Games','f-eats':'Food & Coffee','f-community':'Community'};
 const KIND={'f-ibm':'Role','f-workiva':'Role','f-cisco':'Role','f-usrc':'Role','f-ebay':'Role',
   'f-utd':'Education','f-kdr':'Project','f-highspot':'Project','f-flightflow':'Project',
-  'f-food':'Project','f-valor':'Project','f-hobby':'Personal'};
+  'f-food':'Project','f-valor':'Project','f-hobby':'Personal','f-f1':'Personal','f-travel':'Personal',
+  'f-gaming':'Personal','f-eats':'Personal','f-community':'Personal'};
 function chainOf(id){const c=[];let n=document.getElementById(id);
   while(n){c.unshift(n.id);n=n.dataset.parent?document.getElementById(n.dataset.parent):null}return c}
 function chrome(){
@@ -1444,7 +1506,7 @@ function chrome(){
   chrome._crumbT=setTimeout(()=>{
     if(current!==snapshot)return;   // superseded by a newer flight
     cr.innerHTML='';
-    const chain=current==='overview'?['overview']:chainOf(current);
+    const chain=chainOf(current);
     chain.forEach((id,i)=>{
       if(i){const s=document.createElement('span');s.className='sep';s.textContent='/';cr.appendChild(s)}
       const b=document.createElement('button');
@@ -1459,34 +1521,6 @@ function chrome(){
   },220);
 
   document.querySelectorAll('.ritem').forEach(x=>x.classList.toggle('on',x.dataset.jump===current));
-}
-
-/* ═══════════ CONNECTION GRAPH (draft 7) ═══════════ */
-const graphSvg=document.getElementById('graphLines');
-let graphTimer;
-function hideGraph(){graphSvg.style.opacity='0'}
-function renderGraph(){
-  if(current!=='overview')return;
-  const ns='http://www.w3.org/2000/svg', edges=[], seen=new Set();
-  const add=(a,b,cls)=>{const k=cls+':'+[a,b].sort().join('|');if(seen.has(k))return;seen.add(k);edges.push([a,b,cls])};
-  frames.forEach(f=>{if(f.dataset.parent)add(f.id,f.dataset.parent,'glink-hier')});
-  document.querySelectorAll('.xlink[data-fly]').forEach(x=>{
-    const src=x.closest('.frame'); if(src)add(src.id,x.dataset.fly,'glink-cross')});
-  graphSvg.setAttribute('width',WORLD_W);
-  graphSvg.setAttribute('height',WORLD_H);
-  graphSvg.setAttribute('viewBox',`0 0 ${WORLD_W} ${WORLD_H}`);
-  graphSvg.innerHTML='';
-  edges.forEach(([a,b,cls])=>{
-    const fa=document.getElementById(a), fb=document.getElementById(b);
-    if(!fa||!fb)return;
-    const [ax,ay]=centerOf(fa), [bx,by]=centerOf(fb);
-    const ln=document.createElementNS(ns,'line');
-    ln.setAttribute('x1',ax); ln.setAttribute('y1',ay);
-    ln.setAttribute('x2',bx); ln.setAttribute('y2',by);
-    ln.setAttribute('class','glink '+cls);
-    graphSvg.appendChild(ln);
-  });
-  graphSvg.style.opacity='1';
 }
 
 /* ═══════════ MOUSE PARALLAX TILT ═══════════ */
@@ -1636,8 +1670,7 @@ function toggleRail(force){
   rectsStale=true;
   if(innerWidth>1080){          // reserved space changed — recentre smoothly
     const c=current;
-    if(c==='overview'){current='';overview(true)}
-    else if(c){current='';flyTo(c,true)}
+    if(c){current='';flyTo(c,true)}
   }
 }
 function toggleTheme(){
@@ -1646,7 +1679,7 @@ function toggleTheme(){
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
   rz();rectsStale=true;applyRail();
-  if(current==='overview'){current='';overview(true)}else{const c=current;current='';flyTo(c,true)}
+  const c=current;current='';flyTo(c,true);
 },120)});
 
 /* ═══════════ ROTATING HERO VERB ═══════════
@@ -1797,13 +1830,10 @@ function armRecTl(){
 }
 
 
-/* boot: overview → dive to home → offer the tour on first visit */
+/* boot: land on home → offer the tour on first visit */
 applyRail();
-current='';overview(true);
-setTimeout(()=>{
-  flyTo('f-home',true);hist=[];chrome();
-  setTimeout(()=>{if(!lsGet('sk-tour-seen'))openTourStart()},1500);
-},1150);
+current='';flyTo('f-home',true);hist=[];chrome();
+setTimeout(()=>{if(!lsGet('sk-tour-seen'))openTourStart()},1800);
 </script>
 </body>
 </html>
