@@ -59,19 +59,21 @@
 .ax-ibm{--ax:#78a9ff}     .ax-workiva{--ax:#66cc66} .ax-cisco{--ax:#ff7a33}
 .ax-usrc{--ax:#33b1ff}    .ax-ebay{--ax:#ff6f68}    .ax-utd{--ax:#ff9a54}
 .ax-akpsi{--ax:#f1c21b}   .ax-contact{--ax:#be95ff} .ax-person{--ax:#3ddbd9}
+.ax-recs{--ax:#ff7eb6}
 [data-theme="light"] .ax-ibm{--ax:#0f62fe}     [data-theme="light"] .ax-workiva{--ax:#2e7d32}
 [data-theme="light"] .ax-cisco{--ax:#cc5200}   [data-theme="light"] .ax-usrc{--ax:#0072c3}
 [data-theme="light"] .ax-ebay{--ax:#e53238}    [data-theme="light"] .ax-utd{--ax:#c25f10}
 [data-theme="light"] .ax-akpsi{--ax:#8e6a00}   [data-theme="light"] .ax-contact{--ax:#8a3ffc}
-[data-theme="light"] .ax-person{--ax:#007d79}
+[data-theme="light"] .ax-person{--ax:#007d79}  [data-theme="light"] .ax-recs{--ax:#d02670}
 [data-ctx="ibm"]{--ctx:#78a9ff}     [data-ctx="workiva"]{--ctx:#66cc66} [data-ctx="cisco"]{--ctx:#ff7a33}
 [data-ctx="usrc"]{--ctx:#33b1ff}    [data-ctx="ebay"]{--ctx:#ff6f68}    [data-ctx="utd"]{--ctx:#ff9a54}
 [data-ctx="akpsi"]{--ctx:#f1c21b}   [data-ctx="contact"]{--ctx:#be95ff} [data-ctx="person"]{--ctx:#3ddbd9}
+[data-ctx="recs"]{--ctx:#ff7eb6}
 [data-theme="light"][data-ctx="ibm"]{--ctx:#0f62fe}     [data-theme="light"][data-ctx="workiva"]{--ctx:#2e7d32}
 [data-theme="light"][data-ctx="cisco"]{--ctx:#cc5200}   [data-theme="light"][data-ctx="usrc"]{--ctx:#0072c3}
 [data-theme="light"][data-ctx="ebay"]{--ctx:#e53238}    [data-theme="light"][data-ctx="utd"]{--ctx:#c25f10}
 [data-theme="light"][data-ctx="akpsi"]{--ctx:#8e6a00}   [data-theme="light"][data-ctx="contact"]{--ctx:#8a3ffc}
-[data-theme="light"][data-ctx="person"]{--ctx:#007d79}
+[data-theme="light"][data-ctx="person"]{--ctx:#007d79}  [data-theme="light"][data-ctx="recs"]{--ctx:#d02670}
 
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -89,7 +91,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
    silently die. Zero clip-path in this file; filter only on .passed. */
 .viewport{position:fixed;inset:0;overflow:hidden;z-index:10;perspective:1400px;perspective-origin:50% 50%}
 #tilt{position:absolute;inset:0;transform-style:preserve-3d}
-#world{position:absolute;top:0;left:0;width:7800px;height:5600px;transform-style:preserve-3d;
+#world{position:absolute;top:0;left:0;width:7800px;height:7000px;transform-style:preserve-3d;
   transform-origin:0 0;transition:transform 1.3s cubic-bezier(.6,.03,.13,1)}
 
 /* PERF: `background` and `box-shadow` transitions here fired on all 17
@@ -223,7 +225,34 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .quote{border-left:3px solid var(--ax);padding:2px 0 2px 14px;margin:2px 0 4px}
 .quote p{font-style:italic;color:var(--ink);font-weight:300;margin-bottom:6px;font-size:13.5px;line-height:1.55}
 .quote cite{font-size:11px;color:var(--dim);font-style:normal;letter-spacing:.04em;line-height:1.5;display:block}
+/* ── RECOMMENDATIONS ── */
+.recs{display:flex;flex-direction:column;gap:16px;margin-top:4px}
+.deep.two .recs{gap:14px}
+.rec{border-left:3px solid var(--ax);padding:2px 0 2px 14px}
+.rec .r-who{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.rec .r-name{font-weight:600;font-size:14px;color:var(--ink)}
+.rec .r-rel{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ax)}
+.rec .r-title{font-size:11.5px;color:var(--dim);line-height:1.5;margin-bottom:6px}
+.rec .r-body{font-style:italic;font-weight:300;font-size:13px;line-height:1.6;color:var(--ink)}
+.rec .cert{margin-top:8px;display:inline-block;text-decoration:none}
+/* pager — only rendered when a page holds more entries than fit */
+.pager{display:flex;align-items:center;gap:6px;margin-top:16px;padding-top:12px;
+  border-top:1px solid var(--line-2);flex-wrap:wrap}
+.pager .pg-lbl{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dimmer);margin-right:auto}
+.pgb{font-size:11.5px;font-weight:500;min-width:28px;padding:6px 9px;background:none;
+  border:1px solid var(--line-2);color:var(--dim);cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s}
+.pgb:hover,.pgb.hovered{color:var(--ax);border-color:var(--ax);background:var(--ax-tint)}
+.pgb.on{color:var(--bg);background:var(--ax);border-color:var(--ax)}
+.pgb[disabled]{opacity:.3;pointer-events:none}
 .strip{display:flex;gap:8px;margin-top:8px}
+/* real uploaded imagery — same footprint as the .ph placeholders */
+.shot{flex:1;min-width:0;border:1px solid var(--line-2);background:var(--raise);overflow:hidden;
+  display:flex;flex-direction:column}
+.shot img{width:100%;height:auto;display:block;aspect-ratio:16/10;object-fit:cover;object-position:top center}
+.shot figcaption{font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;
+  letter-spacing:.1em;padding:7px 9px;border-top:1px solid var(--line);line-height:1.4}
 .ph{flex:1;aspect-ratio:4/3;border:1px solid var(--line-2);background:var(--raise);
   display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;letter-spacing:.12em;
@@ -540,7 +569,12 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="ritem sub ax-person" data-jump="f-gaming"><span class="rd"></span><span class="rt">Video Games<em>GTA V · lifelong gamer</em></span></button>
   <button class="ritem sub ax-person" data-jump="f-eats"><span class="rd"></span><span class="rt">Food &amp; Coffee<em>New cuisines · coffee · matcha</em></span></button>
   <button class="ritem sub ax-person" data-jump="f-community"><span class="rd"></span><span class="rt">Community<em>MSA · Islamic Relief · Alpha Kappa Psi</em></span></button>
-  <div class="g">04 · Reach me</div>
+  <div class="g">04 · In their words</div>
+  <button class="ritem ax-recs" data-jump="f-recs"><span class="rd"></span><span class="rt">Recommendations</span></button>
+  <button class="ritem sub ax-recs" data-jump="f-recsmgr"><span class="rd"></span><span class="rt">My managers<em>Workiva</em></span></button>
+  <button class="ritem sub ax-recs" data-jump="f-recslead"><span class="rd"></span><span class="rt">Leaders &amp; mentors<em>Splunk (Cisco)</em></span></button>
+  <button class="ritem sub ax-recs" data-jump="f-recspeer"><span class="rd"></span><span class="rt">Peers<em>Splunk (Cisco)</em></span></button>
+  <div class="g">05 · Reach me</div>
   <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Get in touch</span></button>
 </nav>
 
@@ -564,6 +598,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <button class="jump primary" data-fly="f-career">Roles →</button>
           <button class="jump" data-fly="f-projects">Projects →</button>
           <button class="jump alt" data-fly="f-person">Off the Clock →</button>
+          <button class="jump alt" data-fly="f-recs">Recommendations →</button>
           <button class="jump alt" data-fly="f-contact">Contact →</button>
         </div>
       </div>
@@ -677,7 +712,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>My mentor — a Technical Sales Leader (IBM's version of an Account Executive) covering <b>Core 2</b>, a mid-revenue slice of ~<b>40+ agencies</b> inside a New York State enterprise account spanning <b>150+ agencies</b> total — handed me the reins to engage five of them directly. For each, I drafted an engagement game plan: researched the key stakeholders, figured out what the agency was actually working on, and ran outreach through tools like ZoomInfo and LinkedIn Sales Navigator. I worked across opportunities sitting in different stages of the deal cycle and tracked all of it through our CRM. Between the two of us, we moved <b>six active opportunities</b> forward.</p>
           <p>Three of those came out of rooms I stood up myself. What I'm proudest of here is the client-facing work — presenting in person, whether clients came to our New York City office, we visited a client site, or we hosted them at our Yorktown facility. I built the financial models and ROI mock-ups behind those pitches, ran the business value assessments, and presented IBM client-zero stories translated into language a public-sector buyer will actually act on. Two produced follow-up meetings.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">Yorktown presentation photo</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/ibm-client-presentation-yorktown.jpeg"
+              alt="Saaif presenting to clients in the IBM Yorktown briefing room" loading="lazy">
+              <figcaption>Presenting to clients · IBM Yorktown</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -710,7 +749,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>Workiva's Highspot enablement platform served <b>230+ Sales Engineers</b> globally, and adoption was failing. My job was to find out why with evidence, not opinion. I designed a <b>50-question behavioural survey</b>, analysed the failure quantitatively, and produced the baseline metrics that defined the redesign's scope and business case.</p>
           <p>The data gave me five distinct personas, and every architecture decision after that traced back to one of them. I built an <b>18-page information architecture</b> from scratch with a tagging taxonomy standard and a governance framework covering content ownership, expiration enforcement, and migration rules for <b>259 audited assets</b>. Then I demoed V2 to <b>90+ Sales Engineers</b>, anchoring each decision to a specific pain point from discovery — the only way a room full of SEs will believe you.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">Highspot V2 homepage screenshot</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/workiva-highspot-v2-sc-hub-homepage.jpeg"
+              alt="Redesigned Workiva Highspot V2 Solution Consultant hub homepage" loading="lazy">
+              <figcaption>Highspot V2 · SC hub homepage</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -746,7 +789,17 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>Boulder is where I learned what the job actually is. I shadowed <b>60+ discovery calls</b>, demos, and workshops alongside AEs and Sales Engineers, ran live chat support during customer workshops answering questions in real time, and helped a full-time Solutions Engineer put together an RFP response for a client opportunity worth <b>$1M+</b> in pipeline.</p>
           <p>I co-led four customer enablement workshops, three-hour hands-on sessions with clients and prospects, and built a predictive flight delay dashboard on Splunk MLTK that reached <b>89% accuracy</b> — a real solution to a problem a lot of people deal with. Demoing it live to 30+ senior leaders was where value selling and storytelling mattered as much as the model: showing the technical build and the business case in the same breath.</p>
           <h5>In pictures</h5>
-          <div class="strip"><div class="ph">add photo</div><div class="ph">add photo</div><div class="ph">FlightFlow screenshot</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/splunk-office-boulder-saaif.png"
+              alt="Saaif at the Splunk office in Boulder, Colorado" loading="lazy">
+              <figcaption>Splunk · Boulder, CO</figcaption></figure>
+            <figure class="shot"><img src="assets/photos/splunk-security-posture-demo-dashboard.jpeg"
+              alt="Splunk security posture dashboard used in customer demos" loading="lazy">
+              <figcaption>Core demo · security posture</figcaption></figure>
+            <figure class="shot"><img src="assets/photos/splunk-flightflow-delay-prediction-dashboard.jpeg"
+              alt="FlightFlow delay prediction dashboard built on Splunk MLTK" loading="lazy">
+              <figcaption>FlightFlow · delay prediction</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>What I built here</h5>
@@ -865,7 +918,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <h5>How it works</h5>
           <p>Four distinct AI workflows underneath: structured deal extraction, skeleton inference, conversational plan patching, and deal narrative generation. Each emits strict JSON with a regex-based fallback so production never goes down. It validates against a <b>5,000+ SKU IBM OGS pricelist</b> in real time, authenticates against @ibm.com, and routes email and in-app notifications through a milestone tagging system to whoever owns the next step.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">demo screenshot</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/ibm-kdr-generator-close-plan-app.jpeg"
+              alt="KDR Generator app turning seller notes into a 12-stage close plan" loading="lazy">
+              <figcaption>KDR Generator · close plan output</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -878,7 +935,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>5,000+</b><span>SKUs validated</span></div>
           </div>
           <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▶ demo video</button></div>
+          <div class="arts"><a class="art" href="https://drive.google.com/file/d/1CLx7LoHW2-9N3Opm8Ylob72uPfvq99Ow/view?usp=sharing" target="_blank" rel="noopener">▶ Watch the demo ↗</a></div>
         </div>
       </div>
     </div>
@@ -899,7 +956,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <h5>What I designed</h5>
           <p>An <b>18-page information architecture</b> from scratch — tagging taxonomy, governance policy framework, content migration rules, and a zero-training-required navigation system replacing a disorganised V1. Recommendations targeted a <b>40% reduction in Slack reliance</b> and a projected <b>30%+ improvement in asset time-to-find</b>, validated through survey correlation analysis.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">SE hub page</div><div class="ph">IA diagram</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/workiva-highspot-v2-sc-hub-homepage.jpeg"
+              alt="Redesigned Highspot V2 hub: products, deal tools, learning, team operations" loading="lazy">
+              <figcaption>V2 hub · navigation rebuilt around the five personas</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -931,7 +992,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <h5>The part I'd demo first</h5>
           <p>The alerts engine. It flags at-risk flights from weather, historical delay patterns, and operational metrics, then recommends alternate actions — up to <b>40% less disruption impact</b> in simulation. I presented it live to <b>32+ Splunk senior leaders</b>.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">alerts engine</div><div class="ph">dashboard</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/splunk-flightflow-delay-prediction-dashboard.jpeg"
+              alt="FlightFlow dashboard: delay probability, predicted delay, confidence range, alternate flights" loading="lazy">
+              <figcaption>Delay probability, predicted delay &amp; alternate-flight guidance</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -943,8 +1008,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>89%</b><span>model accuracy</span></div>
             <div class="metric"><b>32+</b><span>leaders demoed to</span></div>
           </div>
-          <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▶ demo video</button></div>
         </div>
       </div>
     </div>
@@ -964,7 +1027,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>County-level food access risk built from USDA datasets, with state filtering, choropleth mapping, and dynamic summaries that surface the <b>top 10 highest-risk counties</b> per region. It correlates access against diabetes and obesity rates to show where the gaps compound.</p>
           <p>Normalising and visualising the data cut prep time <b>35%</b> for every social-impact analysis downstream of it.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">choropleth</div><div class="ph">state view</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/splunk-food-desert-impact-dashboard.jpeg"
+              alt="Food desert impact dashboard correlating diabetes and obesity rates by state" loading="lazy">
+              <figcaption>Diabetes vs. obesity correlation &amp; top-10 gap ranking</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -994,7 +1061,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>A 5-member team, a Bank of America brief, and IBM watsonx. We built <b>Valor</b>, an AI-driven chatbot leveraging IBM watsonx to enhance veteran engagement and financial literacy for Bank of America. I helped conduct competitive analysis, define customer-centric solutions, and deliver a client-ready pitch showcasing projected improvements in customer satisfaction and cost efficiency — a panel of four judges, projecting a <b>20% lift in veteran engagement</b>.</p>
           <p>The focus throughout was aligning AI capabilities with actual business objectives to drive client and end-user value — my first real attempt at mapping a technology's capabilities onto a client's business goals, which turned out to be the entire job description.</p>
           <h5>See it</h5>
-          <div class="strip"><div class="ph">pitch deck homepage screenshot</div></div>
+          <div class="strip">
+            <figure class="shot"><img src="assets/photos/valor-ibm-watsonx-bofa-pitch-title-slide.jpeg"
+              alt="Valor pitch deck title slide: For Those Who Served, Banking That Serves You" loading="lazy">
+              <figcaption>Valor · IBM watsonx × Bank of America pitch</figcaption></figure>
+          </div>
         </div>
         <div class="d-side">
           <h5>By the numbers</h5>
@@ -1083,6 +1154,117 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         <div class="meta">Service committees · event coordination · fundraising</div>
         <h5>The story</h5>
         <p>Giving back isn't a once-a-year thing for me. On Islamic Relief's service committee, I helped plan and host charity events — including ones for kids with special needs, giving their parents a day to themselves — plus a run of fundraisers. In Alpha Kappa Psi, I served as lead event coordinator for the service committee: running our charity basketball tournament, where teams paid to compete and the proceeds went to charity, and organizing volunteer events like nursing home visits and donation drives. I'm also part of the Muslim Student Association at UT Dallas.</p>
+      </div>
+    </div>
+
+    <!-- ══ RECOMMENDATIONS — hub ══ -->
+    <div class="frame cluster-frame focusable kind-hub ax-recs" id="f-recs" data-fz="-750"
+      data-depth="2" data-parent="f-home" data-ctx="recs" data-fly="f-recs"
+      style="width:600px;left:4700px;top:1700px;transform:translateZ(-750px)">
+      <div class="pad">
+        <div class="shead"><span class="snum">05</span><h2>In their words</h2></div>
+        <p class="lede">LinkedIn recommendations from the people I've reported to, been mentored by, and built alongside.</p>
+        <div class="items">
+          <button class="item ax-recs" data-fly="f-recsmgr">
+            <div><div class="i-name"><span class="i-dot"></span>My managers</div><div class="i-sub">Managed me directly</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-recs" data-fly="f-recslead">
+            <div><div class="i-name"><span class="i-dot"></span>Leaders &amp; mentors</div><div class="i-sub">Senior to me</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-recs" data-fly="f-recspeer">
+            <div><div class="i-name"><span class="i-dot"></span>Peers</div><div class="i-sub">Worked alongside me</div></div><span class="i-go">Open →</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RECOMMENDATIONS — managers ══ -->
+    <div class="frame deep focusable kind-role ax-recs" id="f-recsmgr" data-fz="-1500"
+      data-depth="3" data-parent="f-recs" data-ctx="recs" data-fly="f-recsmgr"
+      style="width:1040px;left:200px;top:5700px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Recommendations</span><span class="w">Most recent first</span></div>
+        <h2>From the people who <i>managed me</i></h2>
+        <div class="meta">Direct managers</div>
+        <div class="recs" data-per-page="2">
+          <div class="rec" data-date="2026-06-11">
+            <div class="r-who"><span class="r-name">Kim Fisher</span><span class="r-rel">Managed Saaif directly · Jun 2026</span></div>
+            <div class="r-title">Senior Enablement Leader at Workiva · Storyteller/Public Speaker</div>
+            <p class="r-body">“Saaif has a unique ability to balance technical mindset with human connection. Over the course of his time with my team, I was impressed with his proactive engagement with his project stakeholders, consistently validating his hypothesis, plans, and desired outcomes. His maturity in masterful communication is remarkable, particularly because it is balanced by his technical acumen. Having spent the majority of my career in technical sales and solution consulting, I highly recommend Saaif for roles in these fields.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/fisherkimberly/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2026-05-19">
+            <div class="r-who"><span class="r-name">Schane' van der Boom CA(SA)</span><span class="r-rel">Managed Saaif directly · May 2026</span></div>
+            <div class="r-title">Simplifying complex reporting with Workiva</div>
+            <p class="r-body">“It was a pleasure to work with Saaif during his internship on our Global Solution Consulting Enablement team. What stood out the most is his skill in leveraging AI to drive efficiencies in his projects, combined with an exceptional ability to communicate well and articulate value. He is sharp, articulate, and highly efficient. Any team would be lucky to have him!”</p>
+            <a class="cert" href="https://www.linkedin.com/in/schane-delport/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RECOMMENDATIONS — leaders & mentors ══ -->
+    <div class="frame deep focusable kind-role ax-recs" id="f-recslead" data-fz="-1500"
+      data-depth="3" data-parent="f-recs" data-ctx="recs" data-fly="f-recslead"
+      style="width:1040px;left:1400px;top:5700px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Recommendations</span><span class="w">Most recent first</span></div>
+        <h2>From <i>leaders &amp; mentors</i></h2>
+        <div class="meta">Senior leaders and mentors I worked under</div>
+        <div class="recs" data-per-page="2">
+          <div class="rec" data-date="2025-08-13">
+            <div class="r-who"><span class="r-name">Nick Higgins</span><span class="r-rel">Senior · Aug 2025</span></div>
+            <div class="r-title">VP of Growth &amp; Development at Pathwise Leadership</div>
+            <p class="r-body">“Saaif is incredibly bright — he picked up the technical aspects of our software at a pace that exceeded expectations, mastering complex concepts in a short amount of time. What really set Saaif apart was his elevated sense of salesmanship. He has a unique ability to connect the value of our solutions to clients through compelling storytelling and engaging demos. His presentations not only showcased our technology's capabilities but also resonated deeply with customers, leaving a lasting impact. I would recommend Saaif to any organization looking for an ambitious and talented solutions engineer — but I sincerely hope we have the opportunity to work with him again first!”</p>
+            <a class="cert" href="https://www.linkedin.com/in/nick-higgins/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2025-08-12">
+            <div class="r-who"><span class="r-name">Shane Mullens</span><span class="r-rel">Saaif's mentor · Aug 2025</span></div>
+            <div class="r-title">Solutions Engineer @ Splunk, a Cisco company</div>
+            <p class="r-body">“Saaif has an innate ability to learn new concepts and technologies incredibly quickly, and he's equally skilled at applying them in real-world scenarios. Ask him about his Splunk passion project — we were all blown away by the real-time data ingestion and machine learning concepts he applied! He works seamlessly with other Solutions Engineers and cross-functional teams, contributing ideas, supporting his peers, and always fostering a collaborative spirit. What truly stands out is Saaif's willingness to go above and beyond. He's a driven, resourceful professional with a bright future ahead.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/shane-mullens/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2025-08-12">
+            <div class="r-who"><span class="r-name">Rob Millette</span><span class="r-rel">Senior · Aug 2025</span></div>
+            <div class="r-title">Technical Presales Leader</div>
+            <p class="r-body">“Saaif is thoughtful and engages deeply with topics. He loves AI and has a good understanding of the sales cycle. He will make an excellent SE or Consultant based on having both technical and people skills.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/robmillette/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RECOMMENDATIONS — peers ══ -->
+    <div class="frame deep focusable kind-role ax-recs" id="f-recspeer" data-fz="-1500"
+      data-depth="3" data-parent="f-recs" data-ctx="recs" data-fly="f-recspeer"
+      style="width:1040px;left:2600px;top:5700px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Recommendations</span><span class="w">Most recent first</span></div>
+        <h2>From the people I <i>built alongside</i></h2>
+        <div class="meta">Teammates and peers</div>
+        <div class="recs" data-per-page="2">
+          <div class="rec" data-date="2025-08-11">
+            <div class="r-who"><span class="r-name">Ameera Habib</span><span class="r-rel">Same team · Aug 2025</span></div>
+            <div class="r-title">SDE Intern @ Amazon · CS @ UT Austin · Prev @ Splunk</div>
+            <p class="r-body">“Saaif has a rare mix of technical skill, creativity, and composure under pressure. From building an API-powered flight delay dashboard to designing tools that help communities address food insecurity, he consistently turned ideas into impactful, data-driven solutions. What stood out most was his calm, customer-first approach in high-pressure situations, always focused on understanding the problem and finding the right path forward.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/ameera-habib-8b84262a5/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2025-08-11">
+            <div class="r-who"><span class="r-name">Dylan Marintzer</span><span class="r-rel">Same team · Aug 2025</span></div>
+            <div class="r-title">Solutions Engineer @ Splunk</div>
+            <p class="r-body">“Throughout the summer, Saaif and I frequently exchanged ideas and shared insights, consistently pushing each other to grow and improve. One memorable example was during a demo of my MVP for a college football analytics dashboard I built with Splunk. Saaif suggested adding a head-to-head matchups page to showcase historical performance between two teams. This idea not only enhanced the user experience but became a key feature in my final product.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/dylan-marintzer-a56180290/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2025-08-11">
+            <div class="r-who"><span class="r-name">Amaan Rahman</span><span class="r-rel">Different team · Aug 2025</span></div>
+            <div class="r-title">AI @ Summit · CS + Math @ Texas Tech</div>
+            <p class="r-body">“Even though we worked in different roles — me as a front-end engineering intern and him as a solutions engineer — Saaif was always ready to share his knowledge, offer guidance, and jump in to help solve problems. He's approachable, collaborative, and genuinely invested in the success of those around him. Anyone would be lucky to have him on their team.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/amaaan/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+          <div class="rec" data-date="2025-08-11">
+            <div class="r-who"><span class="r-name">Abdou Sow</span><span class="r-rel">Same team · Aug 2025</span></div>
+            <div class="r-title">CS @ WashU · Prev SWE Intern @ Splunk · NSBE, ColorStack fellow</div>
+            <p class="r-body">“Saaif and I interned at Splunk this summer — him as a Solutions Engineer and me as a SWE — and we had a great time bouncing ideas off each other. He showed me some awesome demos he built, and I shared coding ideas back with him. Saaif's curiosity, technical skills, and easygoing nature made him a great teammate, and I know he'll do great things wherever he goes next.”</p>
+            <a class="cert" href="https://www.linkedin.com/in/abdou-sow2/" target="_blank" rel="noopener">View profile ↗</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1357,7 +1539,7 @@ document.addEventListener('keydown',e=>{
    flight (and live during one), and clicks, hover, and the cursor
    all resolve the pointer against those boxes directly. Smallest box
    wins, so a row beats the frame that contains it. */
-const INTERACTIVE=[...world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.frame.focusable')]
+const INTERACTIVE=[...world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')]
   .map(el=>({el,frame:el.closest('.frame')}));
 let rects=[],rectsStale=true,lastMeasure=0;
 /* PERF: getBoundingClientRect on ~100 elements inside a nested 3D
@@ -1453,10 +1635,73 @@ document.addEventListener('click',e=>{
   const el=hitAt(e.clientX,e.clientY);
   if(!el)return;
   e.preventDefault();
+  /* pager buttons live inside a frame that itself has data-fly, so they
+     must be handled before the "click anywhere in the tile" fallback */
+  if(el.classList.contains('pgb')){goPage(el);return}
   if(el.dataset.fly){flyTo(el.dataset.fly);return}
   if(el.matches('a[href]')){el.click();return}              // hit-test missed a link — fire it
   const holder=el.closest('[data-fly]');
   if(holder)flyTo(holder.dataset.fly);
+});
+
+/* ═══════════ PAGINATED LISTS (recommendations, and anything reusing it)
+   Any .recs container with data-per-page paginates itself: entries are
+   sorted newest-first by their data-date, split into pages, and a
+   1 · 2 · 3 pager is generated only when there is more than one page.
+   Adding another entry needs no code change — drop in a .rec with a
+   data-date and it sorts and pages itself. ═══════════ */
+function pageBoxes(){return document.querySelectorAll('.recs[data-per-page]')}
+function renderPaged(box){
+  const per=Math.max(1,+box.dataset.perPage||3);
+  const items=[...box.querySelectorAll(':scope > .rec')];
+  const pages=Math.ceil(items.length/per);
+  let page=Math.min(Math.max(1,+box.dataset.page||1),Math.max(pages,1));
+  box.dataset.page=page;
+  items.forEach((it,i)=>{
+    it.style.display=(Math.floor(i/per)+1===page)?'':'none';
+  });
+  const host=box.parentElement;
+  const old=host.querySelector(':scope > .pager');
+  if(old)old.remove();
+  if(pages<=1)return;
+  const pager=document.createElement('div');
+  pager.className='pager';
+  const lbl=document.createElement('span');
+  lbl.className='pg-lbl';
+  lbl.textContent='Page '+page+' of '+pages;
+  pager.appendChild(lbl);
+  const mk=(txt,target,cur,dis)=>{
+    const b=document.createElement('button');
+    b.className='pgb'+(cur?' on':'');
+    b.textContent=txt;
+    b.dataset.target=target;
+    if(dis)b.setAttribute('disabled','');
+    pager.appendChild(b);
+    return b;
+  };
+  mk('‹',page-1,false,page===1);
+  for(let p=1;p<=pages;p++)mk(String(p),p,p===page,false);
+  mk('›',page+1,false,page===pages);
+  host.appendChild(pager);
+}
+function goPage(btn){
+  const box=btn.closest('.pad').querySelector('.recs[data-per-page]');
+  if(!box)return;
+  box.dataset.page=btn.dataset.target;
+  renderPaged(box);
+  rectsStale=true;                      // pager rebuilt: re-measure hit boxes
+  INTERACTIVE.length=0;
+  world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
+    .forEach(el=>INTERACTIVE.push({el,frame:el.closest('.frame')}));
+  const c=current;current='';flyTo(c,true);   // refit: page heights differ
+}
+pageBoxes().forEach(box=>{
+  /* newest first, by data-date */
+  const items=[...box.querySelectorAll(':scope > .rec')];
+  items.sort((a,b)=>(b.dataset.date||'').localeCompare(a.dataset.date||''));
+  items.forEach(i=>box.appendChild(i));
+  box.dataset.page=1;
+  renderPaged(box);
 });
 
 /* hover + cursor — rAF-throttled sweep of the same measured boxes */
@@ -1485,11 +1730,14 @@ const NAMES={'f-home':'Home','f-career':'Roles','f-projects':'Projects','f-perso
   'f-usrc':'U.S. Renal Care','f-ebay':'eBay','f-utd':'UT Dallas','f-kdr':'KDR Generator',
   'f-highspot':'SE Highspot V2','f-flightflow':'FlightFlow','f-food':'U.S. Food Access Risk',
   'f-valor':'Valor','f-hobby':'Pickleball','f-f1':'Formula 1 Racing','f-travel':'Travel',
-  'f-gaming':'Video Games','f-eats':'Food & Coffee','f-community':'Community'};
+  'f-gaming':'Video Games','f-eats':'Food & Coffee','f-community':'Community',
+  'f-recs':'Recommendations','f-recsmgr':'My managers','f-recslead':'Leaders & mentors',
+  'f-recspeer':'Peers'};
 const KIND={'f-ibm':'Role','f-workiva':'Role','f-cisco':'Role','f-usrc':'Role','f-ebay':'Role',
   'f-utd':'Education','f-kdr':'Project','f-highspot':'Project','f-flightflow':'Project',
   'f-food':'Project','f-valor':'Project','f-hobby':'Personal','f-f1':'Personal','f-travel':'Personal',
-  'f-gaming':'Personal','f-eats':'Personal','f-community':'Personal'};
+  'f-gaming':'Personal','f-eats':'Personal','f-community':'Personal',
+  'f-recsmgr':'Recommendations','f-recslead':'Recommendations','f-recspeer':'Recommendations'};
 function chainOf(id){const c=[];let n=document.getElementById(id);
   while(n){c.unshift(n.id);n=n.dataset.parent?document.getElementById(n.dataset.parent):null}return c}
 function chrome(){
