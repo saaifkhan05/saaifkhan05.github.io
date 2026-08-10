@@ -23,6 +23,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>saaif khan :)</title>
 <meta name="description" content="Saaif Khan — enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive tour of the work.">
+<link rel="canonical" href="https://saaifkhan.com/">
+<meta name="robots" content="index,follow">
+<meta name="author" content="Saaif Khan">
+<meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<!-- THEME — restored before first paint. If this ran with the rest of
+     the script at the bottom of the page, a visitor who picked light
+     would get a flash of dark on every load. A returning choice wins;
+     otherwise the OS preference decides; dark is the fallback. -->
+<script>
+(function(){try{
+  var s=localStorage.getItem('sk-theme');
+  if(s==='light'||s==='dark'){document.documentElement.dataset.theme=s;return}
+  if(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)
+    document.documentElement.dataset.theme='light';
+}catch(e){}})();
+</script>
+<!-- SOCIAL PREVIEW — this is what renders when the link is pasted into
+     LinkedIn, Slack, iMessage or X. og-card.jpg is a static 1200×630
+     card; regenerate it if the facts on it go stale. -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Saaif Khan">
+<meta property="og:url" content="https://saaifkhan.com/">
+<meta property="og:title" content="Saaif Khan — I sell what I build.">
+<meta property="og:description" content="Enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive map of the work — roles, projects, and the people who vouch for them.">
+<meta property="og:image" content="https://saaifkhan.com/assets/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Saaif Khan — enterprise sales and solutions engineering.">
+<meta property="profile:first_name" content="Saaif">
+<meta property="profile:last_name" content="Khan">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Saaif Khan — I sell what I build.">
+<meta name="twitter:description" content="Enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive map of the work.">
+<meta name="twitter:image" content="https://saaifkhan.com/assets/og-card.jpg">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
@@ -32,6 +67,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- STRUCTURED DATA — tells Google this page is a person, not a company,
+     and links the profile to its off-site identities. -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Person",
+  "name":"Saaif Khan",
+  "url":"https://saaifkhan.com/",
+  "image":"https://saaifkhan.com/assets/og-card.jpg",
+  "jobTitle":"Brand Sales Specialist Intern",
+  "email":"mailto:saaifkhan05@gmail.com",
+  "telephone":"+1-469-516-1440",
+  "description":"Enterprise sales and solutions engineering — IBM, Workiva, Cisco (Splunk).",
+  "address":{"@type":"PostalAddress","addressLocality":"Dallas","addressRegion":"TX","addressCountry":"US"},
+  "alumniOf":{"@type":"CollegeOrUniversity","name":"The University of Texas at Dallas"},
+  "worksFor":{"@type":"Organization","name":"IBM"},
+  "knowsAbout":["Enterprise sales","Solutions engineering","Sales engineering","Splunk","IBM watsonx","Pre-sales"],
+  "sameAs":["https://www.linkedin.com/in/saaifkhanutd"]
+}
+</script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    DRAFT 8 — HYBRID (live)
@@ -171,6 +226,17 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 #f-home .rot{display:inline-block;color:var(--blue);font-weight:600;transition:opacity .28s,transform .28s}
 #f-home .rot.out{opacity:0;transform:translateY(-16px)}
 #f-home .rot.in{opacity:0;transform:translateY(16px);transition:none}
+/* LIVE STATUS — a single dot and a week count, folded into the "Now"
+   fact that was already on the page. Deliberately not its own line:
+   the home tile earns its calm by having four facts and nothing else,
+   and "graduating December 2026" is already one of them. */
+#f-home .fact .lbl{display:inline-flex;align-items:center;gap:7px}
+#f-home .fact .dot{width:6px;height:6px;background:#42be65;flex:none;border-radius:50%;
+  animation:livePulse 2.4s ease-in-out infinite}
+[data-theme="light"] #f-home .fact .dot{background:#198038}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(66,190,101,.4)}50%{box-shadow:0 0 0 4px transparent}}
+#f-home .fact .wk{color:var(--dimmer)}
+@media(prefers-reduced-motion:reduce){#f-home .fact .dot{animation:none}}
 #f-home .facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-2);margin-top:34px}
 #f-home .fact{padding:15px 20px;border-right:1px solid var(--line);font-size:12px;color:var(--dim)}
 #f-home .fact:first-child{padding-left:0}
@@ -384,6 +450,8 @@ body.rail-open .rail{transform:none}
 .ritem.sub .rt em{font-style:normal;font-size:11px;letter-spacing:.05em;
   color:var(--dimmer);transition:color .35s}
 .ritem.sub:hover .rt em,.ritem.sub.on .rt em{color:var(--dim)}
+.rail-foot{margin-top:26px;padding:14px 20px 0;border-top:1px solid var(--line);
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dimmer);line-height:1.8}
 .scrim{position:fixed;inset:0;z-index:85;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
 .scrim.on{opacity:1;pointer-events:auto}
 
@@ -443,12 +511,35 @@ body.rail-open .rail{transform:none}
 .ts-box h2 i{font-style:normal;color:var(--ax)}
 .ts-box p{color:var(--dim);font-size:14px;line-height:1.65;margin-bottom:26px}
 .ts-go{display:flex;gap:10px;flex-wrap:wrap}
+/* an unnamed time commitment is the reason product tours go unplayed —
+   the length is computed from the real captions and hold times */
+.ts-meta{margin-top:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dimmer)}
 .tbtn{border:0;cursor:pointer;font:inherit;font-weight:600;font-size:14px;padding:14px 24px;
   letter-spacing:.02em;background:var(--blue);color:#fff}
 .tbtn:hover{background:var(--blue-hover)}
 .tbtn.ghost{background:none;border:1px solid var(--line-2);color:var(--ink)}
 .tbtn.ghost:hover{border-color:var(--ax);background:none}
 
+/* ── TOUR CURSOR ──────────────────────────────────────────────
+   The tour used to teleport the camera, which showed the destination
+   but never the mechanism — a visitor finished it without once seeing
+   that a row highlights on hover and flies on click. This is a ghost
+   pointer that performs the real click on the real control before the
+   camera moves. It is only ever used where a genuine button exists;
+   cross-branch hops (which no single button can make) are labelled
+   honestly instead of faked. */
+#tourCur{position:fixed;left:0;top:0;z-index:118;width:22px;height:22px;pointer-events:none;
+  opacity:0;transform:translate(-3px,-3px);transition:opacity .25s}
+#tourCur.on{opacity:1}
+#tourCur.move{transition:transform .62s cubic-bezier(.45,.05,.2,1),opacity .25s}
+#tourCur svg{display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
+#tourCur i{position:absolute;left:-9px;top:-9px;width:40px;height:40px;border-radius:50%;
+  border:2px solid var(--ax);opacity:0}
+#tourCur.tap i{animation:tapRing .5s ease-out}
+@keyframes tapRing{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(1)}}
+/* the control the ghost pointer is about to press */
+.tour-hit{box-shadow:0 0 0 2px var(--ax),0 0 0 7px var(--ax-tint)!important;
+  transition:box-shadow .2s}
 #tourBar{position:fixed;left:50%;bottom:30px;z-index:120;width:min(700px,94vw);
   background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--blue);
   padding:15px 20px 12px;opacity:0;visibility:hidden;transform:translate(-50%,16px);
@@ -457,17 +548,29 @@ body.rail-open .rail{transform:none}
 .tw{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:700;
   letter-spacing:.22em;text-transform:uppercase;color:var(--ax);margin-bottom:6px}
 .tw .n{margin-left:auto;color:var(--dim);letter-spacing:.08em}
-#tourCap{min-height:44px;font-size:15px;font-weight:300;line-height:1.5}
+#tourCap{min-height:44px;font-size:15px;font-weight:300;line-height:1.5;cursor:pointer}
 .tcur{display:inline-block;width:8px;height:15px;background:var(--ax);vertical-align:-2px;animation:tbl .8s steps(1) infinite}
 @keyframes tbl{50%{opacity:0}}
+/* how the camera got here — set per stop, so a cross-branch jump is
+   labelled as an index jump instead of pretending a button did it */
+.thow{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dimmer);
+  margin-top:7px;min-height:13px;transition:opacity .3s}
+.thow b{color:var(--ax);font-weight:600}
 .tb-ctl{display:flex;align-items:center;gap:6px;margin-top:11px}
 .tb-ctl button{background:none;border:1px solid var(--line);color:var(--ink);width:34px;height:30px;
-  cursor:pointer;font-size:13px;font-family:inherit}
+  cursor:pointer;font-size:13px;font-family:inherit;line-height:1}
 .tb-ctl button:hover{border-color:var(--ax)}
 .tb-dots{display:flex;gap:5px;margin:0 auto}
-.tb-dots i{width:20px;height:3px;background:var(--line);cursor:pointer;transition:background .3s}
-.tb-dots i.done{background:var(--ax);opacity:.4}
-.tb-dots i.now{background:var(--ax)}
+/* real buttons, not decorative <i> — reachable by keyboard and named
+   for screen readers, since they are the tour's own navigation */
+.tb-dots button{width:20px!important;height:10px!important;background:none;border:none!important;
+  padding:0!important;cursor:pointer;display:flex;align-items:center}
+.tb-dots button::before{content:'';display:block;width:20px;height:3px;background:var(--line);
+  transition:background .3s,opacity .3s}
+.tb-dots button:hover::before{background:var(--ax);opacity:.7}
+.tb-dots button.done::before{background:var(--ax);opacity:.4}
+.tb-dots button.now::before{background:var(--ax)}
+.tb-dots button:focus-visible{outline:2px solid var(--ax);outline-offset:2px}
 .tb-exit{width:auto!important;border:none!important;font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--dim);padding:0 4px!important}
 .tb-exit:hover{color:var(--ink)}
@@ -547,10 +650,63 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   .frame.here::after{animation:none}
   #field{display:none}
 }
+
+/* ═══════════ PRINT ═══════════
+   Ctrl/Cmd+P on a 3D canvas frozen mid-transform prints garbage. The
+   whole world is dropped and a plain card is printed instead — the
+   short version, plus where to get the actual resume. */
+#printcard{display:none}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff;color:#000}
+  #field,.viewport,.topbar,.rail,.scrim,.boot,#tourBar,#tourStart,#recruiter{display:none!important}
+  #printcard{display:block;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:0;max-width:none}
+  #printcard h1{font-weight:300;font-size:40pt;letter-spacing:-.03em;margin:0 0 4pt}
+  #printcard h1 i{font-style:normal;color:#0f62fe;font-weight:600}
+  #printcard .pc-sub{font-size:14pt;font-weight:300;color:#333;margin-bottom:16pt}
+  #printcard .pc-rule{height:2pt;background:#0f62fe;width:120pt;margin-bottom:16pt}
+  #printcard h2{font-size:9pt;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:#0f62fe;margin:16pt 0 6pt}
+  #printcard dl{display:grid;grid-template-columns:auto 1fr;gap:4pt 14pt;font-size:10.5pt}
+  #printcard dt{color:#666}
+  #printcard dd{margin:0}
+  #printcard .pc-note{margin-top:20pt;padding-top:10pt;border-top:1px solid #ccc;
+    font-size:10pt;color:#444;line-height:1.6}
+  #printcard .pc-note b{color:#000}
+  @page{margin:18mm}
+}
 </style>
 </head>
 <body>
 <canvas id="field"></canvas>
+
+<!-- PRINT-ONLY — invisible on screen, this is the entire printed page.
+     Deliberately short: printing a portfolio should hand someone the
+     facts and point them at the resume, not reproduce the site. -->
+<div id="printcard">
+  <h1>Saaif Khan<i>.</i></h1>
+  <div class="pc-sub">I sell what I build.</div>
+  <div class="pc-rule"></div>
+  <h2>Contact</h2>
+  <dl>
+    <dt>Email</dt><dd>saaifkhan05@gmail.com</dd>
+    <dt>Phone</dt><dd>(469) 516-1440</dd>
+    <dt>LinkedIn</dt><dd>linkedin.com/in/saaifkhanutd</dd>
+    <dt>Site</dt><dd>saaifkhan.com</dd>
+  </dl>
+  <h2>At a glance</h2>
+  <dl>
+    <dt>Now</dt><dd>Brand Sales Specialist Intern · IBM · New York, NY</dd>
+    <dt>Next</dt><dd>Sales Engineer Enablement Intern II · Workiva · Aug 2026</dd>
+    <dt>Studying</dt><dd>BS, Management Information Systems · IT Sales Engineering track · UT Dallas</dd>
+    <dt>Graduating</dt><dd>December 2026</dd>
+    <dt>Based</dt><dd>Dallas, Texas</dd>
+    <dt>Also</dt><dd>Cisco (Splunk) · U.S. Renal Care · eBay founder</dd>
+  </dl>
+  <p class="pc-note">This page is an interactive map — roles, projects, and recommendations
+    are best read at <b>saaifkhan.com</b>. The full resume is at
+    <b>saaifkhan.com/resume.pdf</b>.</p>
+</div>
+
 <div class="boot"><div class="b1">Saaif Khan<i>.</i></div><div class="bbar"></div><div class="b2">Entering the map</div></div>
 
 <header class="topbar">
@@ -601,6 +757,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="ritem sub ax-recs" data-jump="f-recspeer"><span class="rd"></span><span class="rt">Peers<em>Splunk (Cisco)</em></span></button>
   <div class="g">05 · Reach me</div>
   <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Get in touch</span></button>
+  <!-- quiet maintenance signal — the site is alive and dated -->
+  <div class="rail-foot" id="railFoot"></div>
 </nav>
 
 <div class="viewport" id="viewport">
@@ -614,7 +772,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         <h1>Saaif Khan<i>.</i></h1>
         <p class="rotline">I <span class="rotwrap"><span class="rot" id="rotWord">discover</span></span> solutions.</p>
         <div class="facts">
-          <div class="fact">Now<b>Brand Sales Specialist Intern · IBM · New York City</b></div>
+          <!-- the live bit lives inside the fact it describes rather than
+               on a line of its own — one element on the page, not two,
+               and no sentence repeated twice -->
+          <div class="fact"><span class="lbl" id="statusLbl">Now</span><b id="statusVal">Brand Sales Specialist Intern · IBM · New York City</b></div>
           <div class="fact">Studying<b>BS, Management Information Systems · IT Sales Engineering track · UT Dallas</b></div>
           <div class="fact">Based<b>Dallas, Texas</b></div>
           <div class="fact">Graduating<b>December 2026</b></div>
@@ -718,6 +879,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <span class="ci">in</span><span class="ct"><span>LinkedIn</span><b>/saaifkhanutd</b></span><span class="ca">↗</span></a>
         <a class="cbtn primary" id="resumeDl" href="resume.pdf" download="Saaif-Khan-Resume.pdf">
           <span class="ci">▤</span><span class="ct"><span>Download · PDF</span><b>Saaif Khan — Resume</b></span><span class="ca">↓</span></a>
+        <!-- the download button forces a save; not everyone wants a file —
+             this is the plain "just let me read it" path, and it also gives
+             the PDF a real crawlable URL for search engines -->
+        <a class="cbtn" href="resume.pdf" target="_blank" rel="noopener">
+          <span class="ci">▦</span><span class="ct"><span>Open in browser</span><b>Read the resume first</b></span><span class="ca">↗</span></a>
       </div>
     </div>
 
@@ -815,7 +981,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <p>I co-led four customer enablement workshops, three-hour hands-on sessions with clients and prospects, and built a predictive flight delay dashboard on Splunk MLTK that reached <b>89% accuracy</b> — a real solution to a problem a lot of people deal with. Demoing it live to 30+ senior leaders was where value selling and storytelling mattered as much as the model: showing the technical build and the business case in the same breath.</p>
           <h5>In pictures</h5>
           <div class="strip">
-            <figure class="shot"><img src="assets/photos/splunk-office-boulder-saaif.png"
+            <figure class="shot"><img src="assets/photos/splunk-office-boulder-saaif.jpeg"
               alt="Saaif at the Splunk office in Boulder, Colorado" loading="lazy">
               <figcaption>Splunk · Boulder, CO</figcaption></figure>
             <figure class="shot"><img src="assets/photos/splunk-security-posture-demo-dashboard.jpeg"
@@ -1315,20 +1481,31 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <p>This site is a map, and the camera flies it. Give it a minute: every section,
        one deep dive, the whole story — narrated. Pause, skip, or take the wheel any time.</p>
     <div class="ts-go">
-      <button class="tbtn" onclick="startTour()">▶ Play the tour</button>
+      <button class="tbtn" id="tsPlay" onclick="startTour()">▶ Play the tour</button>
       <button class="tbtn ghost" onclick="dismissTourStart()">Explore on my own</button>
     </div>
+    <div class="ts-meta" id="tsMeta"></div>
   </div>
+</div>
+
+<!-- ghost pointer: performs the real click the tour is narrating -->
+<div id="tourCur" aria-hidden="true">
+  <i></i>
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+    <path d="M2 1.5 L2 16.5 L6 12.8 L8.7 18.8 L11.6 17.5 L8.9 11.6 L14 11.4 Z"
+      fill="#fff" stroke="#161616" stroke-width="1.4" stroke-linejoin="round"/>
+  </svg>
 </div>
 
 <div id="tourBar" role="region" aria-label="Guided tour narration">
   <div class="tw"><span>Guided tour</span><span class="n" id="tourN"></span></div>
-  <div id="tourCap"></div>
+  <div id="tourCap" onclick="tourSkipType()" title="Click to show the whole caption"></div>
+  <div class="thow" id="tourHow"></div>
   <div class="tb-ctl">
     <button onclick="tourPrev()" aria-label="Previous stop">‹</button>
-    <button id="tourPP" onclick="tourToggle()" aria-label="Pause or resume">❚❚</button>
+    <button id="tourPP" onclick="tourToggle()" aria-label="Pause or resume">‖</button>
     <button onclick="tourNext(true)" aria-label="Next stop">›</button>
-    <div class="tb-dots" id="tourDots"></div>
+    <div class="tb-dots" id="tourDots" role="group" aria-label="Tour stops"></div>
     <button class="tb-exit" onclick="endTour('exited')">Exit</button>
   </div>
 </div>
@@ -1503,6 +1680,52 @@ function setCtx(id){
   if(c)root.dataset.ctx=c; else root.removeAttribute('data-ctx');
 }
 
+/* ═══════════ DEEP LINKING ═══════════
+   Every tile gets a real URL (#ibm, #flightflow, …) so a section can be
+   linked to directly, survives a refresh, and answers the browser's own
+   back/forward buttons. The slug is just the frame id without its "f-"
+   prefix; home is the bare URL with no hash.
+   hashLock stops the feedback loop: writing the hash fires hashchange,
+   which would otherwise call flyTo again for the tile we just flew to. */
+let hashLock=false;
+function idToSlug(id){return id==='f-home'?'':id.replace(/^f-/,'')}
+function slugToId(s){
+  s=(s||'').replace(/^#/,'').trim();
+  if(!s)return 'f-home';
+  const el=document.getElementById('f-'+s);
+  return el?'f-'+s:'f-home';
+}
+function setDocTitle(id){
+  /* the tab title follows the camera — helps anyone with a dozen tabs
+     open, and makes a bookmarked deep link self-describing */
+  const nm=(typeof NAMES!=='undefined'&&NAMES[id])?NAMES[id]:'';
+  document.title=nm&&id!=='f-home'?nm+' · Saaif Khan':'saaif khan :)';
+}
+function syncHash(id,replay){
+  setDocTitle(id);
+  const slug=idToSlug(id);
+  const next=slug?'#'+slug:location.pathname+location.search;
+  if(slug&&location.hash==='#'+slug)return;
+  if(!slug&&!location.hash)return;
+  hashLock=true;
+  try{
+    /* a deliberate move forward earns a history entry, so the browser's
+       own Back button walks back up the site instead of leaving it.
+       Replays — recentres, tour flights, answering a popstate — must
+       not stack entries, or Back would need pressing twice. */
+    if(replay)history.replaceState(null,'',next);
+    else history.pushState(null,'',next);
+  }catch(_){}
+  setTimeout(()=>{hashLock=false},0);
+}
+function routeTo(){
+  if(hashLock)return;
+  const id=slugToId(location.hash);
+  if(id!==current)flyTo(id,true);
+}
+addEventListener('popstate',routeTo);
+addEventListener('hashchange',routeTo);
+
 /* ═══════════ HISTORY ═══════════ */
 let hist=[];
 function flyTo(id,replay){
@@ -1517,6 +1740,7 @@ function flyTo(id,replay){
   setPhases(id,cz); setCtx(id);
   cam(cx,cy,cz);
   chrome();
+  syncHash(id,replay);
 }
 function goBack(){
   if(!hist.length)return;
@@ -1584,14 +1808,32 @@ let rects=[],rectsStale=true,lastMeasure=0;
    of jank. Hover now re-measures at most every 90ms while flying;
    clicks always measure fresh, because correctness beats 1ms there. */
 const LIVE_MS=90;
+/* OCCLUSION — the smallest-box-wins rule alone has no concept of what
+   is in front of what, so a row on a faded background tile that happens
+   to sit under the tile you are reading would win the click, because a
+   row is smaller than a frame. The focused tile is opaque and on top,
+   so anything under its screen box is behind it and must not be
+   reachable. Off to the side, background tiles stay clickable — that
+   part of the map is the point. */
+let hereRect=null;
 function measure(){
-  rects.length=0;
+  rects.length=0;hereRect=null;
+  const hereFrame=document.querySelector('.frame.here');
+  if(hereFrame){
+    const hr=hereFrame.getBoundingClientRect();
+    if(hr.width>3&&hr.height>3)hereRect={l:hr.left,t:hr.top,r:hr.right,b:hr.bottom};
+  }
   for(const t of INTERACTIVE){
     if(!t.frame||t.frame.classList.contains('passed'))continue;
+    /* the focused tile itself is not a target — flying to where you
+       already are does nothing, and treating it as one puts a pointer
+       cursor over every empty inch of the page you are reading */
+    if(t.el===hereFrame)continue;
     const r=t.el.getBoundingClientRect();
     if(r.width<3||r.height<3)continue;
     if(r.right<0||r.bottom<0||r.left>innerWidth||r.top>innerHeight)continue; // offscreen: never hit
-    rects.push({el:t.el,l:r.left,t:r.top,r:r.right,b:r.bottom,a:r.width*r.height});
+    rects.push({el:t.el,l:r.left,t:r.top,r:r.right,b:r.bottom,a:r.width*r.height,
+      here:!!(hereFrame&&t.frame===hereFrame)});
   }
   rects.sort((p,q)=>p.a-q.a);
   rectsStale=false;lastMeasure=performance.now();
@@ -1599,7 +1841,11 @@ function measure(){
 function hitAt(x,y,live){
   if(rectsStale) measure();
   else if(flying && (!live || performance.now()-lastMeasure>LIVE_MS)) measure();
-  for(const r of rects) if(x>=r.l&&x<=r.r&&y>=r.t&&y<=r.b) return r.el;
+  const covered=hereRect&&x>=hereRect.l&&x<=hereRect.r&&y>=hereRect.t&&y<=hereRect.b;
+  for(const r of rects){
+    if(covered&&!r.here)continue;          // sitting behind the focused tile
+    if(x>=r.l&&x<=r.r&&y>=r.t&&y<=r.b) return r.el;
+  }
   return null;
 }
 /* fixed chrome is not 3D-transformed, so plain coordinates identify it */
@@ -1995,11 +2241,55 @@ function toggleTheme(){
   root.dataset.theme=root.dataset.theme==='light'?'dark':'light';
   setFieldTheme();
   syncThemeBtn();
+  lsSet('sk-theme',root.dataset.theme);   // survives the next visit
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
   rz();rectsStale=true;applyRail();
   const c=current;current='';flyTo(c,true);
 },120)});
+
+/* ═══════════ LIVE STATUS + BUILD MARKER ═══════════
+   EDIT HERE — CHAPTERS is the only thing to keep current. Each entry is
+   {from, to, line}; the first one that contains today's date wins, and
+   the day count is computed, never written down. When a chapter ends
+   the next one takes over on its own — no stale "currently at…" line.
+   BUILT is the last-updated date shown at the foot of the index. */
+const BUILT='2026-08-10';
+const CHAPTERS=[
+  {from:'2026-05-18',to:'2026-08-14',co:'IBM',
+   what:'Brand Sales Specialist Intern · IBM · New York City'},
+  {from:'2026-08-15',to:'2026-12-19',co:'Workiva',
+   what:'Sales Engineer Enablement Intern II · Workiva · Dallas'}
+];
+const GRAD='2026-12-19';
+function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',
+  {month:'short',day:'numeric',year:'numeric'})}
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)}
+function todayISO(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4)
+  .toISOString().slice(0,10)}
+function renderStatus(){
+  const lbl=document.getElementById('statusLbl'),val=document.getElementById('statusVal');
+  if(!lbl||!val)return;
+  const t=todayISO();
+  const now=CHAPTERS.find(c=>t>=c.from&&t<=c.to);
+  const next=CHAPTERS.find(c=>t<c.from);
+  if(now){
+    const wk=Math.max(1,Math.ceil((daysBetween(now.from,t)+1)/7));
+    lbl.innerHTML='<span class="dot"></span>Now <span class="wk">· week '+wk+'</span>';
+    val.textContent=now.what;
+  }else if(next){
+    lbl.innerHTML='<span class="dot"></span>Next <span class="wk">· '+fmtDate(next.from)+'</span>';
+    val.textContent=next.what;
+  }else{
+    lbl.innerHTML='<span class="dot"></span>Now';
+    val.textContent='Graduated · open to what’s next';
+  }
+}
+function renderBuilt(){
+  const el=document.getElementById('railFoot');if(!el)return;
+  el.innerHTML='Updated '+fmtDate(BUILT)+'<br>Draft 8 · built by hand';
+}
+renderStatus();renderBuilt();
 
 /* ═══════════ ROTATING HERO VERB ═══════════
    EDIT HERE — ROT_WORDS is the list that cycles in "I ____ solutions."
@@ -2041,62 +2331,198 @@ const TOUR=[
 ];
 const tourStartEl=document.getElementById('tourStart'),tourBarEl=document.getElementById('tourBar'),
       tourCapEl=document.getElementById('tourCap'),tourDotsEl=document.getElementById('tourDots'),
-      tourPPEl=document.getElementById('tourPP'),tourNEl=document.getElementById('tourN');
-let touring=false,tourPlaying=false,tourI=-1,tourTypeT=null,tourAdvT=null;
+      tourPPEl=document.getElementById('tourPP'),tourNEl=document.getElementById('tourN'),
+      tourHowEl=document.getElementById('tourHow'),tourCurEl=document.getElementById('tourCur');
+let touring=false,tourPlaying=false,tourI=-1,tourTypeT=null,tourAdvT=null,tourDemoT=null;
+let tourPendingId=null;   // stop whose flight a pointer demo is still delaying
+let tourFullCap='',tourTyping=false;
+const tourSeen=new Set();           // a stop already read never retypes
 
-TOUR.forEach((_,k)=>{const d=document.createElement('i');
-  d.addEventListener('click',()=>tourGo(k));tourDotsEl.appendChild(d)});
+/* dots are real buttons: keyboard-reachable and named, since they are
+   the tour's own navigation and were previously invisible to a
+   screen reader and impossible to tab to */
+TOUR.forEach((st,k)=>{
+  const b=document.createElement('button');
+  b.type='button';
+  b.setAttribute('aria-label','Stop '+(k+1)+' of '+TOUR.length+
+    (NAMES[st.id]?' — '+NAMES[st.id]:''));
+  b.addEventListener('click',()=>tourGo(k,false));
+  tourDotsEl.appendChild(b);
+});
+
+/* ── ghost pointer ──
+   Only ever used on a control that genuinely navigates to the next
+   stop. findControl returns null for cross-branch hops (no single
+   button makes that jump) and the tour labels those as index jumps
+   rather than faking a click that does not exist. */
+function findControl(fromId,toId){
+  const from=document.getElementById(fromId);
+  if(!from||fromId===toId)return null;
+  const el=from.querySelector('[data-fly="'+toId+'"]');
+  if(!el)return null;
+  const r=el.getBoundingClientRect();
+  if(r.width<6||r.height<6)return null;
+  if(r.right<0||r.bottom<0||r.left>innerWidth||r.top>innerHeight)return null;
+  return el;
+}
+function controlLabel(el){
+  const n=el.querySelector('.i-name');
+  const t=(n?n.textContent:el.textContent).trim().replace(/\s+/g,' ').replace(/\s*→$/,'');
+  return t.length>38?t.slice(0,37)+'…':t;
+}
+function cursorPark(){
+  tourCurEl.classList.remove('on','move','tap');
+}
+/* returns the ms it will take, so the caller can time the flight */
+function demoClick(el,done){
+  if(reduce){done();return 0}
+  const r=el.getBoundingClientRect();
+  const x=r.left+Math.min(r.width*.32,150), y=r.top+r.height/2;
+  /* start from the middle of the screen the first time, then from
+     wherever the pointer was left */
+  if(!tourCurEl.classList.contains('on')){
+    tourCurEl.style.transform='translate('+(innerWidth/2)+'px,'+(innerHeight*.62)+'px)';
+    tourCurEl.classList.add('on');
+  }
+  requestAnimationFrame(()=>{
+    tourCurEl.classList.add('move');
+    tourCurEl.style.transform='translate('+x+'px,'+y+'px)';
+  });
+  tourDemoT=setTimeout(()=>{
+    el.classList.add('hovered','tour-hit');            // the real hover state
+    tourDemoT=setTimeout(()=>{
+      tourCurEl.classList.add('tap');
+      tourDemoT=setTimeout(()=>{
+        tourCurEl.classList.remove('tap');
+        el.classList.remove('hovered','tour-hit');
+        done();
+      },300);
+    },380);
+  },660);
+  return 1340;
+}
 
 function openTourStart(){
   tourStartEl.classList.add('on');tourStartEl.setAttribute('aria-hidden','false');
+  const at=+lsGet('sk-tour-at')||0;
+  const play=document.getElementById('tsPlay');
+  /* an interrupted tour offers to pick up where it stopped instead of
+     making someone sit through the opening again */
+  play.textContent=(at>0&&at<TOUR.length-1)?'▶ Resume at stop '+(at+1):'▶ Play the tour';
+  document.getElementById('tsMeta').textContent='About '+tourEstimate()+' · '+
+    TOUR.length+' stops · leave any time';
 }
 function dismissTourStart(){
   tourStartEl.classList.remove('on');tourStartEl.setAttribute('aria-hidden','true');
   lsSet('sk-tour-seen','1');
 }
+/* the honest length, derived from the real captions and hold times —
+   an unnamed time commitment is why most product tours go unplayed */
+function tourEstimate(){
+  let ms=0;
+  TOUR.forEach((st,i)=>{
+    const f=document.getElementById(st.id);
+    ms+=st.t.length*24+(f?holdFor(f):2600)+(i?1000:0);
+  });
+  const s=Math.round(ms/1000);
+  return s<90?(Math.round(s/5)*5)+' seconds':Math.round(s/60)+' minutes';
+}
 function tourType(text,done){
-  clearInterval(tourTypeT);let n=0;
+  clearInterval(tourTypeT);
+  tourFullCap=text;tourTyping=true;
+  let n=0;
   tourTypeT=setInterval(()=>{
     n++;tourCapEl.innerHTML=text.slice(0,n).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'<span class="tcur"></span>';
-    if(n>=text.length){clearInterval(tourTypeT);tourCapEl.textContent=text;done&&done()}
+    if(n>=text.length){clearInterval(tourTypeT);tourTyping=false;tourCapEl.textContent=text;done&&done()}
   },24);
+  tourType.done=done;
+}
+/* click the caption (or press → / space) to stop waiting on the
+   typewriter — a fast reader should never be held back by an animation */
+function tourSkipType(){
+  if(!tourTyping)return;
+  clearInterval(tourTypeT);tourTyping=false;
+  tourCapEl.textContent=tourFullCap;
+  const d=tourType.done;tourType.done=null;
+  d&&d();
 }
 function holdFor(f){  // content-aware dwell after the caption finishes
-  return Math.max(2000,Math.min(1600+f.innerText.length*3,4600));
+  const txt=(f&&(f.innerText||f.textContent))||'';
+  return Math.max(2000,Math.min(1600+txt.length*3,4600));
 }
-function tourGo(k){
-  clearTimeout(tourAdvT);clearInterval(tourTypeT);
-  tourI=k;const st=TOUR[k],f=document.getElementById(st.id);
-  if(current!==st.id)flyTo(st.id,true);      // replay=true keeps Back history clean
+function tourGo(k,demo){
+  clearTimeout(tourAdvT);clearInterval(tourTypeT);clearTimeout(tourDemoT);
+  cursorPark();
+  document.querySelectorAll('.tour-hit').forEach(e=>e.classList.remove('tour-hit','hovered'));
+  /* someone pressing › faster than the pointer demo plays would leave
+     the camera parked on the previous stop, so the next hop would be
+     measured from the wrong page. Land the interrupted flight first. */
+  if(tourPendingId&&current!==tourPendingId){flyTo(tourPendingId,true)}
+  tourPendingId=null;
+  const st=TOUR[k],f=document.getElementById(st.id),from=current;
+  tourI=k;
+  if(touring)lsSet('sk-tour-at',String(k));
   tourNEl.textContent=(k+1)+' / '+TOUR.length;
   [...tourDotsEl.children].forEach((d,i)=>{d.className=i<k?'done':i===k?'now':''});
-  tourType(st.t,()=>{if(tourPlaying)tourAdvT=setTimeout(()=>tourNext(false),holdFor(f))});
+
+  const ctl=(demo!==false)?findControl(from,st.id):null;
+  const arrive=()=>{
+    tourPendingId=null;
+    if(current!==st.id)flyTo(st.id,true);   // replay=true keeps Back history clean
+    const instant=tourSeen.has(k);
+    tourSeen.add(k);
+    const after=()=>{if(tourPlaying)tourAdvT=setTimeout(()=>tourNext(false),holdFor(f))};
+    if(instant){tourCapEl.textContent=st.t;tourFullCap=st.t;tourTyping=false;after()}
+    else tourType(st.t,after);
+  };
+
+  if(ctl){
+    tourHowEl.innerHTML='Clicking <b>'+controlLabel(ctl)+'</b>';
+    tourPendingId=st.id;
+    demoClick(ctl,arrive);
+  }else{
+    /* no button on this page reaches that page — the real route is the
+       index, so say so instead of miming a click that cannot happen */
+    tourHowEl.innerHTML=(from&&from!==st.id)
+      ? 'Jumping via the <b>☰ Index</b>' : '';
+    arrive();
+  }
 }
 function tourNext(manual){
-  if(tourI<TOUR.length-1)tourGo(tourI+1);
+  if(tourTyping){tourSkipType();return}
+  if(tourI<TOUR.length-1)tourGo(tourI+1,true);
   else if(!manual)endTour('completed');
 }
-function tourPrev(){if(tourI>0)tourGo(tourI-1)}
+function tourPrev(){if(tourI>0)tourGo(tourI-1,false)}
 function tourToggle(){
-  tourPlaying=!tourPlaying;tourPPEl.textContent=tourPlaying?'❚❚':'▶';
+  tourPlaying=!tourPlaying;tourPPEl.textContent=tourPlaying?'‖':'▶';
+  tourPPEl.setAttribute('aria-label',tourPlaying?'Pause tour':'Resume tour');
   if(tourPlaying)tourAdvT=setTimeout(()=>tourNext(false),900);
   else clearTimeout(tourAdvT);
 }
 function startTour(){
+  const at=+lsGet('sk-tour-at')||0;
+  const resume=(at>0&&at<TOUR.length-1)?at:0;
   dismissTourStart();
   if(document.body.classList.contains('rec-open'))closeRec();
-  touring=true;tourPlaying=true;tourPPEl.textContent='❚❚';
+  touring=true;tourPlaying=true;tourPPEl.textContent='‖';
   document.body.classList.add('touring');
   setHover(null);
   tourBarEl.classList.add('on');
-  tourI=-1;tourGo(0);
+  tourI=-1;tourGo(resume,false);
 }
 function endTour(reason){
   if(!touring)return;
-  touring=false;tourPlaying=false;
+  touring=false;tourPlaying=false;tourTyping=false;
   document.body.classList.remove('touring');
-  clearTimeout(tourAdvT);clearInterval(tourTypeT);
+  clearTimeout(tourAdvT);clearInterval(tourTypeT);clearTimeout(tourDemoT);
+  cursorPark();
+  document.querySelectorAll('.tour-hit').forEach(e=>e.classList.remove('tour-hit','hovered'));
   tourBarEl.classList.remove('on');
+  tourHowEl.textContent='';
+  /* finished or abandoned on purpose: forget the bookmark. Only an
+     interruption (tab closed, recruiter mode opened) keeps it. */
+  if(reason==='completed'||reason==='exited')lsSet('sk-tour-at','0');
   /* a finished tour flies back home; an interrupted one leaves the
      visitor exactly where they chose to take over */
   if(reason==='completed'&&current!=='f-home')flyTo('f-home',true);
@@ -2149,10 +2575,15 @@ function armRecTl(){
 }
 
 
-/* boot: land on home → offer the tour on first visit */
+/* boot: honour a deep link if there is one, otherwise land on home →
+   offer the tour on first visit (never when someone arrived via a
+   deep link — they came for that one section, not the guided tour) */
 applyRail();
-current='';flyTo('f-home',true);hist=[];chrome();
-setTimeout(()=>{if(!lsGet('sk-tour-seen'))openTourStart()},1800);
+const bootId=slugToId(location.hash);
+current='';flyTo(bootId,true);hist=[];chrome();
+setTimeout(()=>{
+  if(bootId==='f-home'&&!lsGet('sk-tour-seen'))openTourStart();
+},1800);
 </script>
 </body>
 </html>
