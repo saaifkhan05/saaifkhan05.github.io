@@ -1759,6 +1759,13 @@ pageBoxes().forEach(box=>{
   box.dataset.page=1;
   renderPaged(box);
 });
+/* pagers above were just created, after INTERACTIVE's initial snapshot —
+   without this, their .pgb buttons exist on screen but are invisible to
+   the click/hover hit-test until some other rebuild happens to run first */
+rectsStale=true;
+INTERACTIVE.length=0;
+world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
+  .forEach(el=>INTERACTIVE.push({el,frame:el.closest('.frame')}));
 
 /* hover + cursor — rAF-throttled sweep of the same measured boxes */
 let hoveredEl=null,hvX=-1,hvY=-1,hvQueued=false;
