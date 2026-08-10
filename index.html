@@ -1154,7 +1154,8 @@ let current='f-home', lastCz=0;
 /* SAFE AREA — header owns the top; the rail reserves the left only
    while it is open on desktop (on mobile it overlays with a scrim). */
 const RAILW=280;
-let railOpen=innerWidth>1080;   // open by default on desktop, closed on mobile
+let railOpen=false;   // always starts closed — the map is the first impression,
+                      // the index is there for whoever goes looking for it
 function railReserves(){return railOpen&&innerWidth>1080}
 function safe(){
   const wide=innerWidth>900;
