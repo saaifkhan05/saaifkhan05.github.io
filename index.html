@@ -258,7 +258,20 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .shot img{width:100%;height:auto;display:block;aspect-ratio:16/10;object-fit:cover;object-position:top center}
 .shot figcaption{font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;
   letter-spacing:.1em;padding:7px 9px;border-top:1px solid var(--line);line-height:1.4}
-.shot video{width:100%;height:auto;display:block;aspect-ratio:16/9;background:#000}
+/* demo call-to-action — deliberately the loudest control on a project tile.
+   Selector is doubled (.art.demo-cta) so it outranks .art regardless of
+   which rule appears first in this stylesheet. */
+.art.demo-cta{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  margin-top:10px;padding:15px 18px;text-decoration:none;
+  background:var(--ax);color:var(--bg);border:1px solid var(--ax);
+  transition:filter .15s,transform .15s}
+.art.demo-cta:hover,.art.demo-cta.hovered{filter:brightness(1.12);transform:translateX(2px);
+  background:var(--ax);color:var(--bg);border-color:var(--ax)}
+.art.demo-cta .dc-play{font-size:17px;line-height:1;flex:none}
+.art.demo-cta .dc-t{display:flex;flex-direction:column;gap:1px;min-width:0}
+.art.demo-cta .dc-t span{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.art.demo-cta .dc-t b{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.art.demo-cta .dc-go{margin-left:auto;font-size:15px;font-weight:600;flex:none}
 .ph{flex:1;aspect-ratio:4/3;border:1px solid var(--line-2);background:var(--raise);
   display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;letter-spacing:.12em;
@@ -933,6 +946,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
               alt="KDR Generator app turning seller notes into a 12-stage close plan" loading="lazy">
               <figcaption>KDR Generator · close plan output</figcaption></figure>
           </div>
+          <a class="art demo-cta" href="https://drive.google.com/file/d/1CLx7LoHW2-9N3Opm8Ylob72uPfvq99Ow/view?usp=sharing" target="_blank" rel="noopener">
+            <span class="dc-play">▶</span>
+            <span class="dc-t"><span>Watch the demo</span><b>KDR Generator walkthrough</b></span>
+            <span class="dc-go">↗</span></a>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -944,8 +961,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>12</b><span>plan stages</span></div>
             <div class="metric"><b>5,000+</b><span>SKUs validated</span></div>
           </div>
-          <h5>Artifacts</h5>
-          <div class="arts"><a class="art" href="https://drive.google.com/file/d/1CLx7LoHW2-9N3Opm8Ylob72uPfvq99Ow/view?usp=sharing" target="_blank" rel="noopener">▶ Watch the demo ↗</a></div>
         </div>
       </div>
     </div>
@@ -1008,14 +1023,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
               <figcaption>Delay probability, predicted delay &amp; alternate-flight guidance</figcaption></figure>
           </div>
           <h5>The demo</h5>
-          <div class="strip">
-            <figure class="shot">
-              <video controls preload="none" playsinline
-                poster="assets/photos/flightflow-demo-poster.jpg">
-                <source src="assets/videos/flightflow-demo-web.mp4" type="video/mp4">
-              </video>
-              <figcaption>Splunk passion project presentation · full walkthrough</figcaption></figure>
-          </div>
+          <a class="art demo-cta" href="assets/videos/flightflow-demo-web.mp4" target="_blank" rel="noopener">
+            <span class="dc-play">▶</span>
+            <span class="dc-t"><span>Watch the demo</span><b>FlightFlow walkthrough</b></span>
+            <span class="dc-go">↗</span></a>
         </div>
         <div class="d-side">
           <h5>Built during</h5>
@@ -1612,6 +1623,7 @@ async function downloadResume(a){
     const obj=URL.createObjectURL(blob.type?blob:new Blob([blob],{type:'application/pdf'}));
     const t=document.createElement('a');
     t.href=obj; t.download=name; t.rel='noopener';
+    t.dataset.rawdl='1';                 // let the browser handle this click
     t.style.display='none'; document.body.appendChild(t);
     t.click();
     setTimeout(()=>{URL.revokeObjectURL(obj);t.remove()},4000);
@@ -1622,6 +1634,7 @@ async function downloadResume(a){
        so a failed save doesn't also lose the user's place. */
     const t=document.createElement('a');
     t.href=url; t.download=name; t.target='_blank'; t.rel='noopener';
+    t.dataset.rawdl='1';                 // let the browser handle this click
     t.style.display='none'; document.body.appendChild(t);
     t.click();
     setTimeout(()=>t.remove(),2000);
@@ -1645,6 +1658,12 @@ document.addEventListener('click',e=>{
 /* clicks */
 document.addEventListener('click',e=>{
   const T=e.target;
+  /* downloadResume() saves the file by synthesising an <a download> and
+     clicking it. That synthetic click bubbles right back into this very
+     handler, which used to preventDefault() it — the page cancelled its
+     own download. Anything flagged data-rawdl is the browser's job, not
+     ours: bail before any preventDefault can touch it. */
+  if(T&&T.closest&&T.closest('[data-rawdl]'))return;
   /* overlays sit above the 3D world — a click inside one must never
      fall through to the geometric hit-test of what's behind it */
   if(T.closest&&T.closest('#tourBar,#tourStart,#recruiter')){

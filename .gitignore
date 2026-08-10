@@ -11,3 +11,7 @@
 
 # misc
 Thumbs.db
+
+# large source video — the 720p web version (flightflow-demo-web.mp4) is the
+# one the site links to and is committed; keep the full-size original local
+assets/videos/flightflow-splunk-passion-project-demo.mp4
