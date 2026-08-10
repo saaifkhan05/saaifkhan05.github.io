@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup 9C · Recruiter Mode</title>
+<style>
+/* ROUGH DRAFT — feature mockup only. Press R (or the button) to collapse
+   the "3D site" (faked here) into a dense, scannable, PRINTABLE one-pager.
+   This doubles as the accessibility + mobile fallback in the real build. */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#161616;--surface:#1f1f1f;--line:#393939;--text:#f4f4f4;--dim:#a8a8a8;--blue:#78a9ff;--blue-d:#0f62fe}
+body{background:var(--bg);color:var(--text);font:14px/1.5 'IBM Plex Sans',system-ui,sans-serif}
+
+/* fake 3D site behind */
+#site{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity .4s,filter .4s}
+#site .fake{background:var(--surface);border:1px solid var(--line);padding:30px 46px;transform:perspective(900px) rotateX(8deg);color:var(--dim)}
+#site h1{font-weight:300;font-size:44px;color:var(--text)}
+body.rec #site{opacity:0;filter:blur(4px);pointer-events:none}
+
+.hint{position:fixed;top:14px;right:16px;z-index:30;display:flex;gap:10px;align-items:center}
+.hint span{font-size:11px;color:var(--dim);letter-spacing:.08em}
+kbd{border:1px solid var(--line);padding:2px 7px;font:600 11px 'IBM Plex Mono',monospace;color:var(--blue)}
+.btn{background:var(--blue-d);color:#fff;border:0;padding:10px 18px;font:600 13px 'IBM Plex Sans',sans-serif;cursor:pointer}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--text)}
+
+/* the one-pager */
+#sheet{position:fixed;inset:0;overflow:auto;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .4s;z-index:20}
+body.rec #sheet{opacity:1;pointer-events:auto}
+.page{max-width:820px;margin:60px auto 80px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue-d);padding:44px 50px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:8px}
+.top h1{font-weight:300;font-size:34px;letter-spacing:-.02em}
+.top .c{text-align:right;font-size:12.5px;color:var(--dim);line-height:1.7}
+.top .c a{color:var(--blue);text-decoration:none}
+.sub{color:var(--dim);font-size:13px;margin-bottom:26px}
+h3{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);margin:26px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:210px 1fr;gap:4px 24px;padding:9px 0;border-bottom:1px solid #2a2a2a}
+.row:last-child{border-bottom:0}
+.row .l b{display:block;font-size:13.5px}
+.row .l span{font-size:11.5px;color:var(--dim)}
+.row .r{font-size:13px;color:#d0d0d0}
+.row .r b{color:var(--blue);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{border:1px solid var(--line);color:var(--dim);font-size:11.5px;padding:4px 10px}
+.actions{display:flex;gap:10px;margin-top:30px}
+@media(max-width:640px){.row{grid-template-columns:1fr}.top .c{text-align:left}}
+
+/* print: white paper, no chrome */
+@media print{
+  body{background:#fff}
+  .hint,#site{display:none!important}
+  #sheet{position:static;opacity:1}
+  .page{margin:0;max-width:none;border:0;background:#fff;color:#000;padding:0}
+  .page *{color:#000!important;border-color:#ccc!important}
+  h3,.row .r b,.top .c a{color:#0f62fe!important}
+  .actions{display:none}
+}
+</style>
+</head>
+<body>
+<div class="hint">
+  <span>Mockup 9C · Recruiter mode — press</span><kbd>R</kbd>
+  <button class="btn" onclick="toggleRec()" id="tbtn">Recruiter view</button>
+</div>
+
+<div id="site">
+  <h1>Saaif Khan<i style="color:var(--blue)">.</i></h1>
+  <div class="fake">⟵ imagine the full 3D map here ⟶</div>
+  <div class="fake" style="transform:perspective(900px) rotateX(8deg) scale(.85);opacity:.6">deeper frames…</div>
+</div>
+
+<div id="sheet" aria-hidden="true">
+  <div class="page">
+    <div class="top">
+      <div><h1>Saaif Khan</h1>
+        <div class="sub">SE / AE candidate · BS MIS, IT Sales Engineering track, UT Dallas · Graduating Dec 2026 · Dallas, TX</div></div>
+      <div class="c">
+        <a href="mailto:saaifkhan05@gmail.com">saaifkhan05@gmail.com</a><br>
+        (469) 516-1440<br>
+        <a href="https://www.linkedin.com/in/saaifkhanutd">linkedin.com/in/saaifkhanutd</a>
+      </div>
+    </div>
+
+    <h3>Experience</h3>
+    <div class="row"><div class="l"><b>IBM — Brand Sales Specialist</b><span>New York, NY · May 2026 – Present · Internship</span></div>
+      <div class="r">Public-sector territory inside a 150+ agency account. <b>6 opportunities advanced</b>, 30+ exec emails, watsonx client workshops.</div></div>
+    <div class="row"><div class="l"><b>Workiva — SE Enablement</b><span>Dallas, TX · Jan – Jun 2026 · Internship</span></div>
+      <div class="r">Diagnosed and redesigned the enablement platform for <b>230+ SEs</b>; 259 assets audited, demoed V2 to 90+.</div></div>
+    <div class="row"><div class="l"><b>Cisco (Splunk) — Solutions Engineer</b><span>Boulder, CO · May – Aug 2025 · Internship</span></div>
+      <div class="r"><b>60+ discovery calls</b> shadowed feeding $1M+ pipeline; built &amp; live-demoed an 89%-accurate ML model.</div></div>
+    <div class="row"><div class="l"><b>U.S. Renal Care — AI Solutions Consultant</b><span>Plano, TX · Aug – Dec 2025 · Contract</span></div>
+      <div class="r">Drove Microsoft Copilot adoption in supply chain — the blocker was <b>people, not tech</b>.</div></div>
+    <div class="row"><div class="l"><b>eBay — Founder &amp; Business Owner</b><span>Dallas, TX · Aug 2023 – Aug 2025</span></div>
+      <div class="r">Solo e-commerce operation: sourcing, listings, fulfilment, support.</div></div>
+
+    <h3>Projects</h3>
+    <div class="row"><div class="l"><b>KDR Generator</b><span>IBM</span></div><div class="r">AI close-plan engine — hours of seller work down to <b>minutes</b>.</div></div>
+    <div class="row"><div class="l"><b>SE Highspot V2</b><span>Workiva</span></div><div class="r">Enablement platform redesign: research → IA → governance → rollout demo.</div></div>
+    <div class="row"><div class="l"><b>FlightFlow</b><span>Splunk</span></div><div class="r">Flight-delay intelligence on Splunk MLTK, <b>89% accuracy</b>, live alerts.</div></div>
+    <div class="row"><div class="l"><b>U.S. Food Access Risk</b><span>Splunk</span></div><div class="r">County-level USDA risk model for health-disparity analysis.</div></div>
+    <div class="row"><div class="l"><b>Valor</b><span>IBM watsonx</span></div><div class="r">Bank of America case study — full pursuit narrative.</div></div>
+
+    <h3>Certifications</h3>
+    <div class="chips"><span>Splunk Core Power User</span><span>Splunk Enterprise Admin</span><span>Splunk Cloud Admin</span><span>AWS Cloud Practitioner (in progress)</span><span>IBM watsonx Challenge 2026</span></div>
+
+    <div class="actions">
+      <button class="btn" onclick="alert('In the real build this triggers the Blob resume download from index.html')">▤ Download resume (PDF)</button>
+      <button class="btn ghost" onclick="print()">Print this page</button>
+      <button class="btn ghost" onclick="toggleRec()">Back to the full site</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleRec(){
+  const on=document.body.classList.toggle('rec');
+  document.getElementById('sheet').setAttribute('aria-hidden',!on);
+  document.getElementById('tbtn').textContent=on?'Exit recruiter view':'Recruiter view';
+}
+addEventListener('keydown',e=>{
+  if(e.key.toLowerCase()==='r'&&!e.metaKey&&!e.ctrlKey)toggleRec();
+  if(e.key==='Escape'&&document.body.classList.contains('rec'))toggleRec();
+});
+</script>
+</body>
+</html>

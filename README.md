@@ -17,7 +17,35 @@ A one-of-a-kind interactive portfolio that recruiters, peers, and anyone curious
 
 **Audience note (important):** Saaif is going into **technical sales / solutions engineering / enterprise sales**, not software engineering. Copy is written for SE and AE hiring managers — discovery, demos, value translation, ROI. The site itself is the artifact: an AE intern who shipped a 3D spatial interface is a stronger proof than any bullet list.
 
-## 2. The design — "The Fusion", draft 6
+## 2a-00. Draft 8 — Hybrid console (current, live)
+
+`index.html` is now **draft 8**, chosen by Saaif from five structural mockups (see `mockups/`). It keeps draft 7's Carbon-styled 3D map-dive engine and adds: a persistent left rail index (always visible on desktop, drawer below 1080px), a 48px header with live clickable breadcrumb, editorial typography (light-weight display headlines, numbered sections 01–04, oversized stat callouts), and a deliberately minimal home screen — name at 104px, a rotating verb line ("I discover / demo / design / translate / teach / build / sell solutions." — edit `ROT_WORDS` in the script), four facts, four doors. No stats or summary paragraph on home by request.
+
+**The pointer engine (do not regress this):** Chrome's hit-testing is unreliable for ALL pointer events on content under nested 3D transforms — clicks, mouseover, and cursor alike — and the failure varies with window size (worse non-fullscreen, because viewport size changes camera scale). Event-target-based hover "fixes" repeatedly failed for exactly this reason. The world therefore trusts nothing from the browser's hit-test: every interactive element's screen box is measured after each flight (`INTERACTIVE` / `measure()` / `hitAt()`, live re-measure while `flying`), and clicks, hover (`.hovered` mirror rules), and the pointer cursor all resolve against those boxes geometrically. Smallest box wins. Fixed chrome (header/rail) is identified by plain coordinates (`overChrome()`). Keep `.hovered` CSS in sync with `:hover` rules when editing.
+
+The rail toggles at any width via the always-visible Index button: on desktop it reserves layout space and the camera glides to recentre when toggled; on mobile it overlays with a scrim. Motion standard: rail highlight eases (.35s), breadcrumb crossfades, camera flights 1.3s, rotating verb ~2.5s cycle.
+
+**Data decisions (Aug 2026):** IBM title is officially **Brand Sales Specialist Intern** (used site-wide; the dossier story carries the AE-side nuance — he shadowed a Technology Sales Leader/AE). Degree is **BS, Management Information Systems** (MIS), IT Sales Engineering track. Home facts: based Dallas, TX (NYC summers only), graduating December 2026.
+
+A "HOW TO EDIT THIS FILE" comment sits at the top of `index.html` so Saaif can self-edit content without assistance. Draft 7 archived at `archive/draft-7-carbon.html`; draft 6 at `archive/draft-6-fusion.html`.
+
+## 2a-0. Draft 7 — IBM Carbon redesign (superseded by draft 8)
+
+`index.html` is now **draft 7**: the draft-6 engine restyled to the IBM design system, using the `ibm-brand-compliance` folder as the sole design reference. Draft 6 is archived at `archive/draft-6-fusion.html`. What changed and why:
+
+- **Problem solved:** draft 6 was visually overwhelming — 9 fighting OKLCH hues, rotated chamfered plates, warm-neutral tint, starfield nebula. Draft 7 keeps the signature 3D map-dive mechanic and every frame/feature, but rebuilds the visual layer on Carbon.
+- **Palette:** Carbon v2.1 only. Shell is Gray 100/90/80 (dark) or White/Gray 10/20 (light). Blue 60 `#0f62fe` is the primary action colour (Blue 70 hover). Per-company context accents are remapped to Carbon ramps — dark theme uses 30–50 steps for contrast on Gray 100, light theme uses 60s: IBM Blue 40/60, Workiva Green 40/60, Cisco Magenta 40/60, USRC Cyan 40/60, eBay Red 50/60, UTD Orange 40/60, AKPsi Yellow 30/60, Contact Purple 40/60, Person Teal 30/60. Verified: every hex in the file is a palette value.
+- **Typography:** IBM Plex Sans only (300–700). Headlines sentence case per the brand's explicit rule (no more ALL CAPS); uppercase survives only on ≤11px micro-labels. Body 14px Light, titles SemiBold.
+- **Geometry:** sharp 90° everywhere — no radii, no chamfers, and **no frame rotation** (the map is orthogonal now; the camera still flies pan + z).
+- **Kind encoding replaced, not removed:** hubs = 3px top accent rule; roles = 3px left accent rule + outlined kindbar + ink title; projects = solid accent kindbar + accent-coloured title + faint engineering grid texture.
+- **Starfield → grid field:** the canvas now draws drifting plus-marks and points in Carbon grays with occasional Blue accents (IBM 2x-grid construction marks, given depth). Same z-projection; warp streaks still fire on flight.
+- **HUD → Carbon header bar:** fixed 48px top bar with brand, Back button, and a **live clickable breadcrumb** (chainOf(), previously unimplemented), plus Home / Map / Theme / Index on the right.
+- **No IBM logo placed** — deliberate. This is a personal site; using the wordmark would read as endorsement/co-branding, which the logo-usage rules prohibit.
+- **All draft-6 engineering constraints preserved:** no `filter`/`clip-path` on in-world clickables (now structural — zero clip-path in the file, filter only on `.passed`), delegated clicks + geoHit fallback, JS hover delegation, history-based Back, readability floor MIN_S=.94, cached theme colours outside the rAF loop, reduced-motion support.
+
+Sections 2–2k below document draft 6 and remain useful as engine documentation; colour/shape specifics there are superseded by this section.
+
+## 2. The design — "The Fusion", draft 6 (superseded by draft 7)
 
 `index.html` is the working file. Single self-contained HTML. It fuses a Prezi-style spatial canvas with 3D depth navigation:
 

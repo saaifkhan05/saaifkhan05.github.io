@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup 8B — Editorial</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#161616;--surface:#262626;--raise:#393939;--line:#393939;--line-2:#525252;
+--ink:#f4f4f4;--dim:#a8a8a8;--dimmer:#6f6f6f;--blue:#0f62fe;--ax:#78a9ff}
+.ax-ibm{--ax:#78a9ff}.ax-workiva{--ax:#42be65}.ax-cisco{--ax:#ff7eb6}.ax-usrc{--ax:#33b1ff}
+.ax-ebay{--ax:#fa4d56}.ax-utd{--ax:#ff832b}.ax-akpsi{--ax:#f1c21b}.ax-contact{--ax:#be95ff}.ax-person{--ax:#3ddbd9}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:15px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
+
+.topbar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:stretch;background:var(--bg);border-bottom:1px solid var(--line);z-index:100}
+.brand{display:flex;align-items:center;padding:0 18px;font-weight:600;border-right:1px solid var(--line)}
+.brand i{font-style:normal;color:var(--blue);font-weight:700}
+.tnav{display:flex;margin-left:auto}
+.tnav a{display:flex;align-items:center;padding:0 16px;border-left:1px solid var(--line);color:var(--dim);font-size:12.5px;text-decoration:none;font-weight:500;transition:.15s}
+.tnav a:hover{background:var(--surface);color:var(--ink)}
+.tnav a b{color:var(--blue);margin-right:8px;font-weight:600}
+
+.wrap{max-width:1140px;margin:0 auto;padding:0 40px}
+
+/* hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:48px;position:relative}
+.tag{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.16em}
+.tag::before{content:'';width:24px;height:2px;background:var(--blue)}
+.hero h1{font-weight:300;font-size:clamp(64px,11vw,148px);letter-spacing:-.04em;line-height:.98;margin:22px 0 26px}
+.hero h1 i{font-style:normal;color:var(--blue);font-weight:600}
+.hero .lede{font-size:19px;color:var(--dim);font-weight:300;max-width:56ch;line-height:1.65}
+.hero .lede b{color:var(--ink);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-2);margin-top:46px}
+.fact{padding:18px 20px 18px 0;border-right:1px solid var(--line);font-size:12.5px;color:var(--dim)}
+.fact:last-child{border-right:none}
+.fact b{display:block;color:var(--ink);font-weight:500;margin-top:4px;font-size:13.5px}
+.scrolldn{position:absolute;bottom:28px;left:40px;font-size:11px;color:var(--dimmer);letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+
+/* sections */
+section{padding:90px 0 60px;border-top:1px solid var(--line)}
+.snum{font-size:13px;font-weight:600;color:var(--blue)}
+.shead{display:flex;align-items:baseline;gap:20px;margin-bottom:10px}
+.shead h2{font-weight:300;font-size:clamp(36px,5vw,64px);letter-spacing:-.03em}
+.slede{color:var(--dim);font-weight:300;max-width:62ch;line-height:1.65;margin-bottom:36px}
+
+/* rows that expand into dossiers */
+.row{border-top:1px solid var(--line-2)}
+.row:last-child{border-bottom:1px solid var(--line-2)}
+.rhead{display:grid;grid-template-columns:14px 1.2fr 1fr auto;gap:18px;align-items:center;width:100%;padding:20px 8px;transition:.15s}
+.rhead:hover{background:color-mix(in srgb,var(--ax) 10%,transparent)}
+.rhead .rd{width:9px;height:9px;background:var(--ax)}
+.rhead .rn{font-size:19px;font-weight:600}
+.rhead .rs{font-size:13px;color:var(--dim);font-weight:300}
+.rhead .rg{font-size:11px;font-weight:600;color:var(--dimmer);text-transform:uppercase;letter-spacing:.12em;transition:.15s}
+.row.open .rhead .rg,.rhead:hover .rg{color:var(--ax)}
+.dossier{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.row.open .dossier{max-height:1200px}
+.dbody{display:grid;grid-template-columns:1.4fr .6fr;gap:40px;padding:10px 8px 40px;border-left:3px solid var(--ax);padding-left:24px;margin:0 0 26px}
+.dbody h5{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--dim);margin:16px 0 9px;display:flex;align-items:center;gap:10px}
+.dbody h5::after{content:'';flex:1;height:1px;background:var(--line-2)}
+.dbody h5:first-child{margin-top:0}
+.dbody p{font-size:14.5px;color:var(--dim);font-weight:300;line-height:1.7;margin-bottom:10px}
+.dbody p b{color:var(--ink);font-weight:600}
+.mrow{display:flex;gap:30px;flex-wrap:wrap}
+.metric b{display:block;font-size:40px;font-weight:600;color:var(--ax);letter-spacing:-.03em}
+.metric span{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.quote{border-left:3px solid var(--ax);padding-left:14px;margin-top:14px}
+.quote p{font-style:italic;color:var(--ink)}
+.quote cite{font-size:11px;color:var(--dim);font-style:normal}
+.xlink{display:flex;align-items:center;gap:12px;border:1px solid var(--ax);background:color-mix(in srgb,var(--ax) 14%,transparent);padding:13px 14px;margin-top:14px;width:100%;transition:.15s}
+.xlink:hover{background:var(--ax);color:var(--bg)}
+.xlink .xt span{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ax)}
+.xlink:hover .xt span{color:var(--bg)}
+.xlink .xt b{font-size:14px}
+.xlink .xa{margin-left:auto}
+.stub-note{font-size:12px;color:var(--dimmer);padding:14px 8px}
+
+/* contact */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;max-width:800px}
+.cbtn{display:flex;align-items:center;gap:12px;border:1px solid var(--line-2);padding:15px;text-decoration:none;color:var(--ink);transition:.15s}
+.cbtn:hover{border-color:var(--ax);background:color-mix(in srgb,var(--ax) 12%,transparent)}
+.cbtn .ci{color:var(--ax)}
+.cbtn div span{display:block;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.cbtn div b{font-size:13.5px}
+.cbtn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.cbtn.primary .ci,.cbtn.primary div span{color:#fff}
+.note{position:fixed;bottom:14px;right:14px;background:var(--surface);border:1px solid var(--line-2);color:var(--dim);font-size:11px;padding:8px 14px;z-index:200;max-width:340px}
+footer{padding:40px;border-top:1px solid var(--line);color:var(--dimmer);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="brand">Saaif Khan<i>.</i></span>
+  <nav class="tnav">
+    <a href="#roles"><b>01</b>Roles</a><a href="#projects"><b>02</b>Projects</a>
+    <a href="#person"><b>03</b>The Person</a><a href="#contact"><b>04</b>Contact</a>
+  </nav>
+</div>
+
+<div class="hero"><div class="wrap">
+  <span class="tag">Enterprise sales · solutions engineering</span>
+  <h1>I sell technology<br>I can <i>build.</i></h1>
+  <p class="lede">Enterprise sales at <b>IBM</b>, solutions engineering at <b>Splunk</b> and <b>Workiva</b>, and a <b>$100k/yr eBay business</b> run solo through college. Scroll, or jump — every dossier expands in place.</p>
+  <div class="facts">
+    <div class="fact">Now<b>Account Executive Intern · IBM · NYC</b></div>
+    <div class="fact">Studying<b>BS CIS&amp;T · IT Sales Engineering · UTD</b></div>
+    <div class="fact">Graduating<b>December 2026</b></div>
+    <div class="fact">Based<b>Dallas–Fort Worth · New York</b></div>
+  </div>
+</div><span class="scrolldn">Scroll ↓</span></div>
+
+<section id="roles"><div class="wrap">
+  <div class="shead"><span class="snum">01</span><h2>Roles</h2></div>
+  <p class="slede">Four years of approaching the same job from different angles: run the business, learn the product, enable the sellers, carry the bag. Click a row — the dossier opens in place.</p>
+
+  <div class="row ax-ibm" id="r-ibm">
+    <button class="rhead" onclick="toggle('r-ibm')"><span class="rd"></span><span class="rn">IBM — Account Executive Intern</span><span class="rs">New York, NY · May 2026 – present · public sector</span><span class="rg">Open ↓</span></button>
+    <div class="dossier"><div class="dbody">
+      <div>
+        <h5>The story</h5>
+        <p>IBM handed me five public sector agencies inside the New York State enterprise account — a book spanning <b>150+ agencies</b> — and left the rest to me. Between us we moved <b>six active opportunities</b> forward.</p>
+        <p>I read the <b>NYS 2026–27 budget</b> against agentic AI adoption trends, pulled five target use cases out of it, worked six-plus industry events across NYC, and sent 30+ personalised executive emails that put net-new attendees in our client workshops.</p>
+      </div>
+      <div>
+        <h5>By the numbers</h5>
+        <div class="mrow"><div class="metric"><b>6</b><span>opps advanced</span></div><div class="metric"><b>30+</b><span>exec emails</span></div></div>
+        <h5>What I built here</h5>
+        <button class="xlink" onclick="jumpTo('p-kdr')"><span class="xt"><span>Project</span><b>KDR Generator</b></span><span class="xa">→</span></button>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="row ax-workiva" id="r-wk">
+    <button class="rhead" onclick="toggle('r-wk')"><span class="rd"></span><span class="rn">Workiva — SE Enablement Intern</span><span class="rs">Dallas, TX · Jan – Jun 2026 · returned Aug 2026</span><span class="rg">Open ↓</span></button>
+    <div class="dossier"><div class="dbody">
+      <div><h5>The story</h5><p>The platform nobody opened: 230+ SEs, failing adoption, and a mandate to find out why with evidence. A <b>50-question behavioural survey</b>, five personas, an <b>18-page information architecture</b>, and a demo to <b>90+ SEs</b>.</p></div>
+      <div><h5>What they said</h5><div class="quote"><p>“His maturity in masterful communication is remarkable…”</p><cite>Kim Fisher · Workiva · direct manager</cite></div></div>
+    </div></div>
+  </div>
+
+  <div class="row ax-cisco"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">Cisco (Splunk) — Solutions Engineer Intern</span><span class="rs">Boulder, CO · May – Aug 2025</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the IBM pattern in the real build.</div></div></div>
+  <div class="row ax-usrc"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">U.S. Renal Care — AI Solutions Consultant</span><span class="rs">Plano, TX · Aug – Dec 2025 · contract</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the IBM pattern in the real build.</div></div></div>
+  <div class="row ax-ebay"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">eBay — Founder &amp; Business Owner</span><span class="rs">Dallas, TX · Aug 2023 – Aug 2025 · $100k ARR</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the IBM pattern in the real build.</div></div></div>
+  <div class="row ax-utd"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">UT Dallas — BS, CIS&amp;T</span><span class="rs">IT Sales Engineering track · Dec 2026</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the IBM pattern in the real build.</div></div></div>
+</div></section>
+
+<section id="projects"><div class="wrap">
+  <div class="shead"><span class="snum">02</span><h2>Projects</h2></div>
+  <p class="slede">Five things I built. Each started as somebody's unglamorous problem, and each links back to the role it came out of.</p>
+
+  <div class="row ax-ibm" id="p-kdr">
+    <button class="rhead" onclick="toggle('p-kdr')"><span class="rd"></span><span class="rn">KDR Generator</span><span class="rs">IBM · full-stack AI close-plan engine · 60× faster</span><span class="rg">Open ↓</span></button>
+    <div class="dossier"><div class="dbody">
+      <div>
+        <h5>The problem</h5>
+        <p>Sellers spent up to three hours assembling a single close plan. I built a full-stack AI application that turns raw seller notes into a complete 12-stage NYS OGS close plan in under thirty seconds — a <b>60× reduction</b>. It validates against a <b>5,000+ SKU pricelist</b> in real time.</p>
+      </div>
+      <div>
+        <h5>By the numbers</h5>
+        <div class="mrow"><div class="metric"><b>60×</b><span>faster</span></div><div class="metric"><b>12</b><span>stages</span></div></div>
+        <h5>Built during</h5>
+        <button class="xlink" onclick="jumpTo('r-ibm')"><span class="xt"><span>Role</span><b>IBM — Account Executive</b></span><span class="xa">→</span></button>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="row ax-workiva"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">SE Highspot V2</span><span class="rs">Workiva · enablement platform redesign · 230+ SEs</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the KDR pattern in the real build.</div></div></div>
+  <div class="row ax-cisco"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">FlightFlow</span><span class="rs">Splunk · delay intelligence &amp; alerts · 89% accuracy</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the KDR pattern in the real build.</div></div></div>
+  <div class="row ax-cisco"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">U.S. Food Access Risk</span><span class="rs">Splunk · USDA county-level health disparity model</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the KDR pattern in the real build.</div></div></div>
+  <div class="row ax-akpsi"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">Valor — watsonx × BofA</span><span class="rs">IBM watsonx × Bank of America case study</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Full dossier follows the KDR pattern in the real build.</div></div></div>
+</div></section>
+
+<section id="person"><div class="wrap">
+  <div class="shead"><span class="snum">03</span><h2>The Person</h2></div>
+  <p class="slede">[One line in your voice about what you're like when nobody's buying anything.]</p>
+  <div class="row ax-person"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">Pickleball</span><span class="rs">Men's Pickleball Club, UTD</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Hobby dossier — story, photos, a favourite memory.</div></div></div>
+  <div class="row ax-person"><button class="rhead" onclick="stub(this)"><span class="rd"></span><span class="rn">Community</span><span class="rs">MSA · Islamic Relief · Pakistani Student Association</span><span class="rg">Open ↓</span></button><div class="dossier"><div class="stub-note">Hobby dossier — story, photos, a favourite memory.</div></div></div>
+</div></section>
+
+<section id="contact"><div class="wrap">
+  <div class="shead"><span class="snum">04</span><h2>Get in touch</h2></div>
+  <p class="slede">Graduating December 2026 · open to full-time SE &amp; AE roles.</p>
+  <div class="cgrid ax-contact">
+    <a class="cbtn" href="mailto:saaifkhan05@gmail.com"><span class="ci">✉</span><div><span>Email</span><b>saaifkhan05@gmail.com</b></div></a>
+    <a class="cbtn" href="tel:+14695161440"><span class="ci">☏</span><div><span>Phone</span><b>(469) 516-1440</b></div></a>
+    <a class="cbtn" href="https://www.linkedin.com/in/saaifkhanutd" target="_blank" rel="noopener"><span class="ci">in</span><div><span>LinkedIn</span><b>/saaifkhanutd</b></div></a>
+    <a class="cbtn primary" href="#"><span class="ci">▤</span><div><span>Download · PDF</span><b>Résumé</b></div></a>
+  </div>
+</div></section>
+
+<footer>Saaif Khan · saaifkhan.com</footer>
+<div class="note">Mockup 8B · Editorial — annual-report scroll, dossiers expand in place. IBM ⇄ KDR cross-links jump and auto-open across sections.</div>
+
+<script>
+function toggle(id){document.getElementById(id).classList.toggle('open')}
+function stub(btn){btn.closest('.row').classList.toggle('open')}
+function jumpTo(id){
+  const el=document.getElementById(id);
+  el.classList.add('open');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
