@@ -21,8 +21,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saaif Khan — Sales Engineering & Enterprise Sales</title>
-<meta name="description" content="Saaif Khan — enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive map of the work.">
+<title>saaif khan :)</title>
+<meta name="description" content="Saaif Khan — enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive tour of the work.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -208,9 +211,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .deep .pad{padding:30px 34px 30px}
 .deep.two .pad{display:grid;grid-template-columns:1.32fr .68fr;gap:30px;align-items:start}
 .deep .d-top{grid-column:1/-1}
-.deep .co{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.deep .co-mark{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--ax);
-  border:1px solid var(--ax);padding:5px 10px;text-transform:uppercase}
+.deep .co{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+/* the company is the first thing to read on a dossier — it was set at 11px
+   caption size, which disappeared once the camera zoomed out to fit */
+.deep .co-mark{font-size:22px;font-weight:700;letter-spacing:.06em;color:var(--ax);
+  border:2px solid var(--ax);padding:7px 14px;text-transform:uppercase;line-height:1.1}
 .deep h2{font-weight:300;font-size:32px;letter-spacing:-.025em;margin:14px 0 8px;line-height:1.12}
 .deep h2 i{color:var(--ax);font-style:normal;font-weight:600}
 .kind-project h2{color:var(--ax)}
@@ -253,6 +258,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .shot img{width:100%;height:auto;display:block;aspect-ratio:16/10;object-fit:cover;object-position:top center}
 .shot figcaption{font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;
   letter-spacing:.1em;padding:7px 9px;border-top:1px solid var(--line);line-height:1.4}
+.shot video{width:100%;height:auto;display:block;aspect-ratio:16/9;background:#000}
 .ph{flex:1;aspect-ratio:4/3;border:1px solid var(--line-2);background:var(--raise);
   display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:500;color:var(--dimmer);text-transform:uppercase;letter-spacing:.12em;
@@ -728,8 +734,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>40+</b><span>agency portfolio (Core 2)</span></div>
             <div class="metric"><b>150+</b><span>agency account</span></div>
           </div>
-          <h5>Artifacts</h5>
-          <div class="arts"><button class="art">▤ client deck 1</button><button class="art">▤ client deck 2</button></div>
         </div>
       </div>
     </div>
@@ -770,6 +774,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <p>“His maturity in masterful communication is remarkable, particularly because it is balanced by his technical acumen.”</p>
             <cite>Kim Fisher · Senior Enablement Leader, Workiva · direct manager</cite>
           </div>
+          <button class="xlink" data-fly="f-recsmgr">
+            <span class="xi">❝</span><span class="xt"><span>Recommendation</span><b>Read it in full</b></span><span class="xa">→</span></button>
         </div>
       </div>
     </div>
@@ -818,6 +824,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <p>“He has a unique ability to connect the value of our solutions to clients through compelling storytelling and engaging demos.”</p>
             <cite>Nick Higgins · Technical Sales Leader, Cisco</cite>
           </div>
+          <button class="xlink" data-fly="f-recslead">
+            <span class="xi">❝</span><span class="xt"><span>Recommendations</span><b>Leaders &amp; mentors</b></span><span class="xa">→</span></button>
+          <button class="xlink" data-fly="f-recspeer">
+            <span class="xi">❝</span><span class="xt"><span>Recommendations</span><b>Teammates &amp; peers</b></span><span class="xa">→</span></button>
         </div>
       </div>
     </div>
@@ -996,6 +1006,15 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <figure class="shot"><img src="assets/photos/splunk-flightflow-delay-prediction-dashboard.jpeg"
               alt="FlightFlow dashboard: delay probability, predicted delay, confidence range, alternate flights" loading="lazy">
               <figcaption>Delay probability, predicted delay &amp; alternate-flight guidance</figcaption></figure>
+          </div>
+          <h5>The demo</h5>
+          <div class="strip">
+            <figure class="shot">
+              <video controls preload="none" playsinline
+                poster="assets/photos/flightflow-demo-poster.jpg">
+                <source src="assets/videos/flightflow-demo-web.mp4" type="video/mp4">
+              </video>
+              <figcaption>Splunk passion project presentation · full walkthrough</figcaption></figure>
           </div>
         </div>
         <div class="d-side">
@@ -1597,7 +1616,15 @@ async function downloadResume(a){
     t.click();
     setTimeout(()=>{URL.revokeObjectURL(obj);t.remove()},4000);
   }catch(err){
-    window.location.href=url;   // fallback: let the browser do whatever it can
+    /* fetch is blocked when the page is opened straight off the disk
+       (file:// has no origin), so fall back to a real anchor click —
+       and open it in a new tab rather than navigating the site away,
+       so a failed save doesn't also lose the user's place. */
+    const t=document.createElement('a');
+    t.href=url; t.download=name; t.target='_blank'; t.rel='noopener';
+    t.style.display='none'; document.body.appendChild(t);
+    t.click();
+    setTimeout(()=>t.remove(),2000);
   }finally{
     a.classList.remove('dl-working'); dlBusy=false;
   }
@@ -1631,6 +1658,7 @@ document.addEventListener('click',e=>{
   const dl=T.closest&&T.closest('a[download]');
   if(dl){e.preventDefault();downloadResume(dl);return}
   if(overChrome(e.clientX,e.clientY))return;
+  if(T.closest&&T.closest('video'))return;   // let native video controls own their clicks
   if(e.target.closest&&e.target.closest('a[href]'))return;  // browser resolved a real link
   const el=hitAt(e.clientX,e.clientY);
   if(!el)return;
@@ -1639,6 +1667,12 @@ document.addEventListener('click',e=>{
      must be handled before the "click anywhere in the tile" fallback */
   if(el.classList.contains('pgb')){goPage(el);return}
   if(el.dataset.fly){flyTo(el.dataset.fly);return}
+  /* Download links must be resolved from the geometric hit-test result
+     directly. Re-dispatching with el.click() and hoping the handler
+     re-entered with a correct e.target is exactly the browser behaviour
+     this whole pointer engine exists to avoid — and it's why the resume
+     button could look dead. */
+  if(el.matches('a[download]')){downloadResume(el);return}
   if(el.matches('a[href]')){el.click();return}              // hit-test missed a link — fire it
   const holder=el.closest('[data-fly]');
   if(holder)flyTo(holder.dataset.fly);
