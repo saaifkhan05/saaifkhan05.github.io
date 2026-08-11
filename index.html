@@ -711,6 +711,15 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    956px and was falling out of the old combined query, which left it
    with no sheet and a clipped tile. A mouse never reports coarse, so
    desktop cannot match this block at any window size. */
+/* The sheet is hidden by default and revealed only inside the touch
+   query below. This MUST sit above that query: both selectors are
+   `#sheet`, so specificity ties and source order decides. When this rule
+   lived further down the file it silently won, leaving the sheet
+   display:none on phones while JS still set `sheet-open` — which made
+   the world's click guard swallow every tap on a panel nobody could see.
+   Declaring the default here also covers a coarse pointer wider than the
+   breakpoint, like an iPad in landscape. */
+#sheet{display:none}
 @media (pointer:coarse){
   html{-webkit-text-size-adjust:100%}          /* stop iOS inflating type */
   button,a{-webkit-tap-highlight-color:transparent}
@@ -806,12 +815,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    whole world is dropped and a plain card is printed instead — the
    short version, plus where to get the actual resume. */
 #printcard{display:none}
-/* The reading sheet is hidden by default and only ever revealed inside
-   the touch query below. Stating it here rather than as a "not coarse"
-   query covers the case that would otherwise slip through: a coarse
-   pointer WIDER than the breakpoint, like an iPad in landscape, which
-   matches neither side of a negated query and would show a stray bar. */
-#sheet{display:none}
 @media print{
   html,body{height:auto;overflow:visible;background:#fff;color:#000}
   #field,.viewport,.topbar,.rail,.scrim,.boot,#tourBar,#tourStart,#recruiter{display:none!important}
@@ -1961,6 +1964,11 @@ function openSheet(id){
   const f=document.getElementById(id);if(!f)return;
   const pad=f.querySelector('.pad');if(!pad)return;
   const sh=document.getElementById('sheet'),body=document.getElementById('sheetBody');
+  /* Never take the screen unless the sheet is actually rendered. If the
+     CSS that shows it has not matched, setting `sheet-open` would make
+     the world ignore every tap on behalf of a panel nobody can see —
+     which is exactly what a source-order slip caused once already. */
+  if(getComputedStyle(sh).display==='none')return;
   const clone=pad.cloneNode(true);
   /* ids would be duplicated into the document twice over; the sheet
      navigates by data-fly and needs none of them */
