@@ -706,12 +706,21 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    map stays a map, and reading happens in a sheet — the same overlay
    pattern recruiter mode already uses successfully in this file.
    ═══════════════════════════════════════════════════════════════ */
-@media (pointer:coarse) and (max-width:900px){
+/* Everything a touch device needs regardless of how wide it is. Width is
+   deliberately NOT part of this test: an iPhone in landscape reports
+   956px and was falling out of the old combined query, which left it
+   with no sheet and a clipped tile. A mouse never reports coarse, so
+   desktop cannot match this block at any window size. */
+@media (pointer:coarse){
   html{-webkit-text-size-adjust:100%}          /* stop iOS inflating type */
   button,a{-webkit-tap-highlight-color:transparent}
 
-  /* chrome clears the notch and the home indicator */
-  .topbar{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  /* chrome clears the notch and the home indicator. The bar grows by the
+     inset rather than sliding under the status bar, and safe() measures
+     its real height so the camera still knows where the screen starts. */
+  .topbar{height:auto;min-height:48px;
+    padding-top:env(safe-area-inset-top);
+    padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
   .rail{width:min(88vw,340px);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
   #tourBar{bottom:calc(12px + env(safe-area-inset-bottom))}
 
@@ -723,27 +732,24 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   .item{padding:16px 12px 16px 16px}
   .cbtn,.xlink{padding:16px 15px}
 
-  /* one column: two made the longest fact wrap four times */
-  #f-home .facts{grid-template-columns:1fr}
-  #f-home .fact{border-right:none;border-bottom:1px solid var(--line);padding:12px 0}
-  #f-home .fact:last-child{border-bottom:none}
-  #f-home h1{font-size:clamp(38px,13vw,54px)}
-  #f-home .rotline{font-size:clamp(20px,6.4vw,26px)}
-  #f-home .go{gap:6px}
   .jump{padding:14px 18px}
 
   /* ── READING SHEET ──
      Sits above the world and the header but below the tour bar, so a
      narrated stop stays visible and legible at the same time. */
-  #sheet{position:fixed;inset:0;z-index:110;background:var(--bg);
+  /* starts BELOW the header, never over it: hiding the header took Index,
+     Home, Tour and Hiring away with it and left the sheet's own back
+     button as the only control on the screen */
+  #sheet{position:fixed;left:0;right:0;bottom:0;
+    top:calc(48px + env(safe-area-inset-top));
+    z-index:110;background:var(--bg);
     display:flex;flex-direction:column;
     transform:translateY(100%);visibility:hidden;
     transition:transform .34s cubic-bezier(.4,0,.2,1),visibility 0s .34s}
   body.sheet-open{overscroll-behavior:none}
   body.sheet-open #sheet{transform:none;visibility:visible;
     transition:transform .34s cubic-bezier(.4,0,.2,1)}
-  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;
-    padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;
+  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;padding:10px 14px;
     border-bottom:1px solid var(--line);border-top:3px solid var(--ax);background:var(--bg)}
   .sh-back{background:none;border:1px solid var(--line-2);color:var(--ink);
     font-size:13px;font-weight:500;padding:10px 14px;min-height:44px;display:flex;
@@ -765,7 +771,17 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   .sh-body .metric b{font-size:34px}
   .sh-body .rec .r-body{font-size:14.5px;line-height:1.62}
   .sh-body .quote p{font-size:14.5px}
-  body.sheet-open .topbar{opacity:0;pointer-events:none;transition:opacity .2s}
+}
+/* Layout squeezes that only make sense on a genuinely narrow screen.
+   Separate from the block above so a phone in landscape keeps the sheet
+   and the tap targets without being forced into a one-column hero. */
+@media (pointer:coarse) and (max-width:900px){
+  #f-home .facts{grid-template-columns:1fr}   /* two made the longest fact wrap four times */
+  #f-home .fact{border-right:none;border-bottom:1px solid var(--line);padding:12px 0}
+  #f-home .fact:last-child{border-bottom:none}
+  #f-home h1{font-size:clamp(38px,13vw,54px)}
+  #f-home .rotline{font-size:clamp(20px,6.4vw,26px)}
+  #f-home .go{gap:6px}
 }
 
 /* ═══════════ MEASURE MODE (?measure=1) ═══════════
@@ -1786,7 +1802,15 @@ function safe(){
   /* while the tour narration bar is up it owns the bottom of the screen,
      so the camera fits frames into the space above it */
   const tourPad=(typeof touring!=='undefined'&&touring)?150:0;
-  return {t:wide?88:64, b:(wide?44:36)+tourPad, l:railReserves()?RAILW+40:(wide?40:14), r:wide?40:14};
+  /* The header used to be assumed 48px tall. On a notched phone it grows
+     by the safe-area inset, and the camera would then fit tiles into a
+     box that started underneath it. Measuring keeps desktop identical
+     (48 + 40 = 88, 48 + 16 = 64, the old constants) and stays correct
+     wherever the bar is taller. */
+  const bar=document.querySelector('.topbar');
+  const topH=bar?Math.round(bar.getBoundingClientRect().height)||48:48;
+  return {t:topH+(wide?40:16), b:(wide?44:36)+tourPad,
+          l:railReserves()?RAILW+40:(wide?40:14), r:wide?40:14};
 }
 function safeBox(){const s=safe();return{
   w:Math.max(innerWidth-s.l-s.r,200), h:Math.max(innerHeight-s.t-s.b,200),
@@ -1833,7 +1857,7 @@ const MIN_S=.45, MAX_S=1.5, PAD=1.06;
    rather than cached, so rotating a phone re-evaluates it. `pointer:
    coarse` is part of the test on purpose: a narrow desktop window must
    keep desktop behaviour. */
-function isTouch(){return matchMedia('(pointer:coarse) and (max-width:900px)').matches}
+function isTouch(){return matchMedia('(pointer:coarse)').matches}
 /* On a phone the floor has to drop, or a tall tile is clipped with no
    scroll to reach the rest of it — measured at .41 on the Workiva tile,
    under the .45 desktop floor. Reading happens in the sheet, so the
@@ -1957,8 +1981,12 @@ function closeSheet(){
 /* links inside the sheet behave like links; anything with data-fly
    navigates the map underneath and swaps the sheet's contents */
 document.getElementById('sheet').addEventListener('click',e=>{
+  /* nothing that happens inside the sheet is ever the world's business */
+  e.stopPropagation();
   if(touring)return;
-  if(e.target.closest('a[href]'))return;
+  const dl=e.target.closest('a[download]');
+  if(dl){e.preventDefault();downloadResume(dl);return}
+  if(e.target.closest('a[href]'))return;      // a real link stays a real link
   const t=e.target.closest('[data-fly]');
   if(!t)return;
   e.preventDefault();
@@ -2145,7 +2173,12 @@ document.addEventListener('click',e=>{
   if(T&&T.closest&&T.closest('[data-rawdl]'))return;
   /* overlays sit above the 3D world — a click inside one must never
      fall through to the geometric hit-test of what's behind it */
-  if(T.closest&&T.closest('#tourBar,#tourStart,#recruiter')){
+  /* Overlay clicks are identified by the ELEMENT they landed in, never
+     by a body class. The sheet's own handler closes the sheet before
+     this listener sees the same click, so a class test would already be
+     stale by now — the world would then geometrically hit-test the tap
+     and fly somewhere else, which read as "the button does nothing". */
+  if(T.closest&&T.closest('#tourBar,#tourStart,#recruiter,#sheet')){
     const odl=T.closest('a[download]');
     if(odl){e.preventDefault();downloadResume(odl)}
     return;
@@ -2461,6 +2494,9 @@ function applyRail(){
 function toggleRail(force){
   const want=typeof force==='boolean'?force:!railOpen;
   if(want===railOpen)return;
+  /* the rail sits under the sheet in the stack, so opening the index
+     while a sheet is up would slide it open behind an opaque panel */
+  if(want&&sheetId)closeSheet();
   railOpen=want;applyRail();
   rectsStale=true;
   if(innerWidth>1080){          // reserved space changed — recentre smoothly
