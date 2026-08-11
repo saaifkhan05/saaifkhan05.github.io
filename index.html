@@ -236,6 +236,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 [data-theme="light"] #f-home .fact .dot{background:#198038}
 @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(66,190,101,.4)}50%{box-shadow:0 0 0 4px transparent}}
 #f-home .fact .wk{color:var(--dimmer)}
+/* tabular figures: without them "09s" → "10s" changes width and nudges
+   the text beside it every single second */
+[data-live="grad-short"],[data-live="grad-out"]{font-variant-numeric:tabular-nums}
 @media(prefers-reduced-motion:reduce){#f-home .fact .dot{animation:none}}
 /* the stacked "Next" list — one line per upcoming step, date first */
 #f-home .fact .nx{display:block}
@@ -2388,12 +2391,22 @@ function dayOf(d){return new Date(d+'T00:00:00').getDate()}
 function gradLeft(){
   const ms=new Date(GRAD_AT).getTime()-Date.now();
   if(!(ms>0))return null;
-  const total=Math.floor(ms/6e4);                 // whole minutes
-  const d=Math.floor(total/1440), h=Math.floor((total%1440)/60), m=total%60;
+  const total=Math.floor(ms/1000);                       // whole seconds
+  const d=Math.floor(total/86400), h=Math.floor((total%86400)/3600),
+        m=Math.floor((total%3600)/60), s=total%60;
   const p=n=>String(n).padStart(2,'0');
-  if(d>0)return d+'d '+p(h)+'h '+p(m)+'m';
-  if(h>0)return h+'h '+p(m)+'m';
-  return m+'m';
+  /* anyone who has asked the OS for less motion gets minute resolution
+     instead: a digit changing every second is exactly the kind of
+     perpetual movement that setting exists to suppress */
+  if(reduce){
+    if(d>0)return d+'d '+p(h)+'h '+p(m)+'m';
+    if(h>0)return h+'h '+p(m)+'m';
+    return m+'m';
+  }
+  if(d>0)return d+'d '+p(h)+'h '+p(m)+'m '+p(s)+'s';
+  if(h>0)return h+'h '+p(m)+'m '+p(s)+'s';
+  if(m>0)return m+'m '+p(s)+'s';
+  return s+'s';
 }
 function nextChapter(){
   const t=todayISO();
@@ -2487,9 +2500,12 @@ function paintGrad(){
 function tickGrad(){
   clearTimeout(gradT);gradT=null;
   if(document.hidden)return;
-  if(!paintGrad())return;              // the day has come and gone; stop
-  const delay=60000-(Date.now()%60000)+250;
-  gradT=setTimeout(tickGrad,delay);
+  if(!paintGrad())return;              // the moment has passed; stop for good
+  /* aligned to the next real boundary rather than a flat interval from
+     load, so the digit turns over when a clock would turn it over and
+     re-aligns itself after the machine wakes from sleep */
+  const step=reduce?60000:1000;
+  gradT=setTimeout(tickGrad,step-(Date.now()%step)+20);
 }
 function stopGrad(){clearTimeout(gradT);gradT=null}
 renderStatus();renderBuilt();renderLive();tickGrad();
