@@ -237,7 +237,21 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(66,190,101,.4)}50%{box-shadow:0 0 0 4px transparent}}
 #f-home .fact .wk{color:var(--dimmer)}
 @media(prefers-reduced-motion:reduce){#f-home .fact .dot{animation:none}}
-#f-home .facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-2);margin-top:34px}
+/* the stacked "Next" list — one line per upcoming step, date first */
+#f-home .fact .nx{display:block}
+#f-home .fact .nx+.nx{margin-top:6px}
+#f-home .fact .nx-when{color:var(--dimmer);font-weight:400;margin-right:9px}
+/* REDACTED COMPANY — a fixed nine characters in a monospace face, so
+   the cell cannot change width while the glyphs cycle; a facts strip
+   that jitters reads as broken rather than deliberate. System mono is
+   used on purpose: no extra font request for one word. */
+.redact{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-weight:600;letter-spacing:.04em;white-space:nowrap;user-select:none;
+  color:var(--ax);font-size:.94em}
+/* three cells, not four — each one gets ~296px instead of ~222px, so
+   the longest value wraps to two lines like its neighbours instead of
+   four, and the strip is shorter as well as calmer */
+#f-home .facts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-2);margin-top:34px}
 #f-home .fact{padding:15px 20px;border-right:1px solid var(--line);font-size:12px;color:var(--dim)}
 #f-home .fact:first-child{padding-left:0}
 #f-home .fact:last-child{border-right:none;padding-right:0}
@@ -277,8 +291,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .cert:hover{color:var(--ax);border-color:var(--ax);background:var(--ax-tint)}
 
 /* ── DOSSIERS — editorial titles ── */
-.deep .pad{padding:30px 34px 30px}
-.deep.two .pad{display:grid;grid-template-columns:1.32fr .68fr;gap:30px;align-items:start}
+.deep .pad{padding:26px 30px 26px}
+/* a wider story column wraps to fewer lines, and every line saved is
+   height the camera does not have to zoom away */
+.deep.two .pad{display:grid;grid-template-columns:1.42fr .58fr;gap:26px;align-items:start}
 .deep .d-top{grid-column:1/-1}
 .deep .co{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 /* the company is the first thing to read on a dossier — it was set at 11px
@@ -290,11 +306,18 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .kind-project h2{color:var(--ax)}
 .deep .meta{font-size:12px;color:var(--dim);letter-spacing:.02em;
   padding-bottom:14px;border-bottom:1px solid var(--line-2);line-height:1.7}
+/* ── STAGE ONE — height reduction at unchanged width ──────────────
+   The camera fits a tile with min(safeW/w, safeH/h). At 1040px wide
+   the width term is never the binding one on a laptop; height is. So
+   every rule below buys vertical space without touching the tile's
+   width, which means no tile can collide with its neighbour and the
+   hand-placed map coordinates stay valid. Measure the result with
+   ?measure=1 — the readout flags anything still fitting under 0.85. */
 .deep h5{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;
-  color:var(--dim);margin:18px 0 9px;display:flex;align-items:center;gap:10px}
+  color:var(--dim);margin:13px 0 7px;display:flex;align-items:center;gap:10px}
 .deep .d-side h5:first-child,.deep .d-main h5:first-child{margin-top:2px}
 .deep h5::after{content:'';flex:1;height:1px;background:var(--line-2)}
-.deep p{font-size:14px;margin-bottom:10px;color:var(--dim);font-weight:300;line-height:1.68}
+.deep p{font-size:14px;margin-bottom:8px;color:var(--dim);font-weight:300;line-height:1.58}
 .deep p b{color:var(--ink);font-weight:600}
 .quote{border-left:3px solid var(--ax);padding:2px 0 2px 14px;margin:2px 0 4px}
 .quote p{font-style:italic;color:var(--ink);font-weight:300;margin-bottom:6px;font-size:13.5px;line-height:1.55}
@@ -321,6 +344,13 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .pgb.on{color:var(--bg);background:var(--ax);border-color:var(--ax)}
 .pgb[disabled]{opacity:.3;pointer-events:none}
 .strip{display:flex;gap:8px;margin-top:8px}
+/* A single 16:10 screenshot spanning the full story column renders
+   ~375px tall — on the densest dossiers that one image was the
+   largest block on the tile. Capping a lone figure keeps it legible
+   while giving back most of that height; strips of two or three are
+   already narrow enough to leave alone. */
+.d-main .strip:has(> .shot:only-child){max-width:430px}
+@supports not selector(:has(*)){.d-main .strip{max-width:430px}}
 /* real uploaded imagery — same footprint as the .ph placeholders */
 .shot{flex:1;min-width:0;border:1px solid var(--line-2);background:var(--raise);overflow:hidden;
   display:flex;flex-direction:column}
@@ -651,6 +681,23 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   #field{display:none}
 }
 
+/* ═══════════ MEASURE MODE (?measure=1) ═══════════
+   A dev instrument, never shown to a visitor. Lists every tile's real
+   rendered size and the scale the camera has to use to fit it, so the
+   readability question can be answered with numbers instead of
+   opinions. Anything under 0.85 renders 14px body text below ~12px. */
+#measure{position:fixed;right:0;top:48px;bottom:0;width:330px;z-index:400;overflow-y:auto;
+  background:var(--bg);border-left:1px solid var(--line-2);padding:14px 16px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.5;
+  color:var(--dim)}
+#measure h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ax);
+  margin-bottom:4px;font-weight:700}
+#measure .mrow{display:grid;grid-template-columns:1fr auto;gap:2px 8px;
+  padding:7px 0;border-bottom:1px solid var(--line)}
+#measure .mid{color:var(--ink);font-weight:600}
+#measure .mdim{grid-column:1/-1;color:var(--dimmer)}
+#measure .ok{color:#42be65}#measure .warn{color:#f1c21b}#measure .bad{color:#fa4d56}
+#measure .msum{margin:10px 0 4px;padding-top:10px;border-top:1px solid var(--line-2);color:var(--dimmer)}
 /* ═══════════ PRINT ═══════════
    Ctrl/Cmd+P on a 3D canvas frozen mid-transform prints garbage. The
    whole world is dropped and a plain card is printed instead — the
@@ -776,9 +823,20 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
                on a line of its own — one element on the page, not two,
                and no sentence repeated twice -->
           <div class="fact"><span class="lbl" id="statusLbl">Now</span><b id="statusVal">Brand Sales Specialist Intern · IBM · New York City</b></div>
-          <div class="fact">Studying<b>BS, Management Information Systems · IT Sales Engineering track · UT Dallas</b></div>
-          <div class="fact">Based<b>Dallas, Texas</b></div>
-          <div class="fact">Graduating<b>December 2026</b></div>
+          <!-- "Next" replaced "Based · Dallas, Texas": the city is already
+               carried by the Now cell, by UT Dallas below, and by the
+               contact tile, whereas what happens after this role is the
+               question a recruiter actually has and nothing answered. -->
+          <!-- both future steps live here as one dated list rather than
+               taking a column each: they answer the same question, and
+               a fourth column would squeeze every cell back to ~222px -->
+          <div class="fact"><span class="lbl">Next</span><b data-live-html="next-list"></b></div>
+          <!-- "Studying" and "Graduating" were two cells asking the same
+               question. Merged: the date needs the school to mean
+               anything, and the school needs the date. The "IT Sales
+               Engineering track" detail moved to the UT Dallas dossier,
+               where someone who cares about it is already looking. -->
+          <div class="fact"><span class="lbl"><span data-live="grad-word">Graduating</span><span class="wk" data-live="grad-short"></span></span><b>December 2026 · BS, Management Information Systems · UT Dallas</b></div>
         </div>
         <div class="go">
           <button class="jump primary" data-fly="f-career">Roles →</button>
@@ -798,7 +856,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
         <div class="shead"><span class="snum">01</span><h2>Roles</h2></div>
         <div class="items">
           <button class="item ax-ibm" data-fly="f-ibm">
-            <div><div class="i-name"><span class="i-dot"></span>IBM — Brand Sales Specialist</div><div class="i-sub">New York, NY · May 2026 – Present · Internship</div></div><span class="i-go">Open →</span></button>
+            <div><div class="i-name"><span class="i-dot"></span>IBM — Brand Sales Specialist</div><div class="i-sub">New York, NY · <span data-live="ibm-range">May 2026 – present</span> · Internship</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-workiva" data-fly="f-workiva">
             <div><div class="i-name"><span class="i-dot"></span>Workiva — Sales Engineer Enablement</div><div class="i-sub">Dallas, TX · Jan – Jun 2026 · Internship</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-cisco" data-fly="f-cisco">
@@ -870,7 +928,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       style="width:560px;left:2800px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">04</span><h2>Get in touch</h2></div>
-        <div class="meta">Graduating December 2026 · always open to a conversation</div>
+        <div class="meta">Graduating December 2026<span data-live="grad-out"></span> · always open to a conversation</div>
         <a class="cbtn" href="mailto:saaifkhan05@gmail.com">
           <span class="ci">✉</span><span class="ct"><span>Email</span><b>saaifkhan05@gmail.com</b></span><span class="ca">→</span></a>
         <a class="cbtn" href="tel:+14695161440">
@@ -892,11 +950,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       data-depth="3" data-parent="f-career" data-ctx="ibm" data-fly="f-ibm"
       style="width:1040px;left:200px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
-        <div class="kindbar"><span class="k">Role</span><span class="w">Current · New York, NY</span></div>
+        <div class="kindbar"><span class="k">Role</span><span class="w"><span data-live="ibm-phase">Current</span> · New York, NY</span></div>
         <div class="d-top">
           <div class="co"><span class="co-mark">IBM</span><span class="f-tag">Brand Sales Specialist Intern</span></div>
           <h2>Five agencies inside <i>New York State</i></h2>
-          <div class="meta">Public Sector (SLED) · New York, NY · May 2026 – present</div>
+          <div class="meta">Public Sector (SLED) · New York, NY · <span data-live="ibm-range">May 2026 – present</span></div>
         </div>
         <div class="d-main">
           <h5>The story</h5>
@@ -927,11 +985,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       data-depth="3" data-parent="f-career" data-ctx="workiva" data-fly="f-workiva"
       style="width:1040px;left:1400px;top:200px;transform:translateZ(-1500px)">
       <div class="pad">
-        <div class="kindbar"><span class="k">Role</span><span class="w">Dallas, TX · incoming Aug 2026</span></div>
+        <div class="kindbar"><span class="k">Role</span><span class="w">Dallas, TX · <span data-live="wk-phase">incoming Aug 2026</span></span></div>
         <div class="d-top">
           <div class="co"><span class="co-mark">Workiva</span><span class="f-tag">Sales Engineer Enablement Intern</span></div>
           <h2>The platform <i>nobody opened</i></h2>
-          <div class="meta">Global Solutions Value Consulting · Dallas, TX · Jan – Jun 2026 · incoming Aug 2026</div>
+          <div class="meta">Global Solutions Value Consulting · Dallas, TX · Jan – Jun 2026 · <span data-live="wk-phase">incoming Aug 2026</span></div>
         </div>
         <div class="d-main">
           <h5>The story</h5>
@@ -987,9 +1045,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <figure class="shot"><img src="assets/photos/splunk-security-posture-demo-dashboard.jpeg"
               alt="Splunk security posture dashboard used in customer demos" loading="lazy">
               <figcaption>Core demo · security posture</figcaption></figure>
-            <figure class="shot"><img src="assets/photos/splunk-flightflow-delay-prediction-dashboard.jpeg"
-              alt="FlightFlow delay prediction dashboard built on Splunk MLTK" loading="lazy">
-              <figcaption>FlightFlow · delay prediction</figcaption></figure>
           </div>
         </div>
         <div class="d-side">
@@ -1577,7 +1632,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       <div class="tnode">
         <div class="twhen">Aug 2026 →</div><button class="tco" data-goto="f-utd">Back to Dallas · UT Dallas, final semester</button>
         <h4>The run-up</h4>
-        <p>This IBM chapter closes August 14. Then it's back to Dallas to finish the degree —
+        <p><span data-live="ibm-close">This IBM chapter closes August 14.</span> Then it's back to Dallas to finish the degree —
            graduating <b>December 2026</b> — while returning to Workiva as a
            <b>Sales Engineer Enablement Intern II</b>. Third company, second time back.</p>
         <button class="tbuilt" data-goto="f-workiva">Returning → <b>Workiva</b> · SE Enablement II</button>
@@ -2210,8 +2265,8 @@ let fieldRAF=0;
 function startField(){if(!reduce&&!fieldRAF&&!document.hidden)fieldRAF=requestAnimationFrame(tick)}
 function stopField(){if(fieldRAF){cancelAnimationFrame(fieldRAF);fieldRAF=0}}
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){stopField();if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
-  else{speed=targetSpeed=.3;startField()}
+  if(document.hidden){stopField();stopScramble();if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
+  else{speed=targetSpeed=.3;startField();armScramble()}
 });
 startField();
 
@@ -2255,11 +2310,20 @@ let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
    the next one takes over on its own — no stale "currently at…" line.
    BUILT is the last-updated date shown at the foot of the index. */
 const BUILT='2026-08-10';
+/* `what` is the full line used when a chapter is the current one;
+   `short` is the compact form used in the stacked "Next" list, where
+   two entries share one cell. `secret:true` means the company has not
+   been announced — the real name is never written here, only the
+   placeholder, so it cannot leak through view-source. */
 const CHAPTERS=[
-  {from:'2026-05-18',to:'2026-08-14',co:'IBM',
-   what:'Brand Sales Specialist Intern · IBM · New York City'},
+  {from:'2026-05-26',to:'2026-08-14',co:'IBM',
+   what:'Brand Sales Specialist Intern · IBM · New York City',
+   short:'Brand Sales Specialist · IBM'},
   {from:'2026-08-15',to:'2026-12-19',co:'Workiva',
-   what:'Sales Engineer Enablement Intern II · Workiva · Dallas'}
+   what:'Sales Engineer Enablement Intern II · Workiva · Dallas',
+   short:'SE Enablement Intern II · Workiva'},
+  {from:'2027-01-14',to:'2099-12-31',co:'█████████',secret:true,
+   what:'Full-time',short:'Full-time'}
 ];
 const GRAD='2026-12-19';
 function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',
@@ -2267,6 +2331,12 @@ function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',
 function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)}
 function todayISO(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4)
   .toISOString().slice(0,10)}
+/* the redacted span. The real name is never rendered — this ships the
+   placeholder and the scrambler only ever replaces it with noise. */
+function redactSpan(co,id){
+  return '<span class="redact"'+(id?' id="'+id+'"':'')+
+    ' aria-label="company not yet announced">'+co+'</span>';
+}
 function renderStatus(){
   const lbl=document.getElementById('statusLbl'),val=document.getElementById('statusVal');
   if(!lbl||!val)return;
@@ -2276,20 +2346,122 @@ function renderStatus(){
   if(now){
     const wk=Math.max(1,Math.ceil((daysBetween(now.from,t)+1)/7));
     lbl.innerHTML='<span class="dot"></span>Now <span class="wk">· week '+wk+'</span>';
-    val.textContent=now.what;
+    /* tense follows the cell: "joining" is right while it is ahead and
+       wrong the morning it starts, so a current chapter states it */
+    val.innerHTML=now.secret?redactSpan(now.co,'scramNow')+' · full-time':esc(now.what);
   }else if(next){
     lbl.innerHTML='<span class="dot"></span>Next <span class="wk">· '+fmtDate(next.from)+'</span>';
-    val.textContent=next.what;
+    val.innerHTML=next.secret?redactSpan(next.co,'scramNow')+' · full-time':esc(next.what);
   }else{
     lbl.innerHTML='<span class="dot"></span>Now';
     val.textContent='Graduated · open to what’s next';
   }
 }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function renderBuilt(){
   const el=document.getElementById('railFoot');if(!el)return;
   el.innerHTML='Updated '+fmtDate(BUILT)+'<br>Draft 8 · built by hand';
 }
-renderStatus();renderBuilt();
+
+/* ═══════════ DERIVED COPY ═══════════
+   Sentences that were true when they were typed and quietly stop being
+   true on a date: "Current", "May 2026 – present", "incoming Aug 2026",
+   "closes August 14". Each is now computed from the same CHAPTERS data
+   the home status uses, so the site cannot contradict itself the
+   morning a role starts or ends. Rendered once on load — nothing here
+   ticks, because none of it changes while someone is reading.
+   To add another: wrap the words in <span data-live="key"> and add the
+   key here. If a key is missing the original text is simply left. */
+function monthName(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long'})}
+function shortMonth(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',year:'numeric'})}
+function dayOf(d){return new Date(d+'T00:00:00').getDate()}
+/* One source of truth for "how far away is graduation". Months read as
+   stalling once it is close, so inside 45 days it switches to days, and
+   at zero it returns nothing rather than counting into the negative.
+   Both the home tile and the contact tile call this, so they can never
+   disagree — an earlier version had them saying "1 month" and "1 day"
+   on the same afternoon. */
+function awayFrom(iso){
+  const d=daysBetween(todayISO(),iso);
+  if(d<=0)return null;
+  if(d<=45)return {n:d,unit:d===1?'day':'days'};
+  const m=Math.max(2,Math.round(d/30.44));
+  return {n:m,unit:'months'};
+}
+function nextChapter(){
+  const t=todayISO();
+  return CHAPTERS.find(c=>c.from>t)||null;
+}
+function LIVE(){
+  const t=todayISO(), ibm=CHAPTERS[0], wk=CHAPTERS[1];
+  const started=x=>t>=x.from, ended=x=>t>x.to;
+  const nx=nextChapter();
+  return {
+    'ibm-phase': ended(ibm)?'Completed':(started(ibm)?'Current':'Incoming'),
+    'ibm-range': ended(ibm)
+      ? shortMonth(ibm.from).replace(/ \d{4}$/,'')+' – '+shortMonth(ibm.to)
+      : shortMonth(ibm.from)+' – present',
+    'wk-phase': ended(wk)?'completed '+shortMonth(wk.to)
+      : (started(wk)?'current':'incoming '+shortMonth(wk.from)),
+    'ibm-close': ended(ibm)
+      ? 'That IBM chapter closed in '+monthName(ibm.to)+'.'
+      : 'This IBM chapter closes '+monthName(ibm.to)+' '+dayOf(ibm.to)+'.',
+    'grad-word': awayFrom(GRAD)?'Graduating':'Graduated',
+    'grad-out': (()=>{const a=awayFrom(GRAD);
+      return a?' · '+(a.unit==='months'?'about ':'')+a.n+' '+a.unit+' out':''})(),
+    'grad-short': (()=>{const a=awayFrom(GRAD);return a?' · '+a.n+' '+a.unit:''})()
+  };
+}
+/* every chapter still ahead, oldest first, as one dated list */
+function nextListHTML(){
+  const t=todayISO();
+  const up=CHAPTERS.filter(c=>c.from>t);
+  /* nothing scheduled ahead. Repeating the current role here would just
+     duplicate the Now cell, so the honest answer is an open one. */
+  if(!up.length)return '<span class="nx" style="color:var(--dimmer)">Open to what’s next</span>';
+  return up.map((c,i)=>'<span class="nx"><span class="nx-when">'+
+    fmtDate(c.from).replace(/, \d{4}$/,'')+'</span>'+
+    (c.secret?'Joining '+redactSpan(c.co,'scramNext'+i)+' full-time':esc(c.short||c.what))+
+    '</span>').join('');
+}
+function renderLive(){
+  const map=LIVE();
+  document.querySelectorAll('[data-live]').forEach(el=>{
+    const v=map[el.dataset.live];
+    if(v!==undefined)el.textContent=v;
+  });
+  const HTML={'next-list':nextListHTML()};
+  document.querySelectorAll('[data-live-html]').forEach(el=>{
+    const v=HTML[el.dataset.liveHtml];
+    if(v!==undefined)el.innerHTML=v;
+  });
+  armScramble();
+}
+
+/* ── SCRAMBLE ──
+   The unannounced company reads as deliberately withheld rather than
+   missing. Fixed length so nothing reflows; stops dead on a hidden tab
+   and never starts under prefers-reduced-motion, matching how the
+   particle field is gated. */
+const GLYPHS='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&▚▞█▓▒░';
+let scramT=null;
+function scrambleEls(){return [...document.querySelectorAll('.redact')]}
+function armScramble(){
+  clearInterval(scramT);scramT=null;
+  if(reduce)return;
+  const els=scrambleEls();
+  if(!els.length)return;
+  const lens=els.map(e=>e.textContent.length);
+  scramT=setInterval(()=>{
+    els.forEach((e,i)=>{
+      let s='';
+      for(let k=0;k<lens[i];k++)s+=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+      e.textContent=s;
+    });
+  },110);
+}
+function stopScramble(){clearInterval(scramT);scramT=null}
+renderStatus();renderBuilt();renderLive();
 
 /* ═══════════ ROTATING HERO VERB ═══════════
    EDIT HERE — ROT_WORDS is the list that cycles in "I ____ solutions."
@@ -2574,6 +2746,42 @@ function armRecTl(){
   spine();
 }
 
+
+/* ═══════════ MEASURE MODE ═══════════
+   Open the site with ?measure=1 to see, for every tile, its rendered
+   size and the scale the camera needs to fit it on THIS screen. The
+   goal is scale ≥ .85; below that 14px body text lands under ~12px.
+   Nothing here runs for a normal visitor. */
+function runMeasure(){
+  if(!/[?&]measure=1/.test(location.search))return;
+  const panel=document.createElement('div');
+  panel.id='measure';
+  const b=safeBox();
+  let rows='',worst=1,over=0;
+  frames.filter(f=>f.classList.contains('deep')||f.classList.contains('cluster-frame'))
+    .forEach(f=>{
+      const w=f.offsetWidth,h=f.offsetHeight;
+      const sW=b.w/(w*PAD), sH=b.h/(h*PAD);
+      const s=Math.min(sW,sH,MAX_S);
+      const px=(14*s).toFixed(1);
+      const cls=s>=.85?'ok':s>=.7?'warn':'bad';
+      if(s<worst)worst=s;
+      if(s<.85)over++;
+      const limit=sH<sW?'height-bound':'width-bound';
+      rows+='<div class="mrow"><span class="mid">'+(NAMES[f.id]||f.id)+'</span>'+
+        '<span class="'+cls+'">'+s.toFixed(2)+'× · '+px+'px</span>'+
+        '<span class="mdim">'+w+'×'+h+'  ar '+(w/h).toFixed(2)+'  '+limit+
+        (sH<sW?'  · fits at '+Math.round(b.h/(PAD*.85))+'px tall':'')+'</span></div>';
+    });
+  panel.innerHTML='<h4>Measure · '+innerWidth+'×'+innerHeight+'</h4>'+
+    '<div class="mdim" style="margin-bottom:8px">safe box '+Math.round(b.w)+'×'+Math.round(b.h)+
+    ' · target ar '+(b.w/b.h).toFixed(2)+'</div>'+rows+
+    '<div class="msum">'+over+' tile(s) under .85 · worst '+worst.toFixed(2)+'×<br>'+
+    'max height for .85 on this screen: <b style="color:var(--ink)">'+
+    Math.round(b.h/(PAD*.85))+'px</b></div>';
+  document.body.appendChild(panel);
+}
+setTimeout(runMeasure,400);
 
 /* boot: honour a deep link if there is one, otherwise land on home →
    offer the tour on first visit (never when someone arrived via a
