@@ -586,12 +586,26 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .glitch{display:inline-block;min-width:330px;color:var(--ink);font-weight:600;
   letter-spacing:.1em;font-variant-ligatures:none}
 .glitch.hit{animation:glx .26s linear}
+.glitch-list{display:inline-block;color:inherit;font-weight:inherit;
+  letter-spacing:.02em;font-variant-ligatures:none}
+.glitch-list.hit{animation:glx .26s linear}
+.glitch-list.hit2{animation:glx2 .38s linear}
 @keyframes glx{
   0%  {text-shadow:2px 0 rgba(255,0,64,.7),-2px 0 rgba(0,229,255,.7);transform:translateX(0)}
   20% {text-shadow:-3px 0 rgba(255,0,64,.7),3px 0 rgba(0,229,255,.7);transform:translateX(2px)}
   45% {text-shadow:3px 0 rgba(255,0,64,.5),-3px 0 rgba(0,229,255,.5);transform:translateX(-2px)}
   70% {text-shadow:-1px 0 rgba(255,0,64,.4),1px 0 rgba(0,229,255,.4);transform:translateX(1px)}
   100%{text-shadow:none;transform:translateX(0)}
+}
+/* heavier variant — wider displacement, opacity stutter, extra shake frame */
+@keyframes glx2{
+  0%  {text-shadow:3px 0 rgba(255,0,64,.9),-3px 0 rgba(0,229,255,.9);transform:translateX(0);opacity:1}
+  15% {text-shadow:-5px 0 rgba(255,0,64,.8), 5px 0 rgba(0,229,255,.8);transform:translateX(-3px);opacity:.6}
+  30% {text-shadow: 4px 0 rgba(255,0,64,.7),-4px 0 rgba(0,229,255,.7);transform:translateX(3px);opacity:1}
+  50% {text-shadow:-6px 0 rgba(255,0,64,.6), 6px 0 rgba(0,229,255,.6);transform:translateX(-4px);opacity:.4}
+  65% {text-shadow: 3px 0 rgba(255,0,64,.5),-3px 0 rgba(0,229,255,.5);transform:translateX(2px);opacity:.8}
+  80% {text-shadow:-2px 0 rgba(255,0,64,.3), 2px 0 rgba(0,229,255,.3);transform:translateX(-1px);opacity:1}
+  100%{text-shadow:none;transform:translateX(0);opacity:1}
 }
 .lock-count{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:40px;font-weight:600;letter-spacing:-.02em;color:var(--ink);
@@ -1140,7 +1154,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <h2>At a glance</h2>
   <dl>
     <dt>Now</dt><dd>Brand Sales Specialist Intern · IBM · New York, NY</dd>
-    <dt>Next</dt><dd>Sales Engineer Enablement Intern II · Workiva · Aug 2026</dd>
+    <dt>Next</dt><dd>Sales Engineer Enablement Intern II · Workiva · Aug 31, 2026</dd>
     <dt>Studying</dt><dd>BS, Management Information Systems · IT Sales Engineering track · UT Dallas</dd>
     <dt>Graduating</dt><dd>December 2026</dd>
     <dt>Based</dt><dd>Dallas, Texas</dd>
@@ -1269,7 +1283,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <!-- first, not last: the list runs future → present → past, and the
                chapter nobody can read yet is the one worth opening with -->
           <button class="item ax-locked" data-fly="f-locked">
-            <div><div class="i-name"><span class="i-dot"></span><span class="redact" aria-label="company not yet announced">█████████</span> — Full-time</div><div class="i-sub">Starts January 2027 · <span data-live="reveal-days">unlocks August 21</span></div></div><span class="i-go">Locked</span></button>
+            <div><div class="i-name"><span class="i-dot"></span><span class="redact" aria-label="company not yet announced">█████████</span> — <span class="glitch-list" id="listRole">Solutions Engineer</span></div><div class="i-sub">Starts 2027 · <span data-live="reveal-days">unlocks August 21</span></div></div><span class="i-go">Locked</span></button>
           <button class="item ax-ibm" data-fly="f-ibm">
             <div><div class="i-name"><span class="i-dot"></span>IBM — Brand Sales Specialist</div><div class="i-sub">New York, NY · <span data-live="ibm-range">May 2026 – present</span> · Internship</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-workiva" data-fly="f-workiva">
@@ -3152,7 +3166,7 @@ const CHAPTERS=[
   {from:'2026-05-26',to:'2026-08-14',co:'IBM',city:'New York',tz:'America/New_York',
    what:'Brand Sales Specialist Intern · IBM · New York City',
    short:'Brand Sales Specialist · IBM'},
-  {from:'2026-08-15',to:'2026-12-19',co:'Workiva',city:'Dallas',tz:'America/Chicago',
+  {from:'2026-08-31',to:'2026-12-19',co:'Workiva',city:'Dallas',tz:'America/Chicago',
    what:'Sales Engineer Enablement Intern II · Workiva · Dallas',
    short:'SE Enablement Intern II · Workiva'},
   {from:'2027-01-14',to:'2099-12-31',co:'█████████',secret:true,city:'Dallas',tz:'America/Chicago',
@@ -3203,10 +3217,11 @@ function renderStatus(){
        wrong the morning it starts, so a current chapter states it */
     val.innerHTML=now.secret?redactSpan(now.co,'scramNow')+' · full-time':esc(now.what);
   }else if(next){
-    lbl.innerHTML='<span class="dot"></span>Next <span class="wk">· '+fmtDate(next.from)+'</span>';
-    val.innerHTML=next.secret
-      ?(revealed()?esc(REVEAL.co)+' · full-time':redactSpan(next.co,'scramNow')+' · full-time')
-      :esc(next.what);
+    const gap=CHAPTERS.some(c=>t>c.to); // at least one chapter has ended → we're between chapters
+    lbl.innerHTML='<span class="dot"></span>Now';
+    val.textContent=gap?'just chillin... for now.':(next.secret
+      ?(revealed()?REVEAL.co+' · full-time':'full-time')
+      :next.what);
   }else{
     lbl.innerHTML='<span class="dot"></span>Now';
     val.textContent='Graduated · open to what’s next';
@@ -3302,7 +3317,7 @@ function nextListHTML(){
      duplicate the Now cell, so the honest answer is an open one. */
   if(!up.length)return '<span class="nx" style="color:var(--dimmer)">Open to what’s next</span>';
   return up.map((c,i)=>'<span class="nx"><span class="nx-when">'+
-    fmtDate(c.from).replace(/, \d{4}$/,'')+'</span>'+
+    (c.secret?c.from.slice(0,4):shortMonth(c.from))+'</span>'+
     /* the home tile stays a plain statement of fact. The countdown lives
        on the locked tile and in the roles list, where someone has already
        chosen to look; putting it here too made one small cell carry two
@@ -3434,30 +3449,67 @@ function paintClock(){
 const LOCK_TITLES=['Solutions Engineer','Account Executive','Solutions Consultant',
   'Sales Engineer','Technical Account Manager','Presales Consultant','Solutions Architect',
   'Enterprise Account Executive','Technical Sales Specialist','Client Engineer'];
-let lockI=0,lockCycT=null,lockScrT=null;
-function lockCycle(){
-  const el=document.getElementById('lockRole'), f=document.getElementById('f-locked');
-  if(!el||!f||revealed()||!f.classList.contains('here'))return;
-  el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit');
-  const next=LOCK_TITLES[(lockI+1)%LOCK_TITLES.length];
+let lockCycT=null,listCycT=null;
+/* shared scramble engine — drives both the deep-dive tile and the list item.
+   heavy=true picks the glx2 animation and runs more frames so the text takes
+   longer to resolve, giving a convincing signal-breakup rather than a swap. */
+function runScramble(el,titles,iRef,scrTRef,heavy,onDone){
+  el.classList.remove('hit','hit2');void el.offsetWidth;
+  el.classList.add(heavy?'hit2':'hit');
+  const next=titles[(iRef.v+1)%titles.length];
   let n=0;
-  clearInterval(lockScrT);
-  /* SPEED — 26ms a frame over 8 frames, so the whole scramble is ~210ms
-     rather than the ~480ms it started at. Fast enough that it reads as a
-     signal breaking up and re-locking rather than as a loading state,
-     which is the difference between "unstable" and "slow". */
-  lockScrT=setInterval(()=>{
+  clearInterval(scrTRef.v);
+  const frames=heavy?15:8, frameMs=heavy?24:26;
+  scrTRef.v=setInterval(()=>{
     n++;
     let s='';
     for(let k=0;k<next.length;k++){
       s+= next[k]===' ' ? ' '
-        : (n>=4&&Math.random()<(n-3)/5) ? next[k]      // resolves left-to-rightish
+        : (n>=(frames-4)&&Math.random()<(n-(frames-5))/(frames-3)) ? next[k]
         : GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
     }
     el.textContent=s;
-    if(n>=8){clearInterval(lockScrT);lockI=(lockI+1)%LOCK_TITLES.length;
-      el.textContent=LOCK_TITLES[lockI]}
-  },26);
+    if(n>=frames){
+      clearInterval(scrTRef.v);
+      iRef.v=(iRef.v+1)%titles.length;
+      el.textContent=titles[iRef.v];
+      if(onDone)onDone();
+    }
+  },frameMs);
+}
+const _lockI={v:0},_lockScrT={v:null};
+function lockCycle(){
+  const el=document.getElementById('lockRole'), f=document.getElementById('f-locked');
+  if(!el||!f||revealed()||!f.classList.contains('here'))return;
+  const heavy=Math.random()<0.4;
+  /* 20% chance of a double-tap: a second scramble fires ~200ms after the
+     first lands, so the title flickers twice before settling */
+  const doubleTap=Math.random()<0.2;
+  runScramble(el,LOCK_TITLES,_lockI,_lockScrT,heavy,doubleTap?()=>{
+    setTimeout(()=>{
+      if(!revealed()&&document.getElementById('f-locked')?.classList.contains('here'))
+        runScramble(el,LOCK_TITLES,_lockI,_lockScrT,false,null);
+    },180);
+  }:null);
+  /* random self-rescheduling: 800–2400ms so it never becomes a metronome */
+  clearTimeout(lockCycT);
+  lockCycT=setTimeout(()=>{if(!document.hidden)lockCycle()},800+Math.random()*1600);
+}
+/* list item — same engine, always running regardless of focused tile,
+   on its own independent random cadence so the two never sync up */
+const _listI={v:0},_listScrT={v:null};
+function listCycle(){
+  const el=document.getElementById('listRole');
+  if(!el||revealed())return;
+  const heavy=Math.random()<0.4;
+  const doubleTap=Math.random()<0.2;
+  runScramble(el,LOCK_TITLES,_listI,_listScrT,heavy,doubleTap?()=>{
+    setTimeout(()=>{
+      if(!revealed())runScramble(el,LOCK_TITLES,_listI,_listScrT,false,null);
+    },180);
+  }:null);
+  /* 900–2800ms, fully independent of lockCycle's cadence */
+  listCycT=setTimeout(()=>{if(!document.hidden)listCycle()},900+Math.random()*1900);
 }
 /* the whole-tile dropout. Randomised interval so it never becomes a
    metronome you can predict, and the title breaks up with everything
@@ -3477,18 +3529,20 @@ function scheduleFx(){
     5000+Math.random()*5000);
 }
 function startLock(){
-  clearInterval(lockCycT);
+  clearTimeout(lockCycT);clearTimeout(listCycT);
   const wh=document.getElementById('lockWhen');
   if(wh)wh.textContent=new Date(REVEAL_AT).toLocaleString('en-US',
     {month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
   if(reduce||revealed())return;
-  /* ~210ms glitching, ~1.2s legible, repeat. Long enough to read the
-     title it lands on, short enough that it never sits still. */
-  lockCycT=setInterval(()=>{if(!document.hidden)lockCycle()},1400);
+  /* both use random self-rescheduling timeouts now; kick them off with
+     different initial delays so they start out of phase */
+  lockCycT=setTimeout(()=>{if(!document.hidden)lockCycle()},300+Math.random()*800);
+  listCycT=setTimeout(()=>{if(!document.hidden)listCycle()},900+Math.random()*1200);
   scheduleFx();
 }
-function stopLock(){clearInterval(lockCycT);clearInterval(lockScrT);clearTimeout(lockFxT);
-  lockCycT=lockScrT=lockFxT=null;
+function stopLock(){clearTimeout(lockCycT);clearInterval(_lockScrT.v);clearTimeout(lockFxT);
+  clearTimeout(listCycT);clearInterval(_listScrT.v);
+  lockCycT=_lockScrT.v=lockFxT=listCycT=_listScrT.v=null;
   const f=document.getElementById('f-locked');if(f)f.classList.remove('fx')}
 
 /* ── ONE TICKER FOR EVERYTHING LIVE ──
