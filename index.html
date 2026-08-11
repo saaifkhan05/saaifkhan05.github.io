@@ -2064,9 +2064,9 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 <!-- ══ GUIDED TOUR — start offer + narration bar ══ -->
 <div id="tourStart" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Guided tour offer">
   <div class="ts-box">
-    <h2>Sit back — I'll drive<i>.</i></h2>
-    <p>This site is a map, and the camera flies it. Give it a minute: every section,
-       one deep dive, the whole story — narrated. Pause, skip, or take the wheel any time.</p>
+    <h2>Hey, I'm saaif-kick<i>.</i></h2>
+    <p>Yes, like sidekick — I'll take it. I fly the camera and narrate while you sit back:
+       every section, one deep dive, the whole story. Pause, skip, or take the wheel any time.</p>
     <div class="ts-go">
       <button class="tbtn" id="tsPlay" onclick="tourPlay()">▶ Play the tour</button>
       <button class="tbtn ghost" onclick="dismissTourStart()">Explore on my own</button>
@@ -2085,7 +2085,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 </div>
 
 <div id="tourBar" role="region" aria-label="Guided tour narration">
-  <div class="tw"><span>Guided tour</span><span class="n" id="tourN"></span></div>
+  <div class="tw"><span>saaif-kick</span><span class="n" id="tourN"></span></div>
   <div id="tourCap" onclick="tourSkipType()" title="Click to show the whole caption"></div>
   <div class="thow" id="tourHow"></div>
   <div class="tb-ctl">
@@ -3598,18 +3598,18 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(_){}}
    manager should not sit through the same seven stops. TOUR is whatever
    route is currently loaded; setTourRoute rebuilds it and its dots. */
 const TOUR_CAP={
- 'f-home':      "Hi, I'm Saaif — a technical seller. Give me a minute and I'll show you the whole map.",
- 'f-career':    "Four years, five roles, one thesis: learn every seat at the table. Founder, engineer, consultant, enabler, seller.",
- 'f-ibm':       "The current chapter — IBM, New York public sector. Real territory inside a 150+ agency account, six opportunities moved forward.",
- 'f-workiva':   "Before that, Workiva. A platform 230 sales engineers were quietly ignoring, rebuilt around what the data said, then defended to a room of ninety of them.",
- 'f-ebay':      "And before any of it, a business I ran solo: a hundred thousand a year, 2,500 transactions, and nobody covering a bad month.",
- 'f-projects':  "I don't just carry the bag — I understand what's inside it. Six projects, each born from a real problem in a real role.",
- 'f-kdr':       "Like this one. Close plans took sellers three hours; my AI engine does it in minutes, inside the workflow they already use.",
- 'f-flightflow':"Splunk, summer 2025. Four live data feeds, a model at 89% accuracy, and an alerts engine — I demoed it live to 32 senior leaders.",
- 'f-site':      "And this one: the site you're inside. One file, no dependencies, and a 3D engine that had to stop trusting the browser to work at all.",
- 'f-recs':      "Don't take my word for it. Managers, mentors, and teammates, in their own words.",
- 'f-person':    "Off the clock: pickleball, community, and the parts of me that never fit on a resume.",
- 'f-contact':   "That's the tour — the resume lives right here whenever you want it. Taking you back home; everything else is one click deep."
+ 'f-home':      "I'm saaif-kick — his sidekick, obviously. Stick with me for a minute and I'll fly you through Saaif's whole map.",
+ 'f-career':    "Here's the shape of it: four years, five roles, one thesis. Saaif keeps taking a different seat at the table — founder, engineer, consultant, enabler, seller — before landing on which one he wanted permanently.",
+ 'f-ibm':       "This is where he is right now: IBM, working New York's public-sector account. Real territory across 150+ agencies, and six opportunities he's personally moved forward.",
+ 'f-workiva':   "Before IBM, it was Workiva. He inherited a toolkit 230 sales engineers had quietly stopped using, rebuilt it around what actually worked, then stood in front of ninety of them and defended every call.",
+ 'f-ebay':      "Before any job title at all, there was a business he ran by himself — about a hundred thousand dollars a year, 2,500 transactions, nobody to cover for him on a bad month.",
+ 'f-projects':  "This wing is proof he doesn't just carry the bag — he knows what's in it. Six projects, and every one of them started as a real problem inside a real job.",
+ 'f-kdr':       "Take this one: close plans used to eat three hours of a seller's day. The tool Saaif pushed to get built does it in minutes, without anyone leaving the workflow they already live in.",
+ 'f-flightflow':"Splunk, summer 2025. Four live data feeds, a model running at 89% accuracy, and an alerts engine on top — he stood up and demoed the whole thing to 32 senior leaders.",
+ 'f-site':      "Meta moment: this is the site you're standing in right now, narrated by yours truly. One file, zero dependencies, and a 3D engine that had to stop trusting the browser to run this smoothly.",
+ 'f-recs':      "I'm just a bot, so don't take my word for any of this. Here's what his managers, mentors, and teammates said when nobody told them what to say.",
+ 'f-person':    "Off the clock, it's pickleball, showing up for his community, and the parts of Saaif that a resume was never built to hold.",
+ 'f-contact':   "And that's everything I've got. The resume's sitting right here if you want the short version — I'll drop you back home now, and anything else on the map is one click away."
 };
 const TOUR_DEFAULT=['f-home','f-career','f-ibm','f-projects','f-kdr','f-person','f-contact'];
 let TOUR=[];
