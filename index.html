@@ -109,34 +109,57 @@
   --ax:#78a9ff; --ctx:#a8a8a8;
   --ax-tint:color-mix(in srgb,var(--ax) 14%,transparent);
   --ax-tint2:color-mix(in srgb,var(--ax) 26%,transparent);
-  --gridln:color-mix(in srgb,var(--dimmer) 14%,transparent);
+  /* Kept deliberately below the level it can be "seen" at, because it sits
+     directly behind body copy. Pushing it up to 20% did make projects
+     unmistakable and made them harder to read, which is the wrong trade on
+     the pages someone is meant to actually read. The kind distinction is
+     carried by the ticked edge rule, the ■/◆ mark and the accent title —
+     none of which touch text contrast. This is texture, not signal. */
+  --gridln:color-mix(in srgb,var(--dimmer) 10%,transparent);
   --rail:280px;
+  /* published by the camera before every flight — the arrival ring and
+     the content stagger key off the real duration of THIS move, not a
+     hard-coded guess that only matched one distance. */
+  --fdur:1.1s;
 }
 [data-theme="light"]{
   --bg:#ffffff; --surface:#f4f4f4; --raise:#e0e0e0;
   --line:#e0e0e0; --line-2:#c6c6c6;
   --ink:#161616; --dim:#525252; --dimmer:#8d8d8d;
   --ax:#0f62fe;
-  --gridln:color-mix(in srgb,var(--dimmer) 16%,transparent);
+  --gridln:color-mix(in srgb,var(--dimmer) 11%,transparent);
 }
 .ax-ibm{--ax:#78a9ff}     .ax-workiva{--ax:#66cc66} .ax-cisco{--ax:#ff7a33}
 .ax-usrc{--ax:#33b1ff}    .ax-ebay{--ax:#ff6f68}    .ax-utd{--ax:#ff9a54}
 .ax-akpsi{--ax:#f1c21b}   .ax-contact{--ax:#be95ff} .ax-person{--ax:#3ddbd9}
 .ax-recs{--ax:#ff7eb6}
+/* THIS SITE — deliberately the only monochrome tile on the map. Every
+   other accent belongs to a company; this one belongs to no client, so
+   it takes the ink itself (Gray 10 on Gray 100, Gray 100 on White).
+   Still Carbon, and unmistakable from across the map. */
+.ax-site{--ax:#f4f4f4}
+/* THE LOCKED CHAPTER — the only tile with no colour of its own. Every
+   other role carries its company's hue; this one has no company it is
+   allowed to name, so it has no hue to carry. The absence IS the
+   redaction, and the day the name lands the colour lands with it. */
+.ax-locked{--ax:#6f6f6f}
 [data-theme="light"] .ax-ibm{--ax:#0f62fe}     [data-theme="light"] .ax-workiva{--ax:#2e7d32}
 [data-theme="light"] .ax-cisco{--ax:#cc5200}   [data-theme="light"] .ax-usrc{--ax:#0072c3}
 [data-theme="light"] .ax-ebay{--ax:#e53238}    [data-theme="light"] .ax-utd{--ax:#c25f10}
 [data-theme="light"] .ax-akpsi{--ax:#8e6a00}   [data-theme="light"] .ax-contact{--ax:#8a3ffc}
 [data-theme="light"] .ax-person{--ax:#007d79}  [data-theme="light"] .ax-recs{--ax:#d02670}
+[data-theme="light"] .ax-site{--ax:#161616}
+[data-theme="light"] .ax-locked{--ax:#8d8d8d}
 [data-ctx="ibm"]{--ctx:#78a9ff}     [data-ctx="workiva"]{--ctx:#66cc66} [data-ctx="cisco"]{--ctx:#ff7a33}
 [data-ctx="usrc"]{--ctx:#33b1ff}    [data-ctx="ebay"]{--ctx:#ff6f68}    [data-ctx="utd"]{--ctx:#ff9a54}
 [data-ctx="akpsi"]{--ctx:#f1c21b}   [data-ctx="contact"]{--ctx:#be95ff} [data-ctx="person"]{--ctx:#3ddbd9}
-[data-ctx="recs"]{--ctx:#ff7eb6}
+[data-ctx="recs"]{--ctx:#ff7eb6}   [data-ctx="site"]{--ctx:#f4f4f4}   [data-ctx="locked"]{--ctx:#8d8d8d}
 [data-theme="light"][data-ctx="ibm"]{--ctx:#0f62fe}     [data-theme="light"][data-ctx="workiva"]{--ctx:#2e7d32}
 [data-theme="light"][data-ctx="cisco"]{--ctx:#cc5200}   [data-theme="light"][data-ctx="usrc"]{--ctx:#0072c3}
 [data-theme="light"][data-ctx="ebay"]{--ctx:#e53238}    [data-theme="light"][data-ctx="utd"]{--ctx:#c25f10}
 [data-theme="light"][data-ctx="akpsi"]{--ctx:#8e6a00}   [data-theme="light"][data-ctx="contact"]{--ctx:#8a3ffc}
 [data-theme="light"][data-ctx="person"]{--ctx:#007d79}  [data-theme="light"][data-ctx="recs"]{--ctx:#d02670}
+[data-theme="light"][data-ctx="site"]{--ctx:#161616}   [data-theme="light"][data-ctx="locked"]{--ctx:#6f6f6f}
 
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -154,7 +177,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
    silently die. Zero clip-path in this file; filter only on .passed. */
 .viewport{position:fixed;inset:0;overflow:hidden;z-index:10;perspective:1400px;perspective-origin:50% 50%}
 #tilt{position:absolute;inset:0;transform-style:preserve-3d}
-#world{position:absolute;top:0;left:0;width:7800px;height:7000px;transform-style:preserve-3d;
+#world{position:absolute;top:0;left:0;width:8600px;height:7000px;transform-style:preserve-3d;
   transform-origin:0 0;transition:transform 1.3s cubic-bezier(.6,.03,.13,1)}
 
 /* PERF: `background` and `box-shadow` transitions here fired on all 17
@@ -172,11 +195,34 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .kind-hub{border-top:3px solid var(--ax)}
 #f-home{border-top:3px solid var(--blue)}
 .kind-role{border-left:3px solid var(--ax)}
+/* ── ROLE vs PROJECT — three signals, none of them subtle ────────────
+   The complaint was that the two still read alike. Draft 7 encoded kind
+   in the SILHOUETTE (chamfered corners cut in different places); draft 8
+   dropped that for Carbon's sharp 90°, which was right for the brand and
+   removed the strongest cue. These put the difference back without a
+   single rounded or clipped edge:
+     edge     · role's 3px left rule is solid, the project's is ticked
+     glyph    · ■ role / ◆ project, the same two marks the cross-link
+                buttons already use, so the map and the links agree
+     title    · role in ink, project in the accent
+   All three are readable across the room and none of them sits behind a
+   word of body copy. The grid texture is a fourth, faint hint — see
+   --gridln for why it stays quiet.
+   Neither pseudo-element may take filter or clip-path (both flatten an
+   element out of preserve-3d and silently kill every click inside it),
+   and both are pointer-events:none. */
 .kind-project{
   background:
-    repeating-linear-gradient(0deg,transparent 0 31px,var(--gridln) 31px 32px),
-    repeating-linear-gradient(90deg,transparent 0 31px,var(--gridln) 31px 32px),
+    repeating-linear-gradient(0deg,transparent 0 27px,var(--gridln) 27px 28px),
+    repeating-linear-gradient(90deg,transparent 0 27px,var(--gridln) 27px 28px),
     var(--surface)}
+.kind-project::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  pointer-events:none;
+  background:repeating-linear-gradient(180deg,var(--ax) 0 13px,transparent 13px 24px)}
+/* only the two-column dossiers carry the mark: the personal and
+   recommendation tiles reuse .kind-role for layout, not for meaning */
+.deep.two.kind-role .kindbar .k::before{content:'■';margin-right:9px;font-size:9px;vertical-align:1px}
+.kind-project .kindbar .k::before{content:'◆';margin-right:9px;font-size:9px;vertical-align:1px}
 .frame.fog{opacity:.25}
 /* PERF: `filter:blur(10px)` here cost a real offscreen blur pass on a
    large element that was already opacity:0 — invisible work, every
@@ -191,8 +237,35 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
    exactly when the flight is still settling. Same look, but now a
    static ring whose OPACITY fades, which the compositor handles free. */
 .frame.here::after{content:'';position:absolute;inset:-1px;pointer-events:none;
-  box-shadow:0 0 0 5px var(--ax-tint2);animation:arrive 1s .8s both}
+  box-shadow:0 0 0 5px var(--ax-tint2);animation:arrive .9s var(--fdur) both}
 @keyframes arrive{0%{opacity:1}100%{opacity:0}}
+
+/* ── ARRIVAL COMPOSITION ──────────────────────────────────────────────
+   The destination tile used to be fully painted before the camera even
+   left, so a flight read as a teleport: the same page, bigger. Its top
+   level blocks now hold back and compose in, staggered.
+
+   TIMING — this overlaps the flight, it does not queue behind it. The
+   first version waited the FULL --fdur before anything appeared, which
+   meant flying toward a visibly empty box for up to 1.7s and only then
+   starting a 400ms stagger: over two seconds before the last block
+   landed, most of it spent staring at nothing. Starting at 45% of the
+   flight means the tile is resolving as the camera closes on it and is
+   whole by the time it settles, which is both faster and a better
+   description of what is happening. Halved again by a shorter step and
+   a shorter fade.
+
+   Only opacity and transform, so it composites and costs no layout.
+   The mobile sheet clones .pad outside .frame.here, so it is untouched. */
+.frame.here .pad>*{
+  animation-name:frIn;animation-duration:.30s;animation-fill-mode:both;
+  animation-timing-function:cubic-bezier(.33,1,.68,1);
+  animation-delay:calc(var(--fdur) * .45)}
+.frame.here .pad>*:nth-child(2){animation-delay:calc(var(--fdur) * .45 + 45ms)}
+.frame.here .pad>*:nth-child(3){animation-delay:calc(var(--fdur) * .45 + 90ms)}
+.frame.here .pad>*:nth-child(4){animation-delay:calc(var(--fdur) * .45 + 130ms)}
+.frame.here .pad>*:nth-child(n+5){animation-delay:calc(var(--fdur) * .45 + 165ms)}
+@keyframes frIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── TYPE — editorial (8B) ── */
 .f-tag{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;
@@ -417,6 +490,142 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .metric span{font-size:11px;font-weight:500;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
 .tbd{font-size:10.5px;font-weight:500;color:var(--dimmer);letter-spacing:.1em;
   text-transform:uppercase;margin-top:10px;display:block;line-height:1.6}
+/* ═══════════ THE LOCKED CHAPTER ═══════════
+   A sealed tile. Everything here is built from text-shadow, transform and
+   gradients — NOT from filter or clip-path, both of which flatten an
+   element out of preserve-3d and silently kill every click inside the
+   world (see the pointer-engine note). The scanline drift only runs while
+   this tile is the focused one, so a decorative background animation is
+   never repainting on a tile nobody is looking at. */
+.kind-locked{border-left:3px solid var(--line-2)}
+.kind-locked::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,
+    color-mix(in srgb,var(--dimmer) 10%,transparent) 2px 3px)}
+.kind-locked.here::before{animation:scan 9s linear infinite}
+@keyframes scan{to{background-position:0 300px}}
+
+/* ── LOSS OF SIGNAL ──────────────────────────────────────────────────
+   Every 5–10 seconds the whole tile drops out for ~620ms: the content
+   tears sideways, the type splits into colour channels, interference
+   bands roll through it and the border flashes. It only ever runs on
+   this one tile, only while it is the focused one, and never under
+   prefers-reduced-motion.
+   Two hard constraints shaped how it is built:
+     · the .frame's own transform carries its translateZ position in the
+       3D world. Touching it would fling the tile out of the map, so the
+       tearing is applied to .pad INSIDE the frame instead, and the frame
+       itself only ever animates border-color.
+     · no filter and no clip-path anywhere, per the pointer-engine rule.
+       The channel split is text-shadow; the bands are a gradient on a
+       pointer-events:none overlay moved with transform and opacity.
+   steps(1,end) is doing real work here — it snaps between keyframes
+   instead of interpolating, which is the difference between a digital
+   fault and a smooth wobble. */
+.lockfx{position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:repeating-linear-gradient(0deg,
+    transparent 0 5px, rgba(255,0,64,.17) 5px 8px,
+    transparent 8px 17px, rgba(0,229,255,.14) 17px 20px)}
+.kind-locked.fx .lockfx{animation:fxVeil .62s steps(1,end)}
+@keyframes fxVeil{
+  0%,100%{opacity:0;transform:none}
+  8%  {opacity:1;transform:translateY(-9px)}
+  20% {opacity:.45;transform:translateY(14px)}
+  34% {opacity:1;transform:translateY(-4px)}
+  50% {opacity:0}
+  62% {opacity:.9;transform:translateY(11px)}
+  76% {opacity:0}
+  88% {opacity:.55;transform:translateY(-6px)}
+}
+.kind-locked.fx .pad{animation:fxTear .62s steps(1,end)}
+@keyframes fxTear{
+  0%,100%{transform:none;text-shadow:none;opacity:1}
+  8%  {transform:translate(-8px,2px) skewX(-1.6deg);opacity:.88;
+       text-shadow:3px 0 rgba(255,0,64,.85),-3px 0 rgba(0,229,255,.85)}
+  16% {transform:translate(7px,-1px);text-shadow:-4px 0 rgba(255,0,64,.7),4px 0 rgba(0,229,255,.7)}
+  26% {transform:none;text-shadow:none}
+  38% {transform:translate(-4px,0) skewX(.9deg);opacity:.94;
+       text-shadow:2px 0 rgba(255,0,64,.6),-2px 0 rgba(0,229,255,.6)}
+  48% {transform:translate(9px,1px);opacity:.8}
+  58% {transform:none;text-shadow:none}
+  70% {transform:translate(-6px,-2px);text-shadow:-3px 0 rgba(255,0,64,.75),3px 0 rgba(0,229,255,.75)}
+  80% {transform:translate(3px,0);opacity:.9}
+  92% {transform:translate(-2px,0);text-shadow:1px 0 rgba(255,0,64,.4),-1px 0 rgba(0,229,255,.4)}
+}
+/* the frame may animate border-color and NOTHING else — see above */
+.kind-locked.fx{animation:fxEdge .62s steps(1,end)}
+@keyframes fxEdge{
+  0%,100%{border-color:var(--line-2)}
+  8%  {border-color:#ff0040}
+  26% {border-color:var(--line-2)}
+  38% {border-color:#00e5ff}
+  58% {border-color:var(--line-2)}
+  70% {border-color:#ff0040}
+  92% {border-color:#00e5ff}
+}
+/* the disclaimer. Half a second of a page tearing itself apart reads as
+   a broken laptop unless something on screen says otherwise. */
+.fxnote{font-size:11px;font-weight:500;letter-spacing:.02em;color:var(--dimmer);
+  margin:-4px 0 14px;display:flex;align-items:center;gap:8px}
+.fxnote b{color:#ff0040;font-weight:600;letter-spacing:.16em;font-size:9.5px;
+  text-transform:uppercase;border:1px solid currentColor;padding:2px 6px}
+[data-theme="light"] .fxnote b{color:#da1e28}
+@media(prefers-reduced-motion:reduce){
+  .kind-locked.fx .lockfx,.kind-locked.fx .pad,.kind-locked.fx{animation:none}
+  .fxnote{display:none}
+}
+.lockhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.lockseal{font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--bg);background:var(--dimmer);padding:5px 10px}
+.lockco{font-weight:300;font-size:38px;letter-spacing:-.02em;margin:12px 0 6px;line-height:1.1}
+.lockco .redact{font-size:.92em}
+.lockrole{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dimmer);margin-bottom:12px}
+/* the title cycles through every name this job goes by. min-width stops
+   a shorter title from reflowing the tile mid-cycle, which inside a 3D
+   subtree costs a real layout pass on every character */
+.glitch{display:inline-block;min-width:330px;color:var(--ink);font-weight:600;
+  letter-spacing:.1em;font-variant-ligatures:none}
+.glitch.hit{animation:glx .26s linear}
+@keyframes glx{
+  0%  {text-shadow:2px 0 rgba(255,0,64,.7),-2px 0 rgba(0,229,255,.7);transform:translateX(0)}
+  20% {text-shadow:-3px 0 rgba(255,0,64,.7),3px 0 rgba(0,229,255,.7);transform:translateX(2px)}
+  45% {text-shadow:3px 0 rgba(255,0,64,.5),-3px 0 rgba(0,229,255,.5);transform:translateX(-2px)}
+  70% {text-shadow:-1px 0 rgba(255,0,64,.4),1px 0 rgba(0,229,255,.4);transform:translateX(1px)}
+  100%{text-shadow:none;transform:translateX(0)}
+}
+.lock-count{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:40px;font-weight:600;letter-spacing:-.02em;color:var(--ink);
+  font-variant-numeric:tabular-nums;line-height:1.05;margin-bottom:6px}
+.lock-when{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer)}
+.lock-note{font-size:12.5px!important;color:var(--dimmer)!important;margin-top:16px!important;
+  padding-top:13px;border-top:1px solid var(--line)}
+/* unlocked: the seal turns blue, the glitch stops, the colour arrives */
+.kind-locked.open{border-left-color:var(--blue)}
+.kind-locked.open::before{display:none}
+.kind-locked.open .lockseal{background:var(--blue);color:#fff}
+.kind-locked.open .glitch{color:var(--blue)}
+@media(prefers-reduced-motion:reduce){
+  .kind-locked.here::before{animation:none}
+  .glitch.hit{animation:none}
+}
+
+/* ── LOCAL CLOCKS — the useful number is the difference ── */
+.clock{margin:12px 0 14px;padding:11px 13px;border:1px solid var(--line);background:var(--bg)}
+.clock .c-now{font-size:13px;color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums;line-height:1.5}
+.clock .c-now b{color:var(--ax);font-weight:600}
+.clock .c-say{font-size:11.5px;color:var(--dim);font-weight:300;line-height:1.5;margin-top:4px}
+
+/* ── LEDGER — cost on the left, fix on the right ──
+   Only the site's own case study uses this. A table would have been the
+   obvious choice and would have cost ~90px of tile height in borders and
+   header row alone; two columns of plain text says the same thing. */
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;margin:2px 0 4px;
+  border-top:1px solid var(--line)}
+.ledger>div{padding:9px 0;border-bottom:1px solid var(--line);font-size:12px;
+  line-height:1.5;color:var(--dim);font-weight:300}
+.ledger>div:nth-child(odd){color:var(--dimmer)}
+.ledger>div b{color:var(--ink);font-weight:600}
+.ledger>div i{font-style:normal;color:var(--ax);font-weight:600}
 
 .cbtn{display:flex;align-items:center;gap:14px;width:100%;text-decoration:none;
   border:1px solid var(--line-2);background:none;color:var(--ink);padding:13px 15px;margin-top:8px;
@@ -540,13 +749,48 @@ body.rail-open .rail{transform:none}
   .deep.two .pad{grid-template-columns:1fr;gap:16px}
   .shead h2{font-size:34px}
 }
-/* ═══════════ GUIDED TOUR ═══════════ */
-#tourStart{position:fixed;inset:0;z-index:250;display:flex;align-items:center;justify-content:center;
+/* ═══════════ GUIDED TOUR + AUDIENCE LENS ═══════════ */
+#tourStart,#lensPick{position:fixed;inset:0;z-index:250;display:flex;align-items:center;justify-content:center;
   background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .45s,visibility 0s .45s}
-#tourStart.on{opacity:1;visibility:visible;transition:opacity .45s}
+#tourStart.on,#lensPick.on{opacity:1;visibility:visible;transition:opacity .45s}
 .ts-box{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue);
   padding:40px 46px;max-width:470px;margin:0 18px;transform:translateY(14px);transition:transform .45s}
-#tourStart.on .ts-box{transform:none}
+#tourStart.on .ts-box,#lensPick.on .ts-box{transform:none}
+
+/* ── AUDIENCE LENS — one question, asked once ──
+   Four answers, each a full-width row rather than a chip: the subtitle is
+   what makes the choice obvious, and a chip has nowhere to put it. */
+.lens-go{display:flex;flex-direction:column;gap:7px}
+.lensb{display:flex;align-items:baseline;gap:12px;width:100%;text-align:left;
+  background:none;border:1px solid var(--line-2);color:var(--ink);
+  padding:14px 16px;cursor:pointer;font:inherit;
+  transition:background .15s,border-color .15s,color .15s}
+.lensb:hover{background:var(--ax-tint);border-color:var(--ax)}
+.lensb b{font-size:14.5px;font-weight:600;flex:none}
+.lensb span{font-size:11.5px;color:var(--dim);font-weight:300;margin-left:auto;text-align:right}
+.lensb:hover span{color:var(--ink)}
+.ts-skip{margin-top:16px}
+.ts-skip button{background:none;border:0;font:inherit;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dimmer);cursor:pointer;padding:0}
+.ts-skip button:hover{color:var(--ink)}
+/* the standing reminder of which lens is on, and the way back out of it.
+   It lives in the index rather than the header: five controls already
+   overflow a 440px phone, and this is a preference, not navigation. */
+.lenschip{display:flex;align-items:center;gap:9px;width:calc(100% - 40px);margin:0 20px 4px;
+  background:none;border:1px solid var(--line);color:var(--dim);
+  padding:9px 11px;cursor:pointer;font:inherit;font-size:11.5px;text-align:left;
+  transition:border-color .2s,color .2s}
+/* a class-level display always outranks the UA's [hidden]{display:none},
+   so the chip has to opt out explicitly or it would never be hidden */
+.lenschip[hidden]{display:none}
+.lenschip:hover{border-color:var(--blue);color:var(--ink)}
+.lenschip .lc-l{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer)}
+.lenschip b{font-weight:600;color:var(--ink)}
+.lenschip .lc-x{margin-left:auto;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+/* the group the chosen lens points at */
+.rail .g.lens-on{color:var(--blue)}
+.rail .g.lens-on::before{content:'Start here';font-size:8.5px;font-weight:700;letter-spacing:.14em;
+  border:1px solid var(--blue);color:var(--blue);padding:2px 6px;text-transform:uppercase}
 .ts-box h2{font-weight:300;font-size:31px;letter-spacing:-.02em;margin-bottom:10px}
 .ts-box h2 i{font-style:normal;color:var(--ax)}
 .ts-box p{color:var(--dim);font-size:14px;line-height:1.65;margin-bottom:26px}
@@ -684,10 +928,28 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 .tb-btn.theme-btn{padding:0 14px;font-size:15px}
 
 
+/* ═══════════ THEME SWEEP ═══════════
+   The new theme grows out of the control that was pressed instead of the
+   page flipping in a single frame. By default the browser cross-fades the
+   old and new snapshots, which turns the circle's edge into a grey wash
+   and looks like a bug — these three rules turn the fade off, pin the old
+   page still underneath, and put the new one on top to be revealed.
+   These rules only set the stage. The keyframes that actually do the
+   revealing are injected by setSweep() with literal pixel values — see
+   the comment there for why they cannot live in this stylesheet.
+   The clip-path applies to a ::view-transition pseudo-element, which
+   lives OUTSIDE the document, so the "never put clip-path on anything
+   inside the world" rule is untouched: no frame is ever clipped. */
+::view-transition-old(root),
+::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:0}
+::view-transition-new(root){z-index:1}
+
 @media(max-width:760px){#crumb{display:none}}
 @media(prefers-reduced-motion:reduce){
   #world{transition:transform .3s linear}
   .frame.here::after{animation:none}
+  .frame.here .pad>*{animation:none}
   #field{display:none}
 }
 
@@ -899,7 +1161,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <div class="tb-right">
     <button class="tb-btn tb-tour" onclick="openTourStart()">▶ Tour</button>
     <button class="tb-btn hire" onclick="openRec()">Hiring?</button>
-    <button class="tb-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">☀</button>
+    <button class="tb-btn theme-btn" id="themeBtn" onclick="toggleTheme(event)" aria-label="Toggle light and dark theme">☀</button>
   </div>
 </header>
 
@@ -907,24 +1169,30 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
 <!-- persistent index — replaces the draft-7 drawer; clicking flies the camera -->
 <nav class="rail" id="rail" aria-label="Site index">
+  <!-- only rendered once a lens has been chosen; clicking re-opens the
+       chooser, so the choice is never a one-way door -->
+  <button class="lenschip" id="lensChip" hidden onclick="openLens()">
+    <span class="lc-l">Viewing as</span><b id="lensName"></b><span class="lc-x">Change</span></button>
   <div class="g">Start</div>
   <button class="ritem" data-jump="f-home"><span class="rd" style="background:var(--blue)"></span><span class="rt">Home</span></button>
-  <div class="g">01 · Roles</div>
+  <div class="g" data-grp="roles">01 · Roles</div>
   <button class="ritem" data-jump="f-career"><span class="rd" style="background:var(--blue)"></span><span class="rt">All roles</span></button>
+  <button class="ritem sub ax-locked"  data-jump="f-locked"><span class="rd"></span><span class="rt">█████████<em>Full-time · locked</em></span></button>
   <button class="ritem sub ax-ibm"     data-jump="f-ibm"><span class="rd"></span><span class="rt">Brand Sales Specialist<em>IBM</em></span></button>
   <button class="ritem sub ax-workiva" data-jump="f-workiva"><span class="rd"></span><span class="rt">Sales Engineer Enablement<em>Workiva</em></span></button>
   <button class="ritem sub ax-cisco"   data-jump="f-cisco"><span class="rd"></span><span class="rt">Solutions Engineer<em>Cisco (Splunk)</em></span></button>
   <button class="ritem sub ax-usrc"    data-jump="f-usrc"><span class="rd"></span><span class="rt">AI Solutions Consultant<em>U.S. Renal Care</em></span></button>
   <button class="ritem sub ax-ebay"    data-jump="f-ebay"><span class="rd"></span><span class="rt">Founder &amp; Business Owner<em>eBay</em></span></button>
   <button class="ritem sub ax-utd"     data-jump="f-utd"><span class="rd"></span><span class="rt">Management Information Systems<em>UT Dallas · BS</em></span></button>
-  <div class="g">02 · Projects</div>
+  <div class="g" data-grp="projects">02 · Projects</div>
   <button class="ritem" data-jump="f-projects"><span class="rd" style="background:var(--blue)"></span><span class="rt">All projects</span></button>
   <button class="ritem sub ax-ibm"     data-jump="f-kdr"><span class="rd"></span><span class="rt">KDR Generator<em>IBM · AI close-plan engine</em></span></button>
   <button class="ritem sub ax-workiva" data-jump="f-highspot"><span class="rd"></span><span class="rt">SE Highspot V2<em>Workiva · Sales Engineer enablement</em></span></button>
   <button class="ritem sub ax-cisco"   data-jump="f-flightflow"><span class="rd"></span><span class="rt">FlightFlow<em>Splunk · Flight delay intelligence</em></span></button>
   <button class="ritem sub ax-cisco"   data-jump="f-food"><span class="rd"></span><span class="rt">U.S. Food Access Risk<em>Splunk · County-level risk model</em></span></button>
   <button class="ritem sub ax-akpsi"   data-jump="f-valor"><span class="rd"></span><span class="rt">Valor<em>IBM watsonx · Bank of America</em></span></button>
-  <div class="g">03 · Personal</div>
+  <button class="ritem sub ax-site"    data-jump="f-site"><span class="rd"></span><span class="rt">This site<em>saaifkhan.com · you are inside it</em></span></button>
+  <div class="g" data-grp="person">03 · Personal</div>
   <button class="ritem ax-person" data-jump="f-person"><span class="rd"></span><span class="rt">Off the Clock</span></button>
   <button class="ritem sub ax-person" data-jump="f-hobby"><span class="rd"></span><span class="rt">Pickleball<em>Ace Pickleball Club</em></span></button>
   <button class="ritem sub ax-person" data-jump="f-f1"><span class="rd"></span><span class="rt">Formula 1 Racing<em>Sim racing · go-karting</em></span></button>
@@ -932,12 +1200,12 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="ritem sub ax-person" data-jump="f-gaming"><span class="rd"></span><span class="rt">Video Games<em>GTA V · lifelong gamer</em></span></button>
   <button class="ritem sub ax-person" data-jump="f-eats"><span class="rd"></span><span class="rt">Food &amp; Coffee<em>New cuisines · coffee · matcha</em></span></button>
   <button class="ritem sub ax-person" data-jump="f-community"><span class="rd"></span><span class="rt">Community<em>MSA · Islamic Relief · Alpha Kappa Psi</em></span></button>
-  <div class="g">04 · In their words</div>
+  <div class="g" data-grp="recs">04 · In their words</div>
   <button class="ritem ax-recs" data-jump="f-recs"><span class="rd"></span><span class="rt">Recommendations</span></button>
   <button class="ritem sub ax-recs" data-jump="f-recsmgr"><span class="rd"></span><span class="rt">My managers<em>Workiva</em></span></button>
   <button class="ritem sub ax-recs" data-jump="f-recslead"><span class="rd"></span><span class="rt">Leaders &amp; mentors<em>Splunk (Cisco)</em></span></button>
   <button class="ritem sub ax-recs" data-jump="f-recspeer"><span class="rd"></span><span class="rt">Peers<em>Splunk (Cisco)</em></span></button>
-  <div class="g">05 · Reach me</div>
+  <div class="g" data-grp="contact">05 · Reach me</div>
   <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Get in touch</span></button>
   <!-- Tour and Theme move here on phones, where the header has no room
        for five controls. Hidden entirely on desktop, which keeps them in
@@ -945,7 +1213,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <div class="g rail-mob">Tools</div>
   <button class="ritem rail-mob" onclick="toggleRail(false);openTourStart()">
     <span class="rd" style="background:var(--blue)"></span><span class="rt">Guided tour<em>About a minute</em></span></button>
-  <button class="ritem rail-mob" onclick="toggleTheme()">
+  <button class="ritem rail-mob" onclick="toggleTheme(event)">
     <span class="rd" style="background:var(--blue)"></span><span class="rt">Light / dark theme<em id="railThemeNow">Dark</em></span></button>
   <!-- quiet maintenance signal — the site is alive and dated -->
   <div class="rail-foot" id="railFoot"></div>
@@ -998,6 +1266,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       <div class="pad">
         <div class="shead"><span class="snum">01</span><h2>Roles</h2></div>
         <div class="items">
+          <!-- first, not last: the list runs future → present → past, and the
+               chapter nobody can read yet is the one worth opening with -->
+          <button class="item ax-locked" data-fly="f-locked">
+            <div><div class="i-name"><span class="i-dot"></span><span class="redact" aria-label="company not yet announced">█████████</span> — Full-time</div><div class="i-sub">Starts January 2027 · <span data-live="reveal-days">unlocks August 21</span></div></div><span class="i-go">Locked</span></button>
           <button class="item ax-ibm" data-fly="f-ibm">
             <div><div class="i-name"><span class="i-dot"></span>IBM — Brand Sales Specialist</div><div class="i-sub">New York, NY · <span data-live="ibm-range">May 2026 – present</span> · Internship</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-workiva" data-fly="f-workiva">
@@ -1039,6 +1311,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div><div class="i-name"><span class="i-dot"></span>U.S. Food Access Risk</div><div class="i-sub">Splunk · County-level risk model</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-akpsi" data-fly="f-valor">
             <div><div class="i-name"><span class="i-dot"></span>Valor</div><div class="i-sub">IBM watsonx · Bank of America case study</div></div><span class="i-go">Open →</span></button>
+          <button class="item ax-site" data-fly="f-site">
+            <div><div class="i-name"><span class="i-dot"></span>This site</div><div class="i-sub">saaifkhan.com · you are inside it</div></div><span class="i-go">Open →</span></button>
         </div>
       </div>
     </div>
@@ -1072,6 +1346,9 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       <div class="pad">
         <div class="shead"><span class="snum">04</span><h2>Get in touch</h2></div>
         <div class="meta"><span data-live="grad-word">Graduating</span> December 17, 2026<span data-live="grad-out"></span> · always open to a conversation</div>
+        <!-- both clocks, because the number a caller actually wants is the
+             difference. City follows CHAPTERS, so this moves with me. -->
+        <div class="clock" id="clock"></div>
         <a class="cbtn" href="mailto:saaifkhan05@gmail.com">
           <span class="ci">✉</span><span class="ct"><span>Email</span><b>saaifkhan05@gmail.com</b></span><span class="ca">→</span></a>
         <a class="cbtn" href="tel:+14695161440">
@@ -1294,6 +1571,30 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       </div>
     </div>
 
+    <!-- ══ THE LOCKED CHAPTER · L3 ══
+         Last in the roles row. Reachable like any other tile, because a
+         teaser nobody can get close enough to read is not a teaser — but
+         there is nothing behind it: no links, no metrics, no cross-links.
+         Just the seal, the countdown, and a job title that cannot decide
+         what it is called yet. -->
+    <div class="frame deep focusable kind-locked ax-locked" id="f-locked" data-fz="-1500"
+      data-depth="3" data-parent="f-career" data-ctx="locked" data-fly="f-locked"
+      style="width:900px;left:7400px;top:200px;transform:translateZ(-1500px)">
+      <div class="lockfx" aria-hidden="true"></div>
+      <div class="pad">
+        <div class="kindbar"><span class="k">Classified</span><span class="w">Full-time · starts 2027</span></div>
+        <div class="lockhead">
+          <span class="lockseal" id="lockSeal">◼ Sealed</span>
+          <span class="f-tag">The next chapter</span>
+        </div>
+        <h2 class="lockco"><span class="redact" id="lockCo" aria-label="company not yet announced">█████████</span></h2>
+        <div class="lockrole">Role &nbsp;·&nbsp; <span class="glitch" id="lockRole">Solutions Engineer</span></div>
+        <h5>Unlocks in</h5>
+        <div class="lock-count" data-live="reveal-out">—</div>
+        <div class="lock-when" id="lockWhen"></div>
+      </div>
+    </div>
+
     <!-- ══ L3 · PROJECT DOSSIERS · z = -1500 ══ -->
     <div class="frame deep two focusable kind-project ax-ibm" id="f-kdr" data-fz="-1500"
       data-depth="3" data-parent="f-projects" data-ctx="ibm" data-fly="f-kdr"
@@ -1474,6 +1775,58 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
             <div class="metric"><b>4</b><span>judges pitched</span></div>
             <div class="metric"><b>20%</b><span>projected lift</span></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ THIS SITE — the only project the reader is already inside ══
+         Deliberately not shaped like the other four. No photo strip (the
+         page IS the screenshot), a cost/fix ledger no other tile uses, a
+         section on what was turned down, and the map's only monochrome
+         accent. It sits sixth in the projects row at left:6200. -->
+    <div class="frame deep two focusable kind-project ax-site" id="f-site" data-fz="-1500"
+      data-depth="3" data-parent="f-projects" data-ctx="site" data-fly="f-site"
+      style="width:1040px;left:6200px;top:3000px;transform:translateZ(-1500px)">
+      <div class="pad">
+        <div class="kindbar"><span class="k">Project</span><span class="w">You are standing in it</span></div>
+        <div class="d-top">
+          <div class="co"><span class="co-mark">saaifkhan.com</span><span class="f-tag">Interactive 3D portfolio</span></div>
+          <h2>The site you're <i>standing in</i></h2>
+          <div class="meta">One file · zero dependencies · hand-built · 2026</div>
+        </div>
+        <div class="d-main">
+          <h5>The problem</h5>
+          <p>A portfolio for a technical seller has to prove two things at once: that I can build the thing, and that I can sell it. A scrolling page proves neither — it just asserts them in bullet points. So the site is the argument. Every tile lives at real coordinates on one <b>8600 × 7000</b> spatial map at three depths, and the only way to read anything is to fly a camera to it. Navigating it <i>is</i> the demo.</p>
+          <h5>The constraint that shaped everything</h5>
+          <p>Chrome's hit-testing is unreliable for content under nested 3D transforms. Clicks, hover, and the cursor all resolve against the wrong coordinate space — silently, with no console error, and the failure changes with window size. Three drafts died to it, and every fix that trusted <b>e.target</b> failed for the same reason.</p>
+          <p>So the world stopped trusting the browser. Every interactive element's screen box is measured after each flight, and clicks, hover states, and the pointer cursor all resolve geometrically against those boxes. Smallest box wins, so a row beats the tile containing it. The focused tile is treated as opaque, so nothing behind it can steal a click.</p>
+          <h5>What it cost to make fast</h5>
+          <div class="ledger">
+            <div><b>getComputedStyle</b> inside the render loop</div><div>60 forced style recalculations a second → cached, re-read only on theme change</div>
+            <div><b>getBoundingClientRect</b> × 42 per mousemove</div><div>a layout pass on every pointer event → measured once per flight, throttled to 90ms mid-flight</div>
+            <div><b>will-change</b> pinned on the world</div><div>a compositor texture for a 8600 × 7000 element, held all session → promoted on flight, released after</div>
+            <div><b>blur()</b> on frames behind the camera</div><div>an offscreen pass for pixels at opacity 0 → visibility:hidden, taken out of paint entirely</div>
+          </div>
+          <h5>What I turned down</h5>
+          <p>A custom cursor — it vanishes whenever the pointer enters the page without a mousemove, which is a total failure on a page someone opens once. Sound. Scroll-jacking. A framework. Each one would have made this look like all the others, which was the only outcome that mattered to avoid.</p>
+        </div>
+        <div class="d-side">
+          <h5>Built for</h5>
+          <button class="xlink" data-fly="f-contact">
+            <span class="xi">✉</span><span class="xt"><span>The whole point</span><b>Get in touch</b></span><span class="xa">→</span></button>
+          <h5>By the numbers</h5>
+          <div class="metrics">
+            <div class="metric"><b data-live="site-frames">26</b><span>tiles on the map</span></div>
+            <div class="metric"><b>0</b><span>dependencies</span></div>
+            <div class="metric"><b>8</b><span>drafts to get here</span></div>
+          </div>
+          <h5>The stack</h5>
+          <div class="arts">
+            <span class="orgtag">Vanilla JavaScript</span><span class="orgtag">CSS 3D transforms</span>
+            <span class="orgtag">Canvas 2D</span><span class="orgtag">IBM Carbon</span>
+            <span class="orgtag">IBM Plex Sans</span>
+          </div>
+          <span class="tbd">The count above is read from the live DOM, not typed in.</span>
         </div>
       </div>
     </div>
@@ -1672,6 +2025,28 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   </div>
 </div>
 
+<!-- ══ AUDIENCE LENS — the second question, never the first ══
+     Only ever reached by someone who has just said yes to the tour, so it
+     is asked of a person who has already opted in rather than of everyone
+     who lands. Anyone who declines the tour never sees it and the site
+     behaves exactly as it always did.
+     This is also the job itself, run on the person evaluating whether I
+     can do it: find out who is in the room before deciding what to show. -->
+<div id="lensPick" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Who is taking the tour">
+  <div class="ts-box">
+    <h2>Before we go — who's asking<i>?</i></h2>
+    <p>One click and I'll cut the route to what you actually came for.
+       About a minute either way, and you can leave at any point.</p>
+    <div class="lens-go">
+      <button class="lensb" data-lens="recruiter"><b>Recruiter</b><span>References, timeline, availability</span></button>
+      <button class="lensb" data-lens="se"><b>SE or technical</b><span>What I built, and how it works</span></button>
+      <button class="lensb" data-lens="leader"><b>Sales leader</b><span>Territory, pipeline, the numbers</span></button>
+      <button class="lensb" data-lens="curious"><b>Just exploring</b><span>The whole map, no agenda</span></button>
+    </div>
+    <div class="ts-skip"><button data-lens="curious">Skip — play the full tour</button></div>
+  </div>
+</div>
+
 <!-- ══ GUIDED TOUR — start offer + narration bar ══ -->
 <div id="tourStart" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Guided tour offer">
   <div class="ts-box">
@@ -1679,7 +2054,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     <p>This site is a map, and the camera flies it. Give it a minute: every section,
        one deep dive, the whole story — narrated. Pause, skip, or take the wheel any time.</p>
     <div class="ts-go">
-      <button class="tbtn" id="tsPlay" onclick="startTour()">▶ Play the tour</button>
+      <button class="tbtn" id="tsPlay" onclick="tourPlay()">▶ Play the tour</button>
       <button class="tbtn ghost" onclick="dismissTourStart()">Explore on my own</button>
     </div>
     <div class="ts-meta" id="tsMeta"></div>
@@ -1825,6 +2200,9 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 const P=1400, world=document.getElementById('world');
 const frames=[...document.querySelectorAll('.frame')];
 const root=document.documentElement;
+/* declared here rather than beside the tilt loop, because the camera now
+   reads it too and the camera is the first thing that runs */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let current='f-home', lastCz=0;
 
 /* SAFE AREA — header owns the top; the rail reserves the left only
@@ -1853,12 +2231,45 @@ function safeBox(){const s=safe();return{
   cx:s.l+(innerWidth-s.l-s.r)/2,      cy:s.t+(innerHeight-s.t-s.b)/2}}
 function centerOf(f){return[f.offsetLeft+f.offsetWidth/2, f.offsetTop+f.offsetHeight/2]}
 
+/* ═══════════ FLIGHT DYNAMICS ═══════════
+   Every flight used to take a flat 1.3s, so a hop to the tile next door
+   and a run across the whole map cost the same time: short moves felt
+   sluggish, long ones felt weightless. Three things changed.
+     · DURATION scales with distance actually travelled (pan + z), clamped
+       so nothing is ever abrupt or tedious.
+     · CURVE follows direction. Diving deeper commits hard and settles;
+       backing out leaves quickly and eases home. They are not the same
+       gesture and they should not share an easing.
+     · LONG HAULS overshoot ~4% and settle back, which is the only cue
+       that reads as the camera having mass.
+   The chosen duration is published as --fdur before .here is applied, so
+   the arrival ring and the content stagger land on the exact frame the
+   motion stops rather than at a hard-coded 800ms. */
+const EASE_IN ='cubic-bezier(.62,.02,.16,1)';      // going deeper
+const EASE_OUT='cubic-bezier(.22,.66,.24,1)';      // coming back up
+const EASE_FAR='cubic-bezier(.5,.02,.26,1.045)';   // long haul, settles past then back
+let camX=0,camY=0,camZ=0,camSet=false;
+function travel(cx,cy,cz){
+  /* z is weighted above pan: a 750px dive changes the scene far more
+     than 750px of sideways drift does */
+  return Math.hypot(cx-camX,cy-camY,(cz-camZ)*1.3);
+}
+function flightMs(cx,cy,cz){
+  if(reduce)return 300;
+  if(!camSet)return 900;                            // the boot dive
+  return Math.round(Math.max(620,Math.min(620+travel(cx,cy,cz)*.165,1680)));
+}
 let wcTimer,flying=false;
-function cam(cx,cy,cz){
+function cam(cx,cy,cz,ms){
   const b=safeBox();
+  const back=cz<camZ-2, far=camSet&&travel(cx,cy,cz)>2600;
+  world.style.transitionDuration=ms+'ms';
+  world.style.transitionTimingFunction=
+    reduce?'linear':(back?EASE_OUT:(far?EASE_FAR:EASE_IN));
   world.style.willChange='transform';
   world.style.transform=
     `translate3d(${b.cx}px,${b.cy}px,0) translate3d(${-cx}px,${-cy}px,${cz}px)`;
+  camX=cx;camY=cy;camZ=cz;camSet=true;
   rectsStale=true;flying=true;
   clearTimeout(wcTimer);
   /* PERF: the flight used to be assumed to last a flat 1400ms, so the
@@ -1866,7 +2277,7 @@ function cam(cx,cy,cz){
      stopped. transitionend ends it exactly when motion ends; the timer
      is only a safety net for the case where the event never fires
      (transition interrupted, tab backgrounded mid-flight). */
-  wcTimer=setTimeout(endFlight,1500);
+  wcTimer=setTimeout(endFlight,ms+220);
 }
 function endFlight(){
   if(!flying)return;
@@ -1882,6 +2293,34 @@ function endFlight(){
 world.addEventListener('transitionend',e=>{
   if(e.target===world&&e.propertyName==='transform')endFlight();
 });
+
+/* ═══════════ METRIC COUNT-UP ═══════════
+   The oversized numbers are the pitch, so they arrive rather than simply
+   being there. Runs once per element (data-done), only on the tile the
+   camera just landed on, and never under prefers-reduced-motion.
+   The prefix and suffix are preserved character for character, so
+   "$1M+" counts 0→1 and stays "$1M+", "2,500+" keeps its comma, and
+   "Top 10" keeps its word. Anything with no digits is left alone. */
+const NUMPART=/^(\D*?)([\d,]+)(.*)$/;
+function countUp(frame){
+  if(!frame)return;
+  frame.querySelectorAll('.metric b:not([data-done])').forEach(el=>{
+    el.setAttribute('data-done','1');
+    const m=NUMPART.exec(el.textContent.trim());
+    if(!m||reduce)return;
+    const pre=m[1],post=m[3],grouped=m[2].indexOf(',')>=0,target=+m[2].replace(/,/g,'');
+    if(!isFinite(target)||target<=0)return;
+    const fmt=n=>pre+(grouped?n.toLocaleString('en-US'):String(n))+post;
+    const t0=performance.now(),D=680;
+    const step=now=>{
+      const p=Math.min(1,(now-t0)/D);
+      el.textContent=fmt(Math.round(target*(1-Math.pow(1-p,3))));   // ease-out cubic
+      if(p<1)requestAnimationFrame(step);
+    };
+    el.textContent=fmt(0);
+    requestAnimationFrame(step);
+  });
+}
 /* MIN_S used to be .94, which stopped the camera from ever zooming out
    far enough for a tall tile — that floor is exactly what clipped the
    dense dossiers top and bottom. It's now low enough that fitScale()
@@ -1966,9 +2405,25 @@ function flyTo(id,replay){
   if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
   current=id;
   const cz=czFor(f), [cx,cy]=centerOf(f);
+  /* published BEFORE .here lands: the arrival ring and the content
+     stagger both key off --fdur, and both are armed by that class */
+  const ms=flightMs(cx,cy,cz);
+  root.style.setProperty('--fdur',ms+'ms');
   warp(Math.abs(cz-lastCz)); lastCz=cz;
   setPhases(id,cz); setCtx(id);
-  cam(cx,cy,cz);
+  cam(cx,cy,cz,ms);
+  /* Armed to fire a hair BEFORE the side column fades in, not after the
+     camera lands. Zeroing a number that is already on screen and then
+     counting it back up reads as a glitch; zeroing one that is still at
+     opacity 0 is invisible, and the count then runs as it appears.
+     The frame is captured rather than re-queried, so an interrupted
+     flight cannot leave this pointing at a different tile. */
+  clearTimeout(flyTo.cu);
+  flyTo.cu=setTimeout(()=>countUp(f),Math.round(ms*.45)+100);
+  /* one dropout shortly after landing on the sealed tile, so nobody has
+     to sit through a random interval to find out the thing does anything */
+  clearTimeout(flyTo.fx);
+  if(id==='f-locked')flyTo.fx=setTimeout(lockGlitch,ms+900);
   chrome();
   syncHash(id,replay);
   syncSheet(id,f);
@@ -2052,13 +2507,26 @@ function goBack(){
   flyTo(hist.pop(),true);
 }
 function setPhases(targetId,cz){
+  /* DEPTH, not haze. Every unfocused tile used to sit at a flat .25
+     whether it was the tile next door or the far corner of the map, so
+     distance carried no information and the background read as fog for
+     its own sake. Opacity now falls off with how far a tile is from the
+     focal plane: neighbours you could plausibly fly to stay legible, the
+     other side of the map recedes. Inline opacity must be cleared for
+     .here and .passed, or it would outrank their own rules. */
+  const tf=targetId?document.getElementById(targetId):null;
+  const focusZ=tf?cz+(+tf.dataset.fz):0;
   frames.forEach(f=>{
     f.classList.remove('here','fog','passed');
+    f.style.opacity='';
     if(targetId===null)return;
     const zEff=cz+(+f.dataset.fz);
     if(f.id===targetId)f.classList.add('here');
     else if(zEff>420)f.classList.add('passed');
-    else f.classList.add('fog');
+    else{
+      f.classList.add('fog');
+      f.style.opacity=Math.max(.06,.30-Math.abs(focusZ-zEff)*(.22/1500)).toFixed(3);
+    }
   });
 }
 function jump(id){
@@ -2067,6 +2535,13 @@ function jump(id){
 }
 document.addEventListener('keydown',e=>{
   /* overlay keyboard layers, top-most first */
+  if(document.body.classList.contains('lens-open')){
+    /* backing out of the question is backing out of the tour too — they
+       are one flow, and starting a tour someone just escaped from would
+       be the opposite of what the key means */
+    if(e.key==='Escape'){applyLens('curious');closeLens()}
+    return;
+  }
   if(document.body.classList.contains('rec-open')){
     if(e.key==='Escape')closeRec();
     return;
@@ -2231,11 +2706,12 @@ document.addEventListener('click',e=>{
      this listener sees the same click, so a class test would already be
      stale by now — the world would then geometrically hit-test the tap
      and fly somewhere else, which read as "the button does nothing". */
-  if(T.closest&&T.closest('#tourBar,#tourStart,#recruiter,#sheet')){
+  if(T.closest&&T.closest('#tourBar,#tourStart,#lensPick,#recruiter,#sheet')){
     const odl=T.closest('a[download]');
     if(odl){e.preventDefault();downloadResume(odl)}
     return;
   }
+  if(document.body.classList.contains('lens-open'))return;
   if(document.body.classList.contains('rec-open'))return;
   /* the sheet owns the screen while it is up; its own listener has
      already had this click, so the world must not also act on it */
@@ -2352,6 +2828,7 @@ document.addEventListener('mousemove',e=>{
   requestAnimationFrame(()=>{
     hvQueued=false;
     setHover((touring||document.body.classList.contains('rec-open')
+      ||document.body.classList.contains('lens-open')
       ||document.body.classList.contains('sheet-open')||overChrome(hvX,hvY))?null:hitAt(hvX,hvY,true));
   });
 },{passive:true});
@@ -2365,10 +2842,10 @@ const NAMES={'f-home':'Home','f-career':'Roles','f-projects':'Projects','f-perso
   'f-valor':'Valor','f-hobby':'Pickleball','f-f1':'Formula 1 Racing','f-travel':'Travel',
   'f-gaming':'Video Games','f-eats':'Food & Coffee','f-community':'Community',
   'f-recs':'Recommendations','f-recsmgr':'My managers','f-recslead':'Leaders & mentors',
-  'f-recspeer':'Peers'};
+  'f-recspeer':'Peers','f-site':'This site','f-locked':'The next chapter'};
 const KIND={'f-ibm':'Role','f-workiva':'Role','f-cisco':'Role','f-usrc':'Role','f-ebay':'Role',
-  'f-utd':'Education','f-kdr':'Project','f-highspot':'Project','f-flightflow':'Project',
-  'f-food':'Project','f-valor':'Project','f-hobby':'Personal','f-f1':'Personal','f-travel':'Personal',
+  'f-utd':'Education','f-locked':'Classified','f-kdr':'Project','f-highspot':'Project','f-flightflow':'Project',
+  'f-food':'Project','f-valor':'Project','f-site':'Project','f-hobby':'Personal','f-f1':'Personal','f-travel':'Personal',
   'f-gaming':'Personal','f-eats':'Personal','f-community':'Personal',
   'f-recsmgr':'Recommendations','f-recslead':'Recommendations','f-recspeer':'Recommendations'};
 function chainOf(id){const c=[];let n=document.getElementById(id);
@@ -2409,7 +2886,6 @@ function chrome(){
 
 /* ═══════════ MOUSE PARALLAX TILT ═══════════ */
 const tilt=document.getElementById('tilt');
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mx=0,my=0,tmx=0,tmy=0;
 /* ═══════════ DEVICE TIER ═══════════
    Everything below scales off this. A 4-core laptop and a touch device
@@ -2534,8 +3010,9 @@ let fieldRAF=0;
 function startField(){if(!reduce&&!fieldRAF&&!document.hidden)fieldRAF=requestAnimationFrame(tick)}
 function stopField(){if(fieldRAF){cancelAnimationFrame(fieldRAF);fieldRAF=0}}
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){stopField();stopScramble();stopGrad();if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
-  else{speed=targetSpeed=.3;startField();armScramble();tickGrad()}
+  if(document.hidden){stopField();stopScramble();stopLive();stopLock();
+    if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
+  else{speed=targetSpeed=.3;startField();armScramble();startLock();lastMin=-1;tickLive()}
 });
 startField();
 
@@ -2567,11 +3044,81 @@ function syncThemeBtn(){
   const r=document.getElementById('railThemeNow');   // the phone's copy
   if(r)r.textContent=light?'Light':'Dark';
 }
-function toggleTheme(){
-  root.dataset.theme=root.dataset.theme==='light'?'dark':'light';
+/* ── THEME ────────────────────────────────────────────────────────────
+   The swap itself is four lines. The rest is the sweep.
+   startViewTransition lets the browser freeze a picture of the old page,
+   apply the change underneath it, and then hand both layers back to be
+   animated. We animate only the NEW layer, growing its clip-path from a
+   zero-radius circle centred on the button that was pressed out to a
+   radius that reaches the furthest corner of the screen. The old page
+   simply sits still beneath it and is progressively uncovered.
+   Three cases fall back to an instant swap, all of them deliberately:
+     · the browser has no View Transitions (the swap still works)
+     · the visitor asked the OS for reduced motion
+     · the camera is mid-flight — capturing a snapshot of a moving
+       preserve-3d scene is exactly where this would hitch visibly */
+function applyTheme(next){
+  root.dataset.theme=next;
   setFieldTheme();
   syncThemeBtn();
-  lsSet('sk-theme',root.dataset.theme);   // survives the next visit
+  lsSet('sk-theme',next);                 // survives the next visit
+}
+const SWEEP_MS=520;
+let sweepStyle=null;
+/* WHY THIS IS AN INJECTED STYLESHEET AND NOT root.animate(), AND NOT A
+   CUSTOM PROPERTY — two bugs, one cause.
+   · Adding the animation inside t.ready.then() hands it to the browser
+     AFTER the transition's timing has already been decided, so the
+     transition could finish out from under it. That is what made the
+     sweep run most of the way and then snap to done.
+   · Parameterising the origin with var(--sx)/var(--sy) depends on custom
+     properties inheriting into the ::view-transition pseudo tree. Where
+     they don't, the circle falls back to its default position — the
+     middle of the screen — which is exactly the wrong failure.
+   Writing real CSS with literal pixel values before the transition
+   starts removes both: the browser knows the full duration up front and
+   there is nothing left to resolve. */
+function setSweep(x,y,r){
+  if(!sweepStyle){sweepStyle=document.createElement('style');document.head.appendChild(sweepStyle)}
+  /* linear, deliberately. With an ease-out the radius reaches ~93% in the
+     first 70% of the time, so the edge lurches away and then crawls
+     across a sliver nobody can see — which reads as the animation
+     finishing early and then jumping. A constant radius is a constant
+     edge speed, which is the only thing that looks like one movement. */
+  sweepStyle.textContent=
+    '::view-transition-new(root){animation:sweepIn '+SWEEP_MS+'ms linear forwards}'+
+    '@keyframes sweepIn{'+
+      'from{clip-path:circle(0px at '+x+'px '+y+'px)}'+
+      'to{clip-path:circle('+r+'px at '+x+'px '+y+'px)}}';
+}
+/* the visible theme control: the header button on a desktop, the index
+   row on a phone where the header has no space for it. Whatever was
+   pressed wins, but only if it has a real box — a display:none button
+   reports 0×0 and would drop the origin in the top-left corner. */
+function sweepOrigin(ev){
+  const tries=[ev&&ev.currentTarget,document.getElementById('themeBtn')];
+  for(const el of tries){
+    if(!el||!el.getBoundingClientRect)continue;
+    const r=el.getBoundingClientRect();
+    if(r.width>0&&r.height>0)return{x:r.left+r.width/2,y:r.top+r.height/2};
+  }
+  return{x:innerWidth-26,y:26};
+}
+let sweeping=false;
+function toggleTheme(ev){
+  const next=root.dataset.theme==='light'?'dark':'light';
+  if(sweeping||reduce||flying||typeof document.startViewTransition!=='function'){
+    applyTheme(next);return;
+  }
+  /* read synchronously: currentTarget is null by the time any callback
+     runs, and a keyboard activation has no pointer coordinates at all,
+     which is the other reason to measure the element rather than
+     the event */
+  const o=sweepOrigin(ev);
+  setSweep(o.x,o.y,Math.hypot(Math.max(o.x,innerWidth-o.x),Math.max(o.y,innerHeight-o.y)));
+  sweeping=true;
+  const t=document.startViewTransition(()=>applyTheme(next));
+  t.finished.then(()=>{sweeping=false},()=>{sweeping=false});
 }
 /* MOBILE: scrolling in Safari or Chrome collapses the address bar,
    which changes innerHeight and nothing else. That used to fire a full
@@ -2593,22 +3140,40 @@ addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
    the day count is computed, never written down. When a chapter ends
    the next one takes over on its own — no stale "currently at…" line.
    BUILT is the last-updated date shown at the foot of the index. */
-const BUILT='2026-08-10';
+const BUILT='2026-08-11';
 /* `what` is the full line used when a chapter is the current one;
    `short` is the compact form used in the stacked "Next" list, where
    two entries share one cell. `secret:true` means the company has not
    been announced — the real name is never written here, only the
    placeholder, so it cannot leak through view-source. */
+/* `city` and `tz` drive the local clock on the contact tile, so it follows
+   me from New York to Dallas on the day the chapter changes, untouched. */
 const CHAPTERS=[
-  {from:'2026-05-26',to:'2026-08-14',co:'IBM',
+  {from:'2026-05-26',to:'2026-08-14',co:'IBM',city:'New York',tz:'America/New_York',
    what:'Brand Sales Specialist Intern · IBM · New York City',
    short:'Brand Sales Specialist · IBM'},
-  {from:'2026-08-15',to:'2026-12-19',co:'Workiva',
+  {from:'2026-08-15',to:'2026-12-19',co:'Workiva',city:'Dallas',tz:'America/Chicago',
    what:'Sales Engineer Enablement Intern II · Workiva · Dallas',
    short:'SE Enablement Intern II · Workiva'},
-  {from:'2027-01-14',to:'2099-12-31',co:'█████████',secret:true,
+  {from:'2027-01-14',to:'2099-12-31',co:'█████████',secret:true,city:'Dallas',tz:'America/Chicago',
    what:'Full-time',short:'Full-time'}
 ];
+
+/* ═══════════ THE NEXT CHAPTER — SEALED UNTIL A DATE ═══════════
+   EDIT HERE ON AUGUST 21. Two strings, thirty seconds, and the locked
+   tile unseals itself: the glitch stops, the seal turns blue, the real
+   name and title take over, and the home tile stops redacting.
+
+   WHY THEY ARE EMPTY, and why they have to be: a name that ships inside
+   this file is public the moment the file is, whether or not JavaScript
+   is hiding it — anyone can read it in View Source before the date. A
+   page cannot keep a secret from its own reader. So the countdown, the
+   seal and the glitch are all genuinely live right now, and the reveal
+   itself is the one thing a human still has to do.
+   Leaving these blank past the date is safe: the tile keeps its seal and
+   simply reads "unlocking shortly" instead of counting into the past. */
+const REVEAL_AT='2026-08-21T17:00:00-05:00';   // 5:00 PM Central (CDT)
+const REVEAL={co:'',role:''};                  // ← fill these in on the day
 /* graduation — a real moment, not just a month, so the countdown can be
    exact. GRAD_AT is local time; GRAD_DAY is the date-only form the
    chapter comparisons use. */
@@ -2639,7 +3204,9 @@ function renderStatus(){
     val.innerHTML=now.secret?redactSpan(now.co,'scramNow')+' · full-time':esc(now.what);
   }else if(next){
     lbl.innerHTML='<span class="dot"></span>Next <span class="wk">· '+fmtDate(next.from)+'</span>';
-    val.innerHTML=next.secret?redactSpan(next.co,'scramNow')+' · full-time':esc(next.what);
+    val.innerHTML=next.secret
+      ?(revealed()?esc(REVEAL.co)+' · full-time':redactSpan(next.co,'scramNow')+' · full-time')
+      :esc(next.what);
   }else{
     lbl.innerHTML='<span class="dot"></span>Now';
     val.textContent='Graduated · open to what’s next';
@@ -2669,8 +3236,7 @@ function dayOf(d){return new Date(d+'T00:00:00').getDate()}
    means nothing. Returns null once the moment has passed, so callers
    render "Graduated" instead of counting into the negative. Both the
    home tile and the contact tile call this, so they cannot disagree. */
-function gradLeft(){
-  const ms=new Date(GRAD_AT).getTime()-Date.now();
+function fmtLeft(ms){
   if(!(ms>0))return null;
   const total=Math.floor(ms/1000);                       // whole seconds
   const d=Math.floor(total/86400), h=Math.floor((total%86400)/3600),
@@ -2689,6 +3255,11 @@ function gradLeft(){
   if(m>0)return m+'m '+p(s)+'s';
   return s+'s';
 }
+function gradLeft(){return fmtLeft(new Date(GRAD_AT).getTime()-Date.now())}
+function revealLeft(){return fmtLeft(new Date(REVEAL_AT).getTime()-Date.now())}
+/* unlocked only when BOTH are true: the moment has passed AND a human
+   has actually supplied the name. Either alone leaves the seal on. */
+function revealed(){return !revealLeft() && !!REVEAL.co}
 function nextChapter(){
   const t=todayISO();
   return CHAPTERS.find(c=>c.from>t)||null;
@@ -2709,8 +3280,19 @@ function LIVE(){
       : 'This IBM chapter closes '+monthName(ibm.to)+' '+dayOf(ibm.to)+'.',
     'grad-word': gradLeft()?'Graduating':'Graduated',
     'grad-out': (()=>{const a=gradLeft();return a?' · '+a:''})(),
-    'grad-short': (()=>{const a=gradLeft();return a?' · '+a:''})()
+    'grad-short': (()=>{const a=gradLeft();return a?' · '+a:''})(),
+    /* counted from the live DOM, so the site's own case study cannot be
+       wrong about the site the moment a tile is added */
+    'site-frames': String(frames.length),
+    'reveal-out': revealLeft()||(REVEAL.co?'Unlocked':'Unlocking shortly'),
+    'reveal-days': revealDays()
   };
+}
+function revealDays(){
+  const ms=new Date(REVEAL_AT).getTime()-Date.now();
+  if(!(ms>0))return REVEAL.co?'announced':'unlocking shortly';
+  const d=Math.ceil(ms/864e5);
+  return d<=1?'unlocks today':'unlocks in '+d+' days';
 }
 /* every chapter still ahead, oldest first, as one dated list */
 function nextListHTML(){
@@ -2721,7 +3303,13 @@ function nextListHTML(){
   if(!up.length)return '<span class="nx" style="color:var(--dimmer)">Open to what’s next</span>';
   return up.map((c,i)=>'<span class="nx"><span class="nx-when">'+
     fmtDate(c.from).replace(/, \d{4}$/,'')+'</span>'+
-    (c.secret?'Joining '+redactSpan(c.co,'scramNext'+i)+' full-time':esc(c.short||c.what))+
+    /* the home tile stays a plain statement of fact. The countdown lives
+       on the locked tile and in the roles list, where someone has already
+       chosen to look; putting it here too made one small cell carry two
+       ticking clocks alongside the graduation counter. */
+    (c.secret
+      ? 'Joining '+(revealed()?esc(REVEAL.co):redactSpan(c.co,'scramNext'+i))+' full-time'
+      : esc(c.short||c.what))+
     '</span>').join('');
 }
 function renderLive(){
@@ -2769,27 +3357,158 @@ function stopScramble(){clearInterval(scramT);scramT=null}
    next real minute boundary rather than firing every 60s from load, so
    the number changes when a clock would change it — and it re-aligns on
    wake, since a sleeping laptop does not fire timers. */
-let gradT=null;
 function paintGrad(){
   const a=gradLeft();
   document.querySelectorAll('[data-live="grad-short"],[data-live="grad-out"]')
     .forEach(el=>{el.textContent=a?' · '+a:''});
   document.querySelectorAll('[data-live="grad-word"]')
     .forEach(el=>{el.textContent=a?'Graduating':'Graduated'});
-  return a;
 }
-function tickGrad(){
-  clearTimeout(gradT);gradT=null;
+
+/* ── THE SEAL ──
+   Counts down to REVEAL_AT, then unseals — but only once a human has
+   supplied the name (see REVEAL). If the date passes with the constants
+   still blank the tile keeps its seal and says so, rather than counting
+   into the negative or announcing an empty string. */
+function paintReveal(){
+  const a=revealLeft(), out=a||(REVEAL.co?'Unlocked':'Unlocking shortly');
+  document.querySelectorAll('[data-live="reveal-out"]').forEach(el=>el.textContent=out);
+  const dd=revealDays();
+  document.querySelectorAll('[data-live="reveal-days"]').forEach(el=>el.textContent=dd);
+  if(!a&&REVEAL.co)unseal();
+}
+function unseal(){
+  const f=document.getElementById('f-locked');
+  if(!f||f.classList.contains('open'))return;
+  f.classList.add('open');
+  stopLock();                                    // no more glitching, ever
+  const co=document.getElementById('lockCo');
+  if(co){co.classList.remove('redact');co.removeAttribute('aria-label');co.textContent=REVEAL.co}
+  const r=document.getElementById('lockRole');
+  if(r){r.classList.remove('hit');r.textContent=REVEAL.role||'Full-time'}
+  const s=document.getElementById('lockSeal'); if(s)s.textContent='◆ Announced';
+  const h=f.querySelector('h5'); if(h)h.textContent='Starting';
+  const n=f.querySelector('.lock-note'); if(n)n.textContent='Told you it would write itself.';
+  /* the home tile redacts from the same data, so it unseals with it —
+     renderLive re-arms the scrambler over whatever .redact spans remain */
+  renderStatus();renderLive();
+}
+
+/* ── LOCAL CLOCKS ──
+   Two times, because the number a caller actually wants is the gap
+   between them. The city comes from whichever chapter contains today, so
+   this walks from New York to Dallas on its own. */
+function nowChapter(){const t=todayISO();return CHAPTERS.find(c=>t>=c.from&&t<=c.to)||null}
+function replyLine(h,wknd){
+  if(h<6)  return 'Middle of the night here — I’ll see this in the morning.';
+  if(h<9)  return 'Early here. You’ll hear back this morning.';
+  if(h<18) return wknd?'It’s the weekend here, but I still check.'
+                     :'I’m probably at my desk — expect a reply today.';
+  if(h<22) return 'Evening here. Tonight, or first thing tomorrow.';
+  return 'It’s late here, so expect a reply in the morning.';
+}
+function paintClock(){
+  const el=document.getElementById('clock'); if(!el)return;
+  const c=nowChapter(), tz=(c&&c.tz)||'America/Chicago', city=(c&&c.city)||'Dallas';
+  const now=new Date();
+  try{
+    const mine=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit'}).format(now);
+    const theirs=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    /* some engines render midnight as hour 24 under hour12:false */
+    const h=(+new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',hour12:false}).format(now))%24;
+    const wd=new Intl.DateTimeFormat('en-US',{timeZone:tz,weekday:'short'}).format(now);
+    el.innerHTML='<div class="c-now">'+(mine===theirs
+        ? 'It’s <b>'+esc(mine)+'</b> for both of us.'
+        : esc(theirs)+' your time &nbsp;·&nbsp; <b>'+esc(mine)+'</b> mine, in '+esc(city))+
+      '</div><div class="c-say">'+esc(replyLine(h,wd==='Sat'||wd==='Sun'))+'</div>';
+  }catch(_){el.innerHTML=''}          // no Intl timezone data: show nothing
+}
+
+/* ── THE GLITCHING TITLE ──
+   The job has ten names depending on who is hiring, and until the seal
+   comes off it is honestly all of them. Built from a character scramble
+   plus a text-shadow colour split — never filter or clip-path, which
+   flatten an element out of preserve-3d and kill clicks in the world.
+   Runs only while this is the focused tile: a text write inside the 3D
+   subtree costs a layout, and nobody can read an 8px fogged tile. */
+const LOCK_TITLES=['Solutions Engineer','Account Executive','Solutions Consultant',
+  'Sales Engineer','Technical Account Manager','Presales Consultant','Solutions Architect',
+  'Enterprise Account Executive','Technical Sales Specialist','Client Engineer'];
+let lockI=0,lockCycT=null,lockScrT=null;
+function lockCycle(){
+  const el=document.getElementById('lockRole'), f=document.getElementById('f-locked');
+  if(!el||!f||revealed()||!f.classList.contains('here'))return;
+  el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit');
+  const next=LOCK_TITLES[(lockI+1)%LOCK_TITLES.length];
+  let n=0;
+  clearInterval(lockScrT);
+  /* SPEED — 26ms a frame over 8 frames, so the whole scramble is ~210ms
+     rather than the ~480ms it started at. Fast enough that it reads as a
+     signal breaking up and re-locking rather than as a loading state,
+     which is the difference between "unstable" and "slow". */
+  lockScrT=setInterval(()=>{
+    n++;
+    let s='';
+    for(let k=0;k<next.length;k++){
+      s+= next[k]===' ' ? ' '
+        : (n>=4&&Math.random()<(n-3)/5) ? next[k]      // resolves left-to-rightish
+        : GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    }
+    el.textContent=s;
+    if(n>=8){clearInterval(lockScrT);lockI=(lockI+1)%LOCK_TITLES.length;
+      el.textContent=LOCK_TITLES[lockI]}
+  },26);
+}
+/* the whole-tile dropout. Randomised interval so it never becomes a
+   metronome you can predict, and the title breaks up with everything
+   else rather than on its own separate clock. */
+let lockFxT=null;
+function lockGlitch(){
+  const f=document.getElementById('f-locked');
+  if(!f||revealed()||reduce||!f.classList.contains('here'))return;
+  f.classList.remove('fx');void f.offsetWidth;f.classList.add('fx');
+  lockCycle();
+  setTimeout(()=>f.classList.remove('fx'),660);
+}
+function scheduleFx(){
+  clearTimeout(lockFxT);
+  if(reduce||revealed())return;
+  lockFxT=setTimeout(()=>{if(!document.hidden)lockGlitch();scheduleFx()},
+    5000+Math.random()*5000);
+}
+function startLock(){
+  clearInterval(lockCycT);
+  const wh=document.getElementById('lockWhen');
+  if(wh)wh.textContent=new Date(REVEAL_AT).toLocaleString('en-US',
+    {month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+  if(reduce||revealed())return;
+  /* ~210ms glitching, ~1.2s legible, repeat. Long enough to read the
+     title it lands on, short enough that it never sits still. */
+  lockCycT=setInterval(()=>{if(!document.hidden)lockCycle()},1400);
+  scheduleFx();
+}
+function stopLock(){clearInterval(lockCycT);clearInterval(lockScrT);clearTimeout(lockFxT);
+  lockCycT=lockScrT=lockFxT=null;
+  const f=document.getElementById('f-locked');if(f)f.classList.remove('fx')}
+
+/* ── ONE TICKER FOR EVERYTHING LIVE ──
+   Graduation, the seal, and the clocks all used to want their own timer.
+   One aligned timeout drives all three: aligned to the next real second
+   rather than a flat interval from load, so digits turn over when a wall
+   clock would turn them over and re-align after the machine sleeps. The
+   clocks only repaint when the minute actually changes. */
+let liveT=null,lastMin=-1;
+function tickLive(){
+  clearTimeout(liveT);liveT=null;
   if(document.hidden)return;
-  if(!paintGrad())return;              // the moment has passed; stop for good
-  /* aligned to the next real boundary rather than a flat interval from
-     load, so the digit turns over when a clock would turn it over and
-     re-aligns itself after the machine wakes from sleep */
+  paintGrad();paintReveal();
+  const m=new Date().getMinutes();
+  if(m!==lastMin){lastMin=m;paintClock()}
   const step=reduce?60000:1000;
-  gradT=setTimeout(tickGrad,step-(Date.now()%step)+20);
+  liveT=setTimeout(tickLive,step-(Date.now()%step)+20);
 }
-function stopGrad(){clearTimeout(gradT);gradT=null}
-renderStatus();renderBuilt();renderLive();tickGrad();
+function stopLive(){clearTimeout(liveT);liveT=null}
+renderStatus();renderBuilt();renderLive();paintClock();startLock();tickLive();
 
 /* ═══════════ ROTATING HERO VERB ═══════════
    EDIT HERE — ROT_WORDS is the list that cycles in "I ____ solutions."
@@ -2820,15 +3539,26 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(_){}}
    One stop per navigation level, one example deep dive each — never
    the whole tree. Pacing is content-aware: the caption types out,
    then the stop holds proportionally to how much is on the frame. */
-const TOUR=[
- {id:'f-home',    t:"This is Saaif Khan — a seller who builds. Give me a minute and I'll show you the whole map."},
- {id:'f-career',  t:"Four years, five roles, one thesis: learn every seat at the table. Founder, engineer, consultant, enabler, seller."},
- {id:'f-ibm',     t:"The current chapter — IBM, New York public sector. Real territory inside a 150+ agency account, six opportunities moved forward."},
- {id:'f-projects',t:"He doesn't just carry the bag — he builds what's inside it. Five projects, each born from a real problem in a real role."},
- {id:'f-kdr',     t:"Like this one. Close plans took sellers three hours; his AI engine does it in minutes, inside the workflow they already use."},
- {id:'f-person',  t:"Off the clock: pickleball, community, and the parts of a person that never fit on a resume."},
- {id:'f-contact', t:"That's the tour — the resume lives right here whenever you want it. Taking you back home; everything else is one click deep."}
-];
+/* Captions are keyed by tile, not held in a fixed running order, because
+   the audience lens re-cuts the route: a recruiter and an SE hiring
+   manager should not sit through the same seven stops. TOUR is whatever
+   route is currently loaded; setTourRoute rebuilds it and its dots. */
+const TOUR_CAP={
+ 'f-home':      "This is Saaif Khan — a seller who builds. Give me a minute and I'll show you the whole map.",
+ 'f-career':    "Four years, five roles, one thesis: learn every seat at the table. Founder, engineer, consultant, enabler, seller.",
+ 'f-ibm':       "The current chapter — IBM, New York public sector. Real territory inside a 150+ agency account, six opportunities moved forward.",
+ 'f-workiva':   "Before that, Workiva. A platform 230 sales engineers were quietly ignoring, rebuilt around what the data said, then defended to a room of ninety of them.",
+ 'f-ebay':      "And before any of it, a business run solo: a hundred thousand a year, 2,500 transactions, and nobody covering a bad month.",
+ 'f-projects':  "He doesn't just carry the bag — he builds what's inside it. Six projects, each born from a real problem in a real role.",
+ 'f-kdr':       "Like this one. Close plans took sellers three hours; his AI engine does it in minutes, inside the workflow they already use.",
+ 'f-flightflow':"Splunk, summer 2025. Four live data feeds, a model at 89% accuracy, and an alerts engine — demoed live to 32 senior leaders.",
+ 'f-site':      "And this one: the site you're inside. One file, no dependencies, and a 3D engine that had to stop trusting the browser to work at all.",
+ 'f-recs':      "Don't take my word for it. Managers, mentors, and teammates, in their own words.",
+ 'f-person':    "Off the clock: pickleball, community, and the parts of a person that never fit on a resume.",
+ 'f-contact':   "That's the tour — the resume lives right here whenever you want it. Taking you back home; everything else is one click deep."
+};
+const TOUR_DEFAULT=['f-home','f-career','f-ibm','f-projects','f-kdr','f-person','f-contact'];
+let TOUR=[];
 const tourStartEl=document.getElementById('tourStart'),tourBarEl=document.getElementById('tourBar'),
       tourCapEl=document.getElementById('tourCap'),tourDotsEl=document.getElementById('tourDots'),
       tourPPEl=document.getElementById('tourPP'),tourNEl=document.getElementById('tourN'),
@@ -2841,14 +3571,27 @@ const tourSeen=new Set();           // a stop already read never retypes
 /* dots are real buttons: keyboard-reachable and named, since they are
    the tour's own navigation and were previously invisible to a
    screen reader and impossible to tab to */
-TOUR.forEach((st,k)=>{
-  const b=document.createElement('button');
-  b.type='button';
-  b.setAttribute('aria-label','Stop '+(k+1)+' of '+TOUR.length+
-    (NAMES[st.id]?' — '+NAMES[st.id]:''));
-  b.addEventListener('click',()=>tourGo(k,false));
-  tourDotsEl.appendChild(b);
-});
+let tourSig='';
+function setTourRoute(ids){
+  const list=(ids||TOUR_DEFAULT).filter(id=>TOUR_CAP[id]&&document.getElementById(id));
+  const sig=list.join('|');
+  if(sig===tourSig)return;
+  /* a re-cut route makes any saved position meaningless — stop 4 of the
+     recruiter route is not stop 4 of the technical one */
+  if(tourSig)lsSet('sk-tour-at','0');
+  tourSig=sig;
+  TOUR=list.map(id=>({id,t:TOUR_CAP[id]}));
+  tourDotsEl.innerHTML='';
+  TOUR.forEach((st,k)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.setAttribute('aria-label','Stop '+(k+1)+' of '+TOUR.length+
+      (NAMES[st.id]?' — '+NAMES[st.id]:''));
+    b.addEventListener('click',()=>tourGo(k,false));
+    tourDotsEl.appendChild(b);
+  });
+}
+setTourRoute(TOUR_DEFAULT);
 
 /* ── ghost pointer ──
    Only ever used on a control that genuinely navigates to the next
@@ -3000,6 +3743,15 @@ function tourToggle(){
   if(tourPlaying)tourAdvT=setTimeout(()=>tourNext(false),900);
   else clearTimeout(tourAdvT);
 }
+/* the Play button. The tour is the thing being offered, so it is the
+   thing that gets asked about first; who is watching is a follow-up, and
+   only for someone who already said yes. Asked once — after that the
+   answer is remembered and Play goes straight in. */
+function tourPlay(){
+  dismissTourStart();
+  if(!lsGet('sk-lens')){openLens(true);return}
+  startTour();
+}
 function startTour(){
   const at=+lsGet('sk-tour-at')||0;
   const resume=(at>0&&at<TOUR.length-1)?at:0;
@@ -3076,6 +3828,65 @@ function armRecTl(){
 }
 
 
+/* ═══════════ AUDIENCE LENS ═══════════
+   The SECOND question, never the first. The order matters: a visitor is
+   asked whether they want the tour, and only if they say yes are they
+   asked who they are. Anyone who declines the tour is never interrogated
+   at all — the site behaves exactly as it did before this existed.
+   The answer changes exactly two things:
+     · the ROUTE the guided tour takes
+     · which group in the index carries a "Start here" flag afterwards
+   It deliberately does NOT reorder the doors on the home tile, and it
+   does not reorder the index. Both are numbered 01–05, those numbers are
+   printed on the hub tiles in-world, and any ordering that contradicts
+   them makes the site argue with itself. Recommendations sitting above
+   Projects on the home screen was exactly that, and it was wrong. */
+const LENSES={
+  recruiter:{name:'Recruiter',grp:'recs',
+    tour:['f-home','f-career','f-ibm','f-recs','f-contact']},
+  se:{name:'SE / technical',grp:'projects',
+    tour:['f-home','f-projects','f-kdr','f-site','f-flightflow','f-contact']},
+  leader:{name:'Sales leader',grp:'roles',
+    tour:['f-home','f-career','f-ibm','f-ebay','f-recs','f-contact']},
+  curious:{name:'Exploring',grp:'roles',tour:null}
+};
+const lensEl=document.getElementById('lensPick');
+let lens=null,lensThenTour=false;
+function applyLens(k){
+  const L=LENSES[k]; if(!L)return;
+  lens=k; lsSet('sk-lens',k);
+  document.querySelectorAll('.rail .g').forEach(g=>
+    g.classList.toggle('lens-on',g.dataset.grp===L.grp));
+  const chip=document.getElementById('lensChip');
+  if(chip){chip.hidden=false;document.getElementById('lensName').textContent=L.name}
+  setTourRoute(L.tour);
+}
+/* thenTour: reached from the tour offer, so an answer starts the tour.
+   Reached from the index chip instead, an answer just changes the lens. */
+function openLens(thenTour){
+  lensThenTour=!!thenTour;
+  if(touring)endTour('interrupted');
+  if(innerWidth<=1080)toggleRail(false);
+  closeSheet();
+  document.body.classList.add('lens-open');
+  lensEl.classList.add('on');lensEl.setAttribute('aria-hidden','false');
+  setHover(null);
+}
+function closeLens(){
+  lensThenTour=false;                        // cleared however it is dismissed
+  document.body.classList.remove('lens-open');
+  lensEl.classList.remove('on');lensEl.setAttribute('aria-hidden','true');
+}
+lensEl.addEventListener('click',e=>{
+  e.stopPropagation();                       // never the world's business
+  const b=e.target.closest&&e.target.closest('[data-lens]');
+  if(!b)return;
+  const go=lensThenTour;                     // read before closeLens clears it
+  applyLens(b.dataset.lens);
+  closeLens();
+  if(go)setTimeout(startTour,340);
+});
+
 /* ═══════════ MEASURE MODE ═══════════
    Open the site with ?measure=1 to see, for every tile, its rendered
    size and the scale the camera needs to fit it on THIS screen. The
@@ -3116,9 +3927,18 @@ setTimeout(runMeasure,400);
    offer the tour on first visit (never when someone arrived via a
    deep link — they came for that one section, not the guided tour) */
 applyRail();
+/* a returning visitor's lens is restored before the first flight, so the
+   index flag and the tour route are already right rather than snapping
+   into place a moment later */
+const savedLens=lsGet('sk-lens');
+if(savedLens&&LENSES[savedLens])applyLens(savedLens);
 const bootId=slugToId(location.hash);
 current='';flyTo(bootId,true);hist=[];chrome();
 setTimeout(()=>{
+  /* the only thing a first-time visitor is ever asked, and only on the
+     home screen: someone who arrived on a deep link came for that one
+     section, not for an offer. "Who's asking" comes later, and only to
+     someone who has already said yes to this. */
   if(bootId==='f-home'&&!lsGet('sk-tour-seen'))openTourStart();
 },1800);
 </script>

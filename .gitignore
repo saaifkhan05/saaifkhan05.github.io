@@ -12,6 +12,19 @@
 # misc
 Thumbs.db
 
+# ── INTERNAL WORKING DOCS — DO NOT COMMIT ────────────────────────────
+# GitHub Pages serves EVERY tracked file, not just the ones the site
+# links to. Anything committed here is readable by anyone who types
+# saaifkhan.com/<filename> — robots.txt stops crawlers and does nothing
+# about a person. These live one level up in ../_working/ instead.
+AUDIT.md
+CONTENT-BRIEF.md
+ROADMAP-*.md
+NOTES*.md
+/archive/
+/mockups/
+_working/
+
 # large source video — the 720p web version (flightflow-demo-web.mp4) is the
 # one the site links to and is committed; keep the full-size original local
 assets/videos/flightflow-splunk-passion-project-demo.mp4

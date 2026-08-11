@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /archive/
-Disallow: /mockups/
 
 Sitemap: https://saaifkhan.com/sitemap.xml

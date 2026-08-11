@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════
+  404 — served by GitHub Pages for any path that isn't a real file.
+  Deliberately NOT the 3D world: someone who landed here took a wrong
+  turn and wants one obvious way out, not an interface to learn.
+  Same Carbon shell, same type, same theme memory as index.html so it
+  reads as the same site rather than a host's error page.
+  ═══════════════════════════════════════════════════════════════ -->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Not on the map · Saaif Khan</title>
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<!-- the visitor's saved theme wins, then the OS, then dark -->
+<script>
+(function(){try{
+  var s=localStorage.getItem('sk-theme');
+  if(s==='light'||s==='dark'){document.documentElement.dataset.theme=s;return}
+  if(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)
+    document.documentElement.dataset.theme='light';
+}catch(e){}})();
+</script>
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#161616; --surface:#262626;
+  --line:#393939; --line-2:#525252;
+  --ink:#f4f4f4; --dim:#a8a8a8; --dimmer:#6f6f6f;
+  --blue:#0f62fe; --blue-hover:#0043ce;
+  --gridln:color-mix(in srgb,var(--dimmer) 10%,transparent);
+}
+[data-theme="light"]{
+  --bg:#ffffff; --surface:#f4f4f4;
+  --line:#e0e0e0; --line-2:#c6c6c6;
+  --ink:#161616; --dim:#525252; --dimmer:#8d8d8d;
+  --gridln:color-mix(in srgb,var(--dimmer) 11%,transparent);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;padding:32px 22px}
+::selection{background:var(--blue);color:#fff}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* the same 2x construction grid the project tiles carry, so a stray URL
+   still lands somewhere that is unmistakably this site */
+.card{position:relative;width:100%;max-width:560px;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 27px,var(--gridln) 27px 28px),
+    repeating-linear-gradient(90deg,transparent 0 27px,var(--gridln) 27px 28px),
+    var(--surface);
+  border:1px solid var(--line);border-top:3px solid var(--blue);
+  padding:44px 46px 40px;
+  animation:up .5s cubic-bezier(.33,1,.68,1) both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+
+.code{display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:600;color:var(--blue);
+  text-transform:uppercase;letter-spacing:.18em;margin-bottom:14px}
+.code::before{content:'';width:20px;height:2px;background:var(--blue)}
+
+h1{font-weight:300;font-size:clamp(34px,7vw,52px);letter-spacing:-.035em;
+  line-height:1.04;margin-bottom:16px}
+h1 i{font-style:normal;color:var(--blue);font-weight:600}
+p{color:var(--dim);font-weight:300;line-height:1.65;font-size:14.5px;max-width:42ch}
+p b{color:var(--ink);font-weight:600}
+.path{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line-2);padding:9px 12px;margin:20px 0 4px;
+  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.go{display:flex;flex-direction:column;gap:8px;margin-top:26px}
+.b{display:flex;align-items:center;gap:13px;text-decoration:none;
+  border:1px solid var(--line-2);background:none;color:var(--ink);
+  padding:14px 16px;font:inherit;font-size:14px;
+  transition:background .15s,border-color .15s,color .15s}
+.b:hover{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+.b.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.b.primary:hover{background:var(--blue-hover);border-color:var(--blue-hover)}
+.b .t{flex:1;min-width:0}
+.b .t span{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.b.primary .t span{color:rgba(255,255,255,.78)}
+.b .t b{display:block;font-weight:600;line-height:1.2}
+.b .a{flex:none;font-size:15px;transition:transform .15s}
+.b:hover .a{transform:translateX(4px)}
+.b.primary:hover .a{transform:translateX(4px)}
+
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dimmer)}
+@media(prefers-reduced-motion:reduce){.card{animation:none}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="code">Error 404</div>
+  <h1>That page isn't<br>on the map<i>.</i></h1>
+  <p>Every section of this site lives behind the front door, so a link that
+     misses lands here. <b>Nothing is more than two clicks from home.</b></p>
+  <code class="path" id="what">—</code>
+  <div class="go">
+    <a class="b primary" href="/"><span class="t"><span>Start over</span><b>Saaif Khan — the full site</b></span><span class="a">→</span></a>
+    <a class="b" href="/#projects"><span class="t"><span>Straight to the work</span><b>Projects</b></span><span class="a">→</span></a>
+    <a class="b" href="/resume.pdf"><span class="t"><span>PDF</span><b>The resume</b></span><span class="a">↗</span></a>
+    <a class="b" href="mailto:saaifkhan05@gmail.com"><span class="t"><span>Or just ask</span><b>saaifkhan05@gmail.com</b></span><span class="a">→</span></a>
+  </div>
+  <div class="foot">saaifkhan.com</div>
+</main>
+<script>
+/* show the path that missed — useful to the visitor, and it tells me
+   what is being linked wrongly if they ever mention it. Escaped, since
+   the URL is attacker-controllable input on any page that echoes it. */
+(function(){
+  var el=document.getElementById('what');
+  var p=(location.pathname||'/')+(location.search||'');
+  if(p.length>64)p=p.slice(0,63)+'…';
+  el.textContent=p;
+})();
+</script>
+</body>
+</html>
