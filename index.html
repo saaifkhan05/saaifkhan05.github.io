@@ -23,7 +23,7 @@
 <!-- viewport-fit=cover lets env(safe-area-inset-*) report real values, so
      chrome can clear the notch and the home indicator on iPhone -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>saaif khan :)</title>
+<title>saaif khan :p</title>
 <meta name="description" content="Saaif Khan — enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive tour of the work.">
 <link rel="canonical" href="https://saaifkhan.com/">
 <meta name="robots" content="index,follow">
@@ -772,11 +772,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     transition:transform .34s cubic-bezier(.4,0,.2,1)}
   /* no accent rule here: it sat directly under the header's own border
      and read as a stray double line. The title already carries the tint. */
-  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;padding:9px 14px;
+  .sh-bar{flex:none;display:flex;align-items:center;padding:11px 18px;
     border-bottom:1px solid var(--line);background:var(--bg)}
-  .sh-back{background:none;border:1px solid var(--line-2);color:var(--ink);
-    font-size:13px;font-weight:500;padding:10px 14px;min-height:44px;display:flex;
-    align-items:center;gap:7px}
   .sh-title{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
     color:var(--ax);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .sh-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
@@ -1716,8 +1713,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
      cannot fit at a readable size. The map keeps its job (navigation);
      this takes over the one job it is bad at on a phone (reading). -->
 <div id="sheet" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Section detail">
+  <!-- no back control of its own: the header's Back sits directly above
+       and already does this, and two back buttons a centimetre apart is
+       a question the reader should not have to answer -->
   <div class="sh-bar">
-    <button class="sh-back" onclick="closeSheet()" aria-label="Back to the map">‹ Map</button>
     <span class="sh-title" id="sheetTitle"></span>
   </div>
   <div class="sh-body" id="sheetBody"></div>
@@ -1930,7 +1929,7 @@ function setDocTitle(id){
   /* the tab title follows the camera — helps anyone with a dozen tabs
      open, and makes a bookmarked deep link self-describing */
   const nm=(typeof NAMES!=='undefined'&&NAMES[id])?NAMES[id]:'';
-  document.title=nm&&id!=='f-home'?nm+' · Saaif Khan':'saaif khan :)';
+  document.title=nm&&id!=='f-home'?nm+' · Saaif Khan':'saaif khan :p';
 }
 function syncHash(id,replay){
   setDocTitle(id);
