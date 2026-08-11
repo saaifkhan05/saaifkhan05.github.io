@@ -20,7 +20,9 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport-fit=cover lets env(safe-area-inset-*) report real values, so
+     chrome can clear the notch and the home indicator on iPhone -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>saaif khan :)</title>
 <meta name="description" content="Saaif Khan — enterprise sales at IBM, solutions engineering at Splunk and Workiva. An interactive tour of the work.">
 <link rel="canonical" href="https://saaifkhan.com/">
@@ -689,6 +691,83 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   #field{display:none}
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — everything below is inside one query and cannot reach a
+   desktop viewport. `pointer:coarse` is deliberately part of the test
+   alongside the width: a narrow desktop window keeps desktop behaviour,
+   only real touch devices get this.
+
+   The measurements that drove it (iPhone 16 Pro Max, 440×796):
+   the camera fits both axes, dossiers stack to 1,100–1,600px tall, and
+   the budget for readable text is 772px. Result: 5.8px body text, and
+   two tiles (Workiva .41, Cisco .42) fell under the MIN_S floor, which
+   meant they were clipped with no way to scroll to the rest.
+   Fixing that by trimming copy would need a ~50% cut. So on touch the
+   map stays a map, and reading happens in a sheet — the same overlay
+   pattern recruiter mode already uses successfully in this file.
+   ═══════════════════════════════════════════════════════════════ */
+@media (pointer:coarse) and (max-width:900px){
+  html{-webkit-text-size-adjust:100%}          /* stop iOS inflating type */
+  button,a{-webkit-tap-highlight-color:transparent}
+
+  /* chrome clears the notch and the home indicator */
+  .topbar{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  .rail{width:min(88vw,340px);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  #tourBar{bottom:calc(12px + env(safe-area-inset-bottom))}
+
+  /* 44px is the floor for a reliable tap; these were 28–34px */
+  .pgb{min-width:44px;min-height:44px;padding:0 12px}
+  .tb-ctl button{width:44px;height:42px}
+  .tb-dots button{width:26px!important;height:34px!important}
+  .cert{padding:12px 14px}
+  .item{padding:16px 12px 16px 16px}
+  .cbtn,.xlink{padding:16px 15px}
+
+  /* one column: two made the longest fact wrap four times */
+  #f-home .facts{grid-template-columns:1fr}
+  #f-home .fact{border-right:none;border-bottom:1px solid var(--line);padding:12px 0}
+  #f-home .fact:last-child{border-bottom:none}
+  #f-home h1{font-size:clamp(38px,13vw,54px)}
+  #f-home .rotline{font-size:clamp(20px,6.4vw,26px)}
+  #f-home .go{gap:6px}
+  .jump{padding:14px 18px}
+
+  /* ── READING SHEET ──
+     Sits above the world and the header but below the tour bar, so a
+     narrated stop stays visible and legible at the same time. */
+  #sheet{position:fixed;inset:0;z-index:110;background:var(--bg);
+    display:flex;flex-direction:column;
+    transform:translateY(100%);visibility:hidden;
+    transition:transform .34s cubic-bezier(.4,0,.2,1),visibility 0s .34s}
+  body.sheet-open{overscroll-behavior:none}
+  body.sheet-open #sheet{transform:none;visibility:visible;
+    transition:transform .34s cubic-bezier(.4,0,.2,1)}
+  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;
+    padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;
+    border-bottom:1px solid var(--line);border-top:3px solid var(--ax);background:var(--bg)}
+  .sh-back{background:none;border:1px solid var(--line-2);color:var(--ink);
+    font-size:13px;font-weight:500;padding:10px 14px;min-height:44px;display:flex;
+    align-items:center;gap:7px}
+  .sh-title{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ax);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sh-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    padding:22px 18px calc(56px + env(safe-area-inset-bottom))}
+  /* the tile's own grid is undone: in the sheet it is a document */
+  .sh-body .pad{padding:0!important;display:block!important}
+  .sh-body .d-side{margin-top:30px;padding-top:4px;border-top:1px solid var(--line-2)}
+  .sh-body p{font-size:15.5px;line-height:1.62;margin-bottom:12px}
+  .sh-body h2{font-size:27px;margin:12px 0 8px}
+  .sh-body h5{margin:24px 0 9px}
+  .sh-body .meta{font-size:12.5px}
+  .sh-body .strip{max-width:none!important;flex-direction:column}
+  .sh-body .shot img{aspect-ratio:16/10}
+  .sh-body .metrics{flex-direction:row!important;flex-wrap:wrap;gap:22px}
+  .sh-body .metric b{font-size:34px}
+  .sh-body .rec .r-body{font-size:14.5px;line-height:1.62}
+  .sh-body .quote p{font-size:14.5px}
+  body.sheet-open .topbar{opacity:0;pointer-events:none;transition:opacity .2s}
+}
+
 /* ═══════════ MEASURE MODE (?measure=1) ═══════════
    A dev instrument, never shown to a visitor. Lists every tile's real
    rendered size and the scale the camera has to use to fit it, so the
@@ -711,6 +790,12 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    whole world is dropped and a plain card is printed instead — the
    short version, plus where to get the actual resume. */
 #printcard{display:none}
+/* The reading sheet is hidden by default and only ever revealed inside
+   the touch query below. Stating it here rather than as a "not coarse"
+   query covers the case that would otherwise slip through: a coarse
+   pointer WIDER than the breakpoint, like an iPad in landscape, which
+   matches neither side of a negated query and would show a stray bar. */
+#sheet{display:none}
 @media print{
   html,body{height:auto;overflow:visible;background:#fff;color:#000}
   #field,.viewport,.topbar,.rail,.scrim,.boot,#tourBar,#tourStart,#recruiter{display:none!important}
@@ -1573,6 +1658,18 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   </div>
 </div>
 
+<!-- ══ MOBILE READING SHEET ══
+     Only ever opened on a touch device, and only for a tile the camera
+     cannot fit at a readable size. The map keeps its job (navigation);
+     this takes over the one job it is bad at on a phone (reading). -->
+<div id="sheet" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Section detail">
+  <div class="sh-bar">
+    <button class="sh-back" onclick="closeSheet()" aria-label="Back to the map">‹ Map</button>
+    <span class="sh-title" id="sheetTitle"></span>
+  </div>
+  <div class="sh-body" id="sheetBody"></div>
+</div>
+
 <!-- ══ RECRUITER MODE — the story, not the resume ══ -->
 <div id="recruiter" role="dialog" aria-modal="true" aria-hidden="true" aria-label="For recruiters and hiring managers">
   <button class="rec-x" onclick="closeRec()">✕ Close</button>
@@ -1732,11 +1829,21 @@ world.addEventListener('transitionend',e=>{
    also widened (1040px) so they're shorter and the zoom-out stays mild
    enough to keep text readable. */
 const MIN_S=.45, MAX_S=1.5, PAD=1.06;
+/* TOUCH — the single switch every mobile behaviour hangs off. Read live
+   rather than cached, so rotating a phone re-evaluates it. `pointer:
+   coarse` is part of the test on purpose: a narrow desktop window must
+   keep desktop behaviour. */
+function isTouch(){return matchMedia('(pointer:coarse) and (max-width:900px)').matches}
+/* On a phone the floor has to drop, or a tall tile is clipped with no
+   scroll to reach the rest of it — measured at .41 on the Workiva tile,
+   under the .45 desktop floor. Reading happens in the sheet, so the
+   in-world tile only has to be whole, not legible. */
+function minScale(){return isTouch()?.24:MIN_S}
 function fitScale(f){
   const b=safeBox();
   return Math.min(b.w/(f.offsetWidth*PAD), b.h/(f.offsetHeight*PAD), MAX_S);
 }
-function czFor(f){return -(+f.dataset.fz)+P*(1-1/Math.max(fitScale(f),MIN_S))}
+function czFor(f){return -(+f.dataset.fz)+P*(1-1/Math.max(fitScale(f),minScale()))}
 function setCtx(id){
   const el=id?document.getElementById(id):null;
   const c=el?el.dataset.ctx:'';
@@ -1804,7 +1911,61 @@ function flyTo(id,replay){
   cam(cx,cy,cz);
   chrome();
   syncHash(id,replay);
+  syncSheet(id,f);
 }
+
+/* ═══════════ MOBILE READING SHEET ═══════════
+   A tile whose text would land below ~0.8 scale is unreadable on a
+   phone, so its content is presented as a normal scrolling document
+   instead. Decided by measurement, not by a list of ids: short tiles
+   (the hubs and hobbies already measure 0.96) stay in the world. */
+let sheetId=null;
+function needsSheet(f){
+  return isTouch() && f && f.id!=='f-home' && fitScale(f)<.8;
+}
+function syncSheet(id,f){
+  if(needsSheet(f)){
+    /* wait out the camera flight so the sheet rises onto a settled
+       map rather than over a moving one */
+    clearTimeout(syncSheet.t);
+    syncSheet.t=setTimeout(()=>{if(current===id)openSheet(id)},420);
+  }else if(sheetId){
+    clearTimeout(syncSheet.t);closeSheet();
+  }
+}
+function openSheet(id){
+  const f=document.getElementById(id);if(!f)return;
+  const pad=f.querySelector('.pad');if(!pad)return;
+  const sh=document.getElementById('sheet'),body=document.getElementById('sheetBody');
+  const clone=pad.cloneNode(true);
+  /* ids would be duplicated into the document twice over; the sheet
+     navigates by data-fly and needs none of them */
+  clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+  body.innerHTML='';body.appendChild(clone);body.scrollTop=0;
+  sh.className=[...f.classList].filter(c=>c.indexOf('ax-')===0).join(' ');
+  document.getElementById('sheetTitle').textContent=NAMES[id]||'';
+  document.body.classList.add('sheet-open');
+  sh.setAttribute('aria-hidden','false');
+  sheetId=id;setHover(null);
+}
+function closeSheet(){
+  if(!sheetId)return;
+  document.body.classList.remove('sheet-open');
+  document.getElementById('sheet').setAttribute('aria-hidden','true');
+  sheetId=null;
+}
+/* links inside the sheet behave like links; anything with data-fly
+   navigates the map underneath and swaps the sheet's contents */
+document.getElementById('sheet').addEventListener('click',e=>{
+  if(touring)return;
+  if(e.target.closest('a[href]'))return;
+  const t=e.target.closest('[data-fly]');
+  if(!t)return;
+  e.preventDefault();
+  const id=t.dataset.fly;
+  if(id===current){closeSheet();return}
+  closeSheet();flyTo(id);
+});
 function goBack(){
   if(!hist.length)return;
   flyTo(hist.pop(),true);
@@ -1840,6 +2001,9 @@ document.addEventListener('keydown',e=>{
     else if(e.key===' '){e.preventDefault();tourToggle()}
     else if(e.key==='Escape')endTour('exited');
     return;
+  }
+  if(document.body.classList.contains('sheet-open')){
+    if(e.key==='Escape'){closeSheet();return}
   }
   if(e.key==='Escape'){
     if(railOpen&&innerWidth<=1080){toggleRail(false);return}
@@ -1987,6 +2151,9 @@ document.addEventListener('click',e=>{
     return;
   }
   if(document.body.classList.contains('rec-open'))return;
+  /* the sheet owns the screen while it is up; its own listener has
+     already had this click, so the world must not also act on it */
+  if(document.body.classList.contains('sheet-open'))return;
   const jd=T.closest&&T.closest('[data-jump]');
   if(jd){jump(jd.dataset.jump);return}
   const dl=T.closest&&T.closest('a[download]');
@@ -2089,12 +2256,17 @@ function setHover(el){
   document.body.style.cursor=hoveredEl?'pointer':'';
 }
 document.addEventListener('mousemove',e=>{
+  /* iOS synthesises mousemove after a tap, which used to leave a row
+     stuck in its hover state until something else was tapped. A device
+     with no real hover should never resolve one. */
+  if(isTouch())return;
   hvX=e.clientX;hvY=e.clientY;
   if(hvQueued)return;
   hvQueued=true;
   requestAnimationFrame(()=>{
     hvQueued=false;
-    setHover((touring||document.body.classList.contains('rec-open')||overChrome(hvX,hvY))?null:hitAt(hvX,hvY,true));
+    setHover((touring||document.body.classList.contains('rec-open')
+      ||document.body.classList.contains('sheet-open')||overChrome(hvX,hvY))?null:hitAt(hvX,hvY,true));
   });
 },{passive:true});
 document.addEventListener('mouseleave',()=>setHover(null),{passive:true});
@@ -2306,7 +2478,16 @@ function toggleTheme(){
   syncThemeBtn();
   lsSet('sk-theme',root.dataset.theme);   // survives the next visit
 }
-let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+/* MOBILE: scrolling in Safari or Chrome collapses the address bar,
+   which changes innerHeight and nothing else. That used to fire a full
+   re-fit, so the camera lurched every time a finger moved. A height-only
+   change on a touch device is browser chrome, not a resize — repaint the
+   field and leave the camera where it is. */
+let rt,lastVW=innerWidth,lastVH=innerHeight;
+addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+  const dw=Math.abs(innerWidth-lastVW), dh=Math.abs(innerHeight-lastVH);
+  lastVW=innerWidth;lastVH=innerHeight;
+  if(isTouch()&&dw===0&&dh<=160){rz();rectsStale=true;return}
   rz();rectsStale=true;applyRail();
   const c=current;current='';flyTo(c,true);
 },120)});
@@ -2769,6 +2950,7 @@ recEl.addEventListener('click',e=>{
 });
 function openRec(){
   if(touring)endTour('interrupted');
+  closeSheet();                 // two stacked overlays is one too many
   if(innerWidth<=1080)toggleRail(false);
   document.body.classList.add('rec-open');
   recEl.setAttribute('aria-hidden','false');
