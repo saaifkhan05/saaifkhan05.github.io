@@ -836,7 +836,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
                anything, and the school needs the date. The "IT Sales
                Engineering track" detail moved to the UT Dallas dossier,
                where someone who cares about it is already looking. -->
-          <div class="fact"><span class="lbl"><span data-live="grad-word">Graduating</span><span class="wk" data-live="grad-short"></span></span><b>December 2026 · BS, Management Information Systems · UT Dallas</b></div>
+          <div class="fact"><span class="lbl"><span data-live="grad-word">Graduating</span><span class="wk" data-live="grad-short"></span></span><b>December 17, 2026 · BS, Management Information Systems · UT Dallas</b></div>
         </div>
         <div class="go">
           <button class="jump primary" data-fly="f-career">Roles →</button>
@@ -928,7 +928,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
       style="width:560px;left:2800px;top:1700px;transform:translateZ(-750px)">
       <div class="pad">
         <div class="shead"><span class="snum">04</span><h2>Get in touch</h2></div>
-        <div class="meta">Graduating December 2026<span data-live="grad-out"></span> · always open to a conversation</div>
+        <div class="meta"><span data-live="grad-word">Graduating</span> December 17, 2026<span data-live="grad-out"></span> · always open to a conversation</div>
         <a class="cbtn" href="mailto:saaifkhan05@gmail.com">
           <span class="ci">✉</span><span class="ct"><span>Email</span><b>saaifkhan05@gmail.com</b></span><span class="ca">→</span></a>
         <a class="cbtn" href="tel:+14695161440">
@@ -2265,8 +2265,8 @@ let fieldRAF=0;
 function startField(){if(!reduce&&!fieldRAF&&!document.hidden)fieldRAF=requestAnimationFrame(tick)}
 function stopField(){if(fieldRAF){cancelAnimationFrame(fieldRAF);fieldRAF=0}}
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){stopField();stopScramble();if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
-  else{speed=targetSpeed=.3;startField();armScramble()}
+  if(document.hidden){stopField();stopScramble();stopGrad();if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}}
+  else{speed=targetSpeed=.3;startField();armScramble();tickGrad()}
 });
 startField();
 
@@ -2325,7 +2325,11 @@ const CHAPTERS=[
   {from:'2027-01-14',to:'2099-12-31',co:'█████████',secret:true,
    what:'Full-time',short:'Full-time'}
 ];
-const GRAD='2026-12-19';
+/* graduation — a real moment, not just a month, so the countdown can be
+   exact. GRAD_AT is local time; GRAD_DAY is the date-only form the
+   chapter comparisons use. */
+const GRAD_AT='2026-12-17T12:00';
+const GRAD='2026-12-17';
 function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',
   {month:'short',day:'numeric',year:'numeric'})}
 function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)}
@@ -2375,18 +2379,21 @@ function renderBuilt(){
 function monthName(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long'})}
 function shortMonth(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',year:'numeric'})}
 function dayOf(d){return new Date(d+'T00:00:00').getDate()}
-/* One source of truth for "how far away is graduation". Months read as
-   stalling once it is close, so inside 45 days it switches to days, and
-   at zero it returns nothing rather than counting into the negative.
-   Both the home tile and the contact tile call this, so they can never
-   disagree — an earlier version had them saying "1 month" and "1 day"
-   on the same afternoon. */
-function awayFrom(iso){
-  const d=daysBetween(todayISO(),iso);
-  if(d<=0)return null;
-  if(d<=45)return {n:d,unit:d===1?'day':'days'};
-  const m=Math.max(2,Math.round(d/30.44));
-  return {n:m,unit:'months'};
+/* One source of truth for "how far away is graduation", to the minute.
+   Units fall away as they empty — days disappear on the last day, hours
+   in the last hour — so the string never carries a leading zero that
+   means nothing. Returns null once the moment has passed, so callers
+   render "Graduated" instead of counting into the negative. Both the
+   home tile and the contact tile call this, so they cannot disagree. */
+function gradLeft(){
+  const ms=new Date(GRAD_AT).getTime()-Date.now();
+  if(!(ms>0))return null;
+  const total=Math.floor(ms/6e4);                 // whole minutes
+  const d=Math.floor(total/1440), h=Math.floor((total%1440)/60), m=total%60;
+  const p=n=>String(n).padStart(2,'0');
+  if(d>0)return d+'d '+p(h)+'h '+p(m)+'m';
+  if(h>0)return h+'h '+p(m)+'m';
+  return m+'m';
 }
 function nextChapter(){
   const t=todayISO();
@@ -2406,10 +2413,9 @@ function LIVE(){
     'ibm-close': ended(ibm)
       ? 'That IBM chapter closed in '+monthName(ibm.to)+'.'
       : 'This IBM chapter closes '+monthName(ibm.to)+' '+dayOf(ibm.to)+'.',
-    'grad-word': awayFrom(GRAD)?'Graduating':'Graduated',
-    'grad-out': (()=>{const a=awayFrom(GRAD);
-      return a?' · '+(a.unit==='months'?'about ':'')+a.n+' '+a.unit+' out':''})(),
-    'grad-short': (()=>{const a=awayFrom(GRAD);return a?' · '+a.n+' '+a.unit:''})()
+    'grad-word': gradLeft()?'Graduating':'Graduated',
+    'grad-out': (()=>{const a=gradLeft();return a?' · '+a:''})(),
+    'grad-short': (()=>{const a=gradLeft();return a?' · '+a:''})()
   };
 }
 /* every chapter still ahead, oldest first, as one dated list */
@@ -2461,7 +2467,32 @@ function armScramble(){
   },110);
 }
 function stopScramble(){clearInterval(scramT);scramT=null}
-renderStatus();renderBuilt();renderLive();
+
+/* ── GRADUATION COUNTDOWN ──
+   Repaints only the three countdown spans, never the whole facts strip:
+   re-rendering the strip every minute would tear down and rebuild the
+   redacted span and restart its scramble. The timeout is aligned to the
+   next real minute boundary rather than firing every 60s from load, so
+   the number changes when a clock would change it — and it re-aligns on
+   wake, since a sleeping laptop does not fire timers. */
+let gradT=null;
+function paintGrad(){
+  const a=gradLeft();
+  document.querySelectorAll('[data-live="grad-short"],[data-live="grad-out"]')
+    .forEach(el=>{el.textContent=a?' · '+a:''});
+  document.querySelectorAll('[data-live="grad-word"]')
+    .forEach(el=>{el.textContent=a?'Graduating':'Graduated'});
+  return a;
+}
+function tickGrad(){
+  clearTimeout(gradT);gradT=null;
+  if(document.hidden)return;
+  if(!paintGrad())return;              // the day has come and gone; stop
+  const delay=60000-(Date.now()%60000)+250;
+  gradT=setTimeout(tickGrad,delay);
+}
+function stopGrad(){clearTimeout(gradT);gradT=null}
+renderStatus();renderBuilt();renderLive();tickGrad();
 
 /* ═══════════ ROTATING HERO VERB ═══════════
    EDIT HERE — ROT_WORDS is the list that cycles in "I ____ solutions."
