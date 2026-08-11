@@ -239,6 +239,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 /* tabular figures: without them "09s" → "10s" changes width and nudges
    the text beside it every single second */
 [data-live="grad-short"],[data-live="grad-out"]{font-variant-numeric:tabular-nums}
+/* the countdown carries the same accent as the redacted company, so the
+   two live things on the page read as a matched pair. Both selectors
+   outrank the .wk / .meta greys they sit inside. */
+#f-home .fact .wk[data-live="grad-short"],
+#f-contact .meta [data-live="grad-out"]{color:var(--ax)}
 @media(prefers-reduced-motion:reduce){#f-home .fact .dot{animation:none}}
 /* the stacked "Next" list — one line per upcoming step, date first */
 #f-home .fact .nx{display:block}
