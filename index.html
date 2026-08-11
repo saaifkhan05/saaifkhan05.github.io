@@ -720,6 +720,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    Declaring the default here also covers a coarse pointer wider than the
    breakpoint, like an iPad in landscape. */
 #sheet{display:none}
+.rail-mob{display:none}          /* index entries that only exist on touch */
 @media (pointer:coarse){
   html{-webkit-text-size-adjust:100%}          /* stop iOS inflating type */
   button,a{-webkit-tap-highlight-color:transparent}
@@ -732,6 +733,17 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
   .rail{width:min(88vw,340px);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
   #tourBar{bottom:calc(12px + env(safe-area-inset-bottom))}
+
+  /* HEADER — five controls plus a "Back to Projects" label overflowed a
+     440px screen, pushing Hiring and the theme toggle off the edge.
+     Tour and Theme move into the index (see .rail-mob), the back label
+     shortens to "Back" in chrome(), and what remains fits with room:
+     brand + Index + Back on the left, Hiring on the right. */
+  .tb-tour,.topbar .theme-btn{display:none}
+  .rail-mob{display:flex}
+  .brand{padding:0 13px;font-size:13px}
+  .tb-btn{padding:0 12px;font-size:12.5px}
+  .topbar{overflow:hidden}
 
   /* 44px is the floor for a reliable tap; these were 28–34px */
   .pgb{min-width:44px;min-height:44px;padding:0 12px}
@@ -758,8 +770,10 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   body.sheet-open{overscroll-behavior:none}
   body.sheet-open #sheet{transform:none;visibility:visible;
     transition:transform .34s cubic-bezier(.4,0,.2,1)}
-  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;padding:10px 14px;
-    border-bottom:1px solid var(--line);border-top:3px solid var(--ax);background:var(--bg)}
+  /* no accent rule here: it sat directly under the header's own border
+     and read as a stray double line. The title already carries the tint. */
+  .sh-bar{flex:none;display:flex;align-items:center;gap:12px;padding:9px 14px;
+    border-bottom:1px solid var(--line);background:var(--bg)}
   .sh-back{background:none;border:1px solid var(--line-2);color:var(--ink);
     font-size:13px;font-weight:500;padding:10px 14px;min-height:44px;display:flex;
     align-items:center;gap:7px}
@@ -767,6 +781,18 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
     color:var(--ax);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .sh-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     padding:22px 18px calc(56px + env(safe-area-inset-bottom))}
+  /* Moving between two pages swaps the contents in place rather than
+     dropping the whole panel and raising it again. Only opacity and
+     transform are animated, so it runs on the compositor and costs no
+     layout — the same discipline the camera flights already follow. */
+  .sh-swap{animation:shSwap .3s cubic-bezier(.33,1,.68,1) both}
+  @keyframes shSwap{from{opacity:0;transform:translateY(14px)}}
+  .sh-bar .sh-title{animation:shTitle .3s ease both}
+  @keyframes shTitle{from{opacity:0}}
+  @media (prefers-reduced-motion:reduce){
+    #sheet{transition:none}
+    .sh-swap,.sh-bar .sh-title{animation:none}
+  }
   /* the tile's own grid is undone: in the sheet it is a document */
   .sh-body .pad{padding:0!important;display:block!important}
   .sh-body .d-side{margin-top:30px;padding-top:4px;border-top:1px solid var(--line-2)}
@@ -874,7 +900,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="tb-btn" id="backBtn" onclick="goBack()"><span class="arr">←</span><span id="bpLabel">Back</span></button>
   <nav id="crumb" aria-label="Breadcrumb"></nav>
   <div class="tb-right">
-    <button class="tb-btn" onclick="openTourStart()">▶ Tour</button>
+    <button class="tb-btn tb-tour" onclick="openTourStart()">▶ Tour</button>
     <button class="tb-btn hire" onclick="openRec()">Hiring?</button>
     <button class="tb-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">☀</button>
   </div>
@@ -916,6 +942,14 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
   <button class="ritem sub ax-recs" data-jump="f-recspeer"><span class="rd"></span><span class="rt">Peers<em>Splunk (Cisco)</em></span></button>
   <div class="g">05 · Reach me</div>
   <button class="ritem ax-contact" data-jump="f-contact"><span class="rd"></span><span class="rt">Get in touch</span></button>
+  <!-- Tour and Theme move here on phones, where the header has no room
+       for five controls. Hidden entirely on desktop, which keeps them in
+       the header exactly as before. -->
+  <div class="g rail-mob">Tools</div>
+  <button class="ritem rail-mob" onclick="toggleRail(false);openTourStart()">
+    <span class="rd" style="background:var(--blue)"></span><span class="rt">Guided tour<em>About a minute</em></span></button>
+  <button class="ritem rail-mob" onclick="toggleTheme()">
+    <span class="rd" style="background:var(--blue)"></span><span class="rt">Light / dark theme<em id="railThemeNow">Dark</em></span></button>
   <!-- quiet maintenance signal — the site is alive and dated -->
   <div class="rail-foot" id="railFoot"></div>
 </nav>
@@ -1951,13 +1985,17 @@ function needsSheet(f){
   return isTouch() && f && f.id!=='f-home' && fitScale(f)<.8;
 }
 function syncSheet(id,f){
+  clearTimeout(syncSheet.t);
   if(needsSheet(f)){
-    /* wait out the camera flight so the sheet rises onto a settled
-       map rather than over a moving one */
-    clearTimeout(syncSheet.t);
-    syncSheet.t=setTimeout(()=>{if(current===id)openSheet(id)},420);
+    /* Already up: swap the contents in place. Sliding the panel out and
+       back in for every hop was the jolt — it read as the page leaving
+       and a different one arriving, rather than one view moving on. */
+    if(sheetId){openSheet(id);return}
+    /* Opening cold: a beat so the camera is visibly under way before the
+       panel rises over it, which is what ties the two together. */
+    syncSheet.t=setTimeout(()=>{if(current===id)openSheet(id)},200);
   }else if(sheetId){
-    clearTimeout(syncSheet.t);closeSheet();
+    closeSheet();
   }
 }
 function openSheet(id){
@@ -1973,9 +2011,14 @@ function openSheet(id){
   /* ids would be duplicated into the document twice over; the sheet
      navigates by data-fly and needs none of them */
   clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+  clone.classList.add('sh-swap');       // replays on every content change
   body.innerHTML='';body.appendChild(clone);body.scrollTop=0;
   sh.className=[...f.classList].filter(c=>c.indexOf('ax-')===0).join(' ');
-  document.getElementById('sheetTitle').textContent=NAMES[id]||'';
+  const ti=document.getElementById('sheetTitle');
+  ti.textContent=NAMES[id]||'';
+  /* the title element persists across swaps, so its fade has to be
+     re-armed by hand — one forced reflow, only on navigation */
+  ti.style.animation='none';void ti.offsetWidth;ti.style.animation='';
   document.body.classList.add('sheet-open');
   sh.setAttribute('aria-hidden','false');
   sheetId=id;setHover(null);
@@ -2000,7 +2043,10 @@ document.getElementById('sheet').addEventListener('click',e=>{
   e.preventDefault();
   const id=t.dataset.fly;
   if(id===current){closeSheet();return}
-  closeSheet();flyTo(id);
+  /* deliberately NOT closing first: syncSheet swaps the contents in
+     place if the destination also wants a sheet, and slides the panel
+     away only when the destination is a tile that reads fine on the map */
+  flyTo(id);
 });
 function goBack(){
   if(!hist.length)return;
@@ -2330,8 +2376,11 @@ function chainOf(id){const c=[];let n=document.getElementById(id);
   while(n){c.unshift(n.id);n=n.dataset.parent?document.getElementById(n.dataset.parent):null}return c}
 function chrome(){
   const btn=document.getElementById('backBtn'),bl=document.getElementById('bpLabel');
+  /* "Back to Recommendations" is 22 characters the header cannot spare on
+     a phone; the breadcrumb that gave it context is hidden there anyway */
+  const brief=isTouch();
   if(hist.length){btn.removeAttribute('disabled');
-    bl.textContent='Back to '+(NAMES[hist[hist.length-1]]||'previous')}
+    bl.textContent=brief?'Back':'Back to '+(NAMES[hist[hist.length-1]]||'previous')}
   else{btn.setAttribute('disabled','');bl.textContent='Back'}
 
   /* breadcrumb — fades out, rebuilds, fades back in (no hard swap) */
@@ -2513,8 +2562,11 @@ function toggleRail(force){
   }
 }
 function syncThemeBtn(){
+  const light=root.dataset.theme==='light';
   const b=document.getElementById('themeBtn');
-  if(b)b.textContent=root.dataset.theme==='light'?'☾':'☀';
+  if(b)b.textContent=light?'☾':'☀';
+  const r=document.getElementById('railThemeNow');   // the phone's copy
+  if(r)r.textContent=light?'Light':'Dark';
 }
 function toggleTheme(){
   root.dataset.theme=root.dataset.theme==='light'?'dark':'light';
