@@ -1283,7 +1283,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <!-- first, not last: the list runs future → present → past, and the
                chapter nobody can read yet is the one worth opening with -->
           <button class="item ax-locked" data-fly="f-locked">
-            <div><div class="i-name"><span class="i-dot"></span><span class="redact" aria-label="company not yet announced">█████████</span> — <span class="glitch-list" id="listRole">Solutions Engineer</span></div><div class="i-sub">Starts 2027 · <span data-live="reveal-days">unlocks August 21</span></div></div><span class="i-go">Locked</span></button>
+            <div><div class="i-name"><span class="i-dot"></span><span class="redact" aria-label="company not yet announced">█████████</span> — <span class="glitch-list" id="listRole">Solutions Engineer</span></div><div class="i-sub">Starts 2027 · <span data-live="reveal-days">unlocks December 21</span></div></div><span class="i-go">Locked</span></button>
           <button class="item ax-ibm" data-fly="f-ibm">
             <div><div class="i-name"><span class="i-dot"></span>IBM — Brand Sales Specialist</div><div class="i-sub">New York, NY · <span data-live="ibm-range">May 2026 – present</span> · Internship</div></div><span class="i-go">Open →</span></button>
           <button class="item ax-workiva" data-fly="f-workiva">
@@ -3186,7 +3186,7 @@ const CHAPTERS=[
    itself is the one thing a human still has to do.
    Leaving these blank past the date is safe: the tile keeps its seal and
    simply reads "unlocking shortly" instead of counting into the past. */
-const REVEAL_AT='2026-08-21T17:00:00-05:00';   // 5:00 PM Central (CDT)
+const REVEAL_AT='2026-12-21T17:00:00-06:00';   // 5:00 PM Central (CST)
 const REVEAL={co:'',role:''};                  // ← fill these in on the day
 /* graduation — a real moment, not just a month, so the countdown can be
    exact. GRAD_AT is local time; GRAD_DAY is the date-only form the
