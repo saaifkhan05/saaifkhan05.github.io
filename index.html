@@ -962,14 +962,13 @@ body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
 .lgsum div{background:var(--bg);padding:14px 16px}
 .lgsum b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;color:var(--ax);line-height:1.1}
 .lgsum span{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer)}
-.lglap{margin-top:46px;scroll-margin-top:20px}
-.lglaph{display:flex;align-items:flex-end;gap:14px;padding-bottom:10px;border-bottom:1px solid var(--line-2)}
+.lglap{margin-top:40px;scroll-margin-top:20px}
+.lglaph{display:flex;align-items:flex-end;gap:14px;padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid var(--line-2)}
 .lglaph .lgn{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--ax);
   text-transform:uppercase;flex:none}
 .lglaph h3{font-size:24px;font-weight:300;letter-spacing:-.02em;flex:1}
 .lglaph .lgwk{font-size:11px;color:var(--dimmer);letter-spacing:.08em;text-transform:uppercase;
   font-weight:600;flex:none}
-.lglapsum{font-size:13.5px;color:var(--dim);font-weight:300;line-height:1.6;margin:12px 0 4px;max-width:66ch}
 /* groups render OPEN. Someone who opened the log wants the content,
    not another menu; collapsing is available, never required. */
 .lggrp{margin-top:24px;scroll-margin-top:20px}
@@ -977,17 +976,15 @@ body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
   border-bottom:1px solid var(--line);background:none;border-left:0;border-right:0;border-top:0;cursor:pointer}
 .lggrph .lgcv{font-size:10px;color:var(--dimmer);transition:transform .2s;flex:none;width:10px}
 .lggrp.shut .lggrph .lgcv{transform:rotate(-90deg)}
-.lggrph h4{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-.lggrph .lgct{margin-left:auto;font-size:10.5px;color:var(--dimmer);font-weight:600;
-  letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.lggrph h4{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-right:auto}
 .lggrp.shut .lgrows{display:none}
-.lgrow{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:15px 0 15px 14px;
+.lgrow{display:grid;grid-template-columns:1fr auto;gap:6px 16px;padding:13px 0 13px 14px;
   border-bottom:1px solid var(--line);border-left:2px solid transparent;
   transition:border-color .15s,background .15s}
 .lgrow:hover{border-left-color:var(--ax);background:var(--ax-tint)}
 .lgrow .lgt{font-size:14.5px;font-weight:500;line-height:1.35;letter-spacing:-.005em}
 .lgrow .lgnote{grid-column:1/-1;font-size:13px;color:var(--dim);font-weight:300;
-  line-height:1.6;max-width:72ch}
+  line-height:1.58;max-width:64ch}
 .lgrow .lgnote b{color:var(--ink);font-weight:500}
 .lgst{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;
   border:1px solid;flex:none;height:fit-content;white-space:nowrap}
@@ -1099,21 +1096,30 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 
 
 /* ═══════════ THEME SWEEP ═══════════
-   The new theme grows out of the control that was pressed instead of the
-   page flipping in a single frame. By default the browser cross-fades the
-   old and new snapshots, which turns the circle's edge into a grey wash
-   and looks like a bug — these three rules turn the fade off, pin the old
-   page still underneath, and put the new one on top to be revealed.
-   These rules only set the stage. The keyframes that actually do the
-   revealing are injected by setSweep() with literal pixel values — see
-   the comment there for why they cannot live in this stylesheet.
-   The clip-path applies to a ::view-transition pseudo-element, which
-   lives OUTSIDE the document, so the "never put clip-path on anything
-   inside the world" rule is untouched: no frame is ever clipped. */
-::view-transition-old(root),
-::view-transition-new(root){animation:none;mix-blend-mode:normal}
-::view-transition-old(root){z-index:0}
-::view-transition-new(root){z-index:1}
+   WHY THIS IS A PLAIN DIV AND NOT startViewTransition().
+   The View Transition version was correct on paper and unreliable in
+   practice. Two failure modes, and the second is fatal:
+     · It has to snapshot the page before anything can move. On this
+       page — a 9000×6400 preserve-3d world, a live canvas, 28 tiles —
+       that measured ~120ms of frozen screen on a fast desktop before
+       the first frame of the sweep. Slower hardware, longer freeze.
+     · Killing the browser's default cross-fade means writing
+       `animation:none` on ::view-transition-new(root) and then putting
+       the real animation back from an injected stylesheet. Where an
+       engine does not apply author keyframes to that pseudo, the
+       `none` is all that survives and the theme swaps in one frame —
+       which is exactly the "it just snaps" report, and it is invisible
+       in any engine where it happens to work.
+   A fixed div animated with the Web Animations API has neither
+   problem: nothing is snapshotted, nothing depends on a pseudo-element
+   cascade, and it behaves identically in every engine that has
+   clip-path — which is all of them, for a decade.
+   The div sits OUTSIDE .viewport, so the load-bearing "never put
+   clip-path on anything inside the world" rule is untouched: no frame
+   is ever clipped, only this overlay. */
+#sweep{position:fixed;inset:0;z-index:400;pointer-events:none;
+  visibility:hidden;will-change:clip-path,opacity}
+body.sweeping #sweep{visibility:visible}
 
 @media(max-width:760px){#crumb{display:none}}
 @media(prefers-reduced-motion:reduce){
@@ -1337,6 +1343,8 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 </header>
 
 <div class="scrim" id="scrim" onclick="toggleRail(false)"></div>
+
+<div id="sweep" aria-hidden="true"></div>
 
 <!-- persistent index — replaces the draft-7 drawer; clicking flies the camera -->
 <nav class="rail" id="rail" aria-label="Site index">
@@ -3273,33 +3281,20 @@ function applyTheme(next){
   syncThemeBtn();
   lsSet('sk-theme',next);                 // survives the next visit
 }
-const SWEEP_MS=520;
-let sweepStyle=null;
-/* WHY THIS IS AN INJECTED STYLESHEET AND NOT root.animate(), AND NOT A
-   CUSTOM PROPERTY — two bugs, one cause.
-   · Adding the animation inside t.ready.then() hands it to the browser
-     AFTER the transition's timing has already been decided, so the
-     transition could finish out from under it. That is what made the
-     sweep run most of the way and then snap to done.
-   · Parameterising the origin with var(--sx)/var(--sy) depends on custom
-     properties inheriting into the ::view-transition pseudo tree. Where
-     they don't, the circle falls back to its default position — the
-     middle of the screen — which is exactly the wrong failure.
-   Writing real CSS with literal pixel values before the transition
-   starts removes both: the browser knows the full duration up front and
-   there is nothing left to resolve. */
-function setSweep(x,y,r){
-  if(!sweepStyle){sweepStyle=document.createElement('style');document.head.appendChild(sweepStyle)}
-  /* linear, deliberately. With an ease-out the radius reaches ~93% in the
-     first 70% of the time, so the edge lurches away and then crawls
-     across a sliver nobody can see — which reads as the animation
-     finishing early and then jumping. A constant radius is a constant
-     edge speed, which is the only thing that looks like one movement. */
-  sweepStyle.textContent=
-    '::view-transition-new(root){animation:sweepIn '+SWEEP_MS+'ms linear forwards}'+
-    '@keyframes sweepIn{'+
-      'from{clip-path:circle(0px at '+x+'px '+y+'px)}'+
-      'to{clip-path:circle('+r+'px at '+x+'px '+y+'px)}}';
+const SWEEP_MS=520, SETTLE_MS=190;
+const sweepEl=document.getElementById('sweep');
+/* The incoming theme's background, read from the palette rather than
+   written down again — a second copy of #161616/#ffffff in the script
+   is a copy that goes stale the day the shell colour changes. The probe
+   works because the theme rules are attribute selectors, not html{}. */
+function themeBg(theme){
+  const probe=document.createElement('div');
+  probe.setAttribute('data-theme',theme);
+  probe.style.cssText='position:fixed;left:-9999px;top:0;width:1px;height:1px;background:var(--bg)';
+  document.body.appendChild(probe);
+  const c=getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return c;
 }
 /* the visible theme control: the header button on a desktop, the index
    row on a phone where the header has no space for it. Whatever was
@@ -3315,9 +3310,12 @@ function sweepOrigin(ev){
   return{x:innerWidth-26,y:26};
 }
 let sweeping=false;
+/* The camera-mid-flight bailout is gone with the snapshot that needed
+   it. There is nothing to capture now, so a sweep during a flight is
+   just two composited animations and it looks fine. */
 function toggleTheme(ev){
   const next=root.dataset.theme==='light'?'dark':'light';
-  if(sweeping||reduce||flying||typeof document.startViewTransition!=='function'){
+  if(sweeping||reduce||typeof sweepEl.animate!=='function'){
     applyTheme(next);return;
   }
   /* read synchronously: currentTarget is null by the time any callback
@@ -3325,10 +3323,38 @@ function toggleTheme(ev){
      which is the other reason to measure the element rather than
      the event */
   const o=sweepOrigin(ev);
-  setSweep(o.x,o.y,Math.hypot(Math.max(o.x,innerWidth-o.x),Math.max(o.y,innerHeight-o.y)));
+  const R=Math.hypot(Math.max(o.x,innerWidth-o.x),Math.max(o.y,innerHeight-o.y));
   sweeping=true;
-  const t=document.startViewTransition(()=>applyTheme(next));
-  t.finished.then(()=>{sweeping=false},()=>{sweeping=false});
+  document.body.classList.add('sweeping');
+  sweepEl.style.background=themeBg(next);
+  sweepEl.style.opacity='1';
+  /* linear, deliberately. With an ease-out the radius reaches ~93% in
+     the first 70% of the time, so the edge lurches away and then crawls
+     across a sliver nobody can see — which reads as the animation
+     finishing early and then jumping. A constant radius is a constant
+     edge speed, which is the only thing that looks like one movement. */
+  const grow=sweepEl.animate(
+    [{clipPath:'circle(0px at '+o.x+'px '+o.y+'px)'},
+     {clipPath:'circle('+R+'px at '+o.x+'px '+o.y+'px)'}],
+    {duration:SWEEP_MS,easing:'linear',fill:'forwards'});
+  const done=()=>{
+    /* The screen is now one flat slab of the incoming background, so the
+       theme itself can be swapped without anything visibly changing —
+       the shell colour under the overlay already matches it. Fading the
+       overlay out therefore reveals only CONTENT resolving into a colour
+       that is already there, never a colour flip. */
+    applyTheme(next);
+    const fade=sweepEl.animate([{opacity:1},{opacity:0}],
+      {duration:SETTLE_MS,easing:'ease-out',fill:'forwards'});
+    const end=()=>{
+      document.body.classList.remove('sweeping');
+      sweepEl.style.opacity='';sweepEl.style.background='';
+      grow.cancel();fade.cancel();
+      sweeping=false;
+    };
+    fade.finished.then(end,end);
+  };
+  grow.finished.then(done,done);
 }
 /* MOBILE: scrolling in Safari or Chrome collapses the address bar,
    which changes innerHeight and nothing else. That used to fire a full
@@ -4207,77 +4233,72 @@ const LEDGER={
 ibm:{
  who:'IBM · Brand Sales Specialist Intern · May – Aug 2026',
  h1:'Fourteen weeks, <i>unabridged</i>',
- lede:'The dossier is the two-paragraph version. This is the record underneath it: every deliverable, in the order it happened, with what actually came of it. Drawn from my Sales Impact Tracker, the document my manager and I reviewed at each checkpoint. <b>Names and specific accounts are redacted</b>; the work is not.',
+ lede:'Every deliverable from the summer, in the order it happened. Names and specific accounts are redacted; the work is not.',
  stat:[['3','laps'],['','deliverables'],['14','weeks'],['5','agencies owned']],
  laps:[
  {id:'lap1',n:'Lap 01',title:'Landing and getting useful',wk:'Weeks 1 – 4',
-  sum:'A ramp period on paper. In practice I took on more account and client work than the program asked for, which is the reason the rest of the summer moved as fast as it did.',
   groups:[
   {id:'lg-l1-ad',h:'Ad hoc impact',rows:[
-   {t:'NY State budget analysis, 2026–2027',st:'ok',n:'Read the enacted state budget end to end and built an executive leadership deck out of it, weighted toward the state university system at my manager’s request. This was the Lap 1 piece that got reused most by other people on the team.'},
-   {t:'Business value model for a large private university',st:'ok',n:'Deep research on the institution’s financials, then a business case modelling hard-dollar revenue and efficiency value. Presented it in person. The client said the model was accurate and useful, which for a first client-facing model is exactly the outcome I wanted.'},
-   {t:'Agentic AI insights analysis for the Public sector',st:'ok',n:'Read IBM’s agentic AI research specifically hunting for material a seller could open a client conversation with, rather than summarising it. Pulled out a set of findings the team used directly in engagements.'},
-   {t:'Rescued attendance at an IBM-hosted higher education event',st:'ok',n:'Registration was coming in low. I partnered with a colleague, built the target list in ZoomInfo, then drafted and sent <b>20+ personalised emails</b> to education leaders across the state.'},
-   {t:'Initiated a business value assessment for a liberal arts college',st:'ok',n:'Led the outreach that started the BVA process, and shadowed the value practitioner through how the assessments are actually constructed rather than just receiving the output.'},
-   {t:'Worked five client-facing events in the field',st:'ok',n:'An AI infrastructure summit, a joint public agency event, a higher education event, a responsible-AI session, and a technical workshop. I went with my mentor and worked the rooms rather than observing them.'},
-   {t:'Analysed open state RFPs for IBM fit',st:'ok',n:'Went through active public-sector solicitations to find the ones IBM could credibly bid, and where we had nothing to say.'},
-   {t:'Turned a proposal whiteboarding session into a structured deliverable',st:'ok',n:'Took a wall of notes from a university proposal session and converted it into the structured table that went into the deck.'},
-   {t:'Account research and game plans, three further agencies',st:'ok',n:'Positioning work on a private research university, a flagship public campus, and a state insurance fund. Still partial at the Lap 1 checkpoint, and I logged it that way at the time. Carried into Lap 2 and finished there.'}]},
+   {t:'NY State budget analysis, 2026–2027',st:'ok',n:'Executive leadership deck built from the enacted budget, weighted toward the state university system. The Lap 1 work the team reused most.'},
+   {t:'Business value model for a large private university',st:'ok',n:'Researched their financials, then modelled hard-dollar revenue and efficiency value. Presented in person; the client called the model accurate and useful.'},
+   {t:'Agentic AI insights analysis for the Public sector',st:'ok',n:'Read IBM’s agentic AI research hunting for material a seller could open a client conversation with, rather than summarising it.'},
+   {t:'Rescued attendance at an IBM-hosted higher education event',st:'ok',n:'Registration was low. Built the target list in ZoomInfo and sent <b>20+ personalised emails</b> to education leaders across the state.'},
+   {t:'Initiated a business value assessment for a liberal arts college',st:'ok',n:'Led the outreach that started the BVA, and shadowed the value practitioner through how the assessments are built.'},
+   {t:'Worked five client-facing events in the field',st:'ok',n:'An AI infrastructure summit, a joint agency event, a higher education event, a responsible-AI session and a technical workshop.'},
+   {t:'Analysed open state RFPs for IBM fit',st:'ok',n:'Worked through active public-sector solicitations to find the ones IBM could credibly bid, and where we had nothing to say.'},
+   {t:'Turned a proposal whiteboarding session into a structured deliverable',st:'ok',n:'A wall of notes from a university proposal session, converted into the table that went into the deck.'},
+   {t:'Account research and game plans, three further agencies',st:'ok',n:'A private research university, a flagship public campus and a state insurance fund. Partial at the Lap 1 checkpoint; finished in Lap 2.'}]},
   {id:'lg-l1-tool',h:'Tooling and first deliverables',rows:[
-   {t:'Built a QBR deck to IBM presentation standard',st:'ok',n:'First real test of the brand and style guidelines. Reviewed with my mentor before it went anywhere.'},
-   {t:'Gathered active entitlements for the Core 2 QBR',st:'ok',n:'Went through Fastpass account by account and assembled the entitlement picture the deck above was built on.'},
-   {t:'Built a healthcare customer reference set',st:'ok',n:'Scraped Seismic and Lighthouse for every watsonx success story in healthcare and packaged them into a reference deck the team could pull from.'},
-   {t:'Pulled the Q2 close list against a national reseller partner',st:'ok',n:'Compiled it out of IBM Sales Cloud with values, links and owners, formatted the way my manager needed it for the quarter close.'},
-   {t:'IBM Technology Zone Fundamentals badge',st:'ok',n:'Outstanding at the Lap 1 checkpoint. I had not recorded the mock demo yet and I said so at the time rather than letting it sit quietly, then recorded it and closed the badge out later in the summer.'},
-   {t:'Ramped on the internal AI tool stack',st:'ok',n:'AskHR, AskIT, AskIBM, AskSales. Worth noting I settled on IBM Bob as my daily driver over Copilot, which is also what the KDR Generator ended up being built on.'}]},
+   {t:'Built a QBR deck to IBM presentation standard',st:'ok',n:'First real test of the brand and style guidelines, reviewed with my mentor before it went anywhere.'},
+   {t:'Gathered active entitlements for the Core 2 QBR',st:'ok',n:'Fastpass, account by account, to assemble the entitlement picture the deck above was built on.'},
+   {t:'Built a healthcare customer reference set',st:'ok',n:'Scraped Seismic and Lighthouse for every watsonx success story in healthcare, packaged as a deck the team could pull from.'},
+   {t:'Pulled the Q2 close list against a national reseller partner',st:'ok',n:'Compiled from IBM Sales Cloud with values, links and owners, formatted for my manager’s quarter close.'},
+   {t:'IBM Technology Zone Fundamentals badge',st:'ok',n:'Outstanding at the Lap 1 checkpoint and I flagged it rather than letting it sit quietly. Recorded and closed out later in the summer.'},
+   {t:'Ramped on the internal AI tool stack',st:'ok',n:'AskHR, AskIT, AskIBM, AskSales. Settled on IBM Bob over Copilot, which is what the KDR Generator was later built on.'}]},
   {id:'lg-l1-learn',h:'Core learning and territory',rows:[
-   {t:'Mapped IBM’s go-to-market model end to end',st:'ok',n:'Worked the GTM guide, then had my mentor draw the coverage model by hand: Enterprise, Strategic, Select Horizon, Select Territory, and where our Public account sits inside it. Being able to place my own role in that diagram is what made everything after it navigable.'},
-   {t:'Ran full client research on two accounts in the territory',st:'ok',n:'An optional module. I took it anyway, profiled the state public account and a private research university, and worked out where IBM could realistically position against each. Both fed straight into later outreach.'},
-   {t:'Networked across roles on the account team',st:'ok',n:'The program asks for two fifteen-minute intros. I ran structured conversations across brand sales, client engineering and partner roles, and asked to be added to recurring meetings I was not on.'}]}],
+   {t:'Mapped IBM’s go-to-market model end to end',st:'ok',n:'Worked the GTM guide, then had my mentor draw the coverage model by hand and place our Public account inside it. That diagram is what made everything after it navigable.'},
+   {t:'Ran full client research on two accounts in the territory',st:'ok',n:'An optional module I took anyway. Profiled the state public account and a private research university; both fed straight into later outreach.'},
+   {t:'Networked across roles on the account team',st:'ok',n:'The program asks for two intros. I ran structured conversations across brand sales, client engineering and partner roles.'}]}],
   refl:{l:'Lap 1 · self-assessment, verbatim',p:[
-   'Lap 1 felt strong overall. I came in wanting to contribute beyond the baseline and ended up taking on more ad hoc client and account work than the tracker required, which gave me a much broader view of the territory than I expected this early. I also built good habits around communication: checking in regularly, staying responsive, and getting comfortable navigating IBM’s tools faster than I anticipated.',
-   'Where I want to improve heading into Lap 2: I leaned heavily into the ad hoc and client-facing work, and a few of the required learning modules slipped behind as a result. That was a prioritisation choice I made somewhat by default rather than deliberately, and I want to be more intentional about balancing both so foundational items don’t keep trailing behind the visible work.']}},
+   'I leaned heavily into the ad hoc and client-facing work, and a few of the required learning modules slipped behind as a result. That was a prioritisation choice I made somewhat by default rather than deliberately.']}},
  {id:'lap2',n:'Lap 02',title:'Carrying my own work',wk:'Weeks 4 – 8',
-  sum:'The lap where I stopped supporting other people’s deals and started sourcing things myself. Also the lap with my clearest gap, which is documented below rather than quietly dropped.',
   groups:[
   {id:'lg-l2-pros',h:'Prospecting and pipeline',rows:[
-   {t:'Identified two new opportunities inside existing accounts',st:'ok',n:'Automated meter reading and noise monitoring at a state environmental agency. Both came out of understanding what the agency was actually being asked to deliver that year, not out of walking a product list.'},
-   {t:'Re-opened a closed-lost opportunity',st:'ok',n:'A data governance deal at a state insurance fund had been marked lost. I found it going through closed-lost records, worked out what had changed since, and started the re-engagement.'},
-   {t:'Generated 20 qualified leads and opened outreach',st:'ok',n:'Built the lists in LinkedIn Sales Navigator and ZoomInfo, had the pitch approved by my mentor, and ran the relationship maps behind the event outreach.'},
-   {t:'Sustained prospecting research at three sessions a week',st:'ok',n:'Research on the QBR accounts, the state university budget work, and the AI report findings all went back to the team rather than staying in my notes.'}]},
+   {t:'Identified two new opportunities inside existing accounts',st:'ok',n:'Automated meter reading and noise monitoring at a state environmental agency. Both came from what the agency had to deliver that year, not from a product list.'},
+   {t:'Re-opened a closed-lost opportunity',st:'ok',n:'A data governance deal at a state insurance fund, found going through closed-lost records. Worked out what had changed, then restarted it.'},
+   {t:'Generated 20 qualified leads and opened outreach',st:'ok',n:'Lists built in LinkedIn Sales Navigator and ZoomInfo, pitch approved by my mentor, relationship maps behind the event outreach.'},
+   {t:'Sustained prospecting research at three sessions a week',st:'ok',n:'The QBR accounts, the state university budget work and the AI report findings all went back to the team rather than staying in my notes.'}]},
   {id:'lg-l2-pitch',h:'Pitch Lab and client delivery',rows:[
-   {t:'Certified on IBM’s Client Zero story through Pitch Lab',st:'ok',n:'Submitted a ten-minute pitch to the Pitch Lab tutor and iterated until it graded <b>Meets or better on every rubric criterion</b>, then took it to my first-line manager for approval.'},
-   {t:'Delivered Client Zero live, internally and to a client audience',st:'ok',n:'Presented to five IBMers for feedback, then delivered the same story to university staff at the Yorktown facility during a quantum tour. Telling an internal transformation story to an external audience is a different exercise, and that is the version I would point to.'}]},
+   {t:'Certified on IBM’s Client Zero story through Pitch Lab',st:'ok',n:'Iterated a ten-minute pitch through the Pitch Lab tutor until it graded <b>Meets or better on every rubric criterion</b>.'},
+   {t:'Delivered Client Zero live, internally and to a client audience',st:'ok',n:'Five IBMers for feedback, then the same story to university staff at Yorktown during a quantum tour. Telling an internal story to an external audience is a different exercise.'}]},
   {id:'lg-l2-tan',h:'Tandem selling and technical practice',rows:[
-   {t:'Delivered a watsonx Orchestrate demo to the account team',st:'ok',n:'Ran it in person for the entire New York State team, walking through the product’s key capabilities live rather than presenting slides about them. This is the requirement I named as my biggest gap at the Lap 2 checkpoint, and it is closed.'},
+   {t:'Delivered a watsonx Orchestrate demo to the account team',st:'ok',n:'Run in person for the entire New York State team, walking the product’s capabilities live rather than presenting slides about them.'},
    {t:'Built and configured two TechZone lab environments',st:'ok',n:'watsonx Orchestrate and Maximo, stood up from scratch rather than cloned.'},
-   {t:'Built a demo against the Transition to Success rubric',st:'ok',n:'Constructed to the official rubric instead of freestyled, which is a meaningfully harder constraint than it sounds.'},
-   {t:'Shadowed live client and internal calls across five accounts',st:'ok',n:'The deal conversations for a liberal arts college, a large private university, the city university system and the state university system, plus the internal account syncs behind them.'},
-   {t:'Contributed to territory planning across five agencies',st:'ok',n:'Initial territory plan with my mentor covering a research university, a flagship campus, an environmental agency, the state court system and a state insurance fund.'},
+   {t:'Built a demo against the Transition to Success rubric',st:'ok',n:'Constructed to the official rubric instead of freestyled, which is a harder constraint than it sounds.'},
+   {t:'Shadowed live client and internal calls across five accounts',st:'ok',n:'A liberal arts college, a large private university, the city university system and the state university system, plus the internal syncs behind them.'},
+   {t:'Contributed to territory planning across five agencies',st:'ok',n:'A research university, a flagship campus, an environmental agency, the state court system and a state insurance fund.'},
    {t:'Stood up a team GitHub repository',st:'ok',n:'For the watsonx Challenge build and the KDR automation tool.'}]},
   {id:'lg-l2-ad',h:'Ad hoc impact',rows:[
-   {t:'Led the New York State team’s watsonx Challenge entry',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'I identified the process gap, ran the first sync, and took the build myself on a team with a full-time technical seller and a managing director. This became the KDR Generator.'},
-   {t:'Built the state university system RDR proposal',st:'ok',n:'Collaborated with technical specialists on the solution design and produced the proposal deck.'},
-   {t:'Led an IBM promotional video for state public-sector clients',st:'hnd',n:'Ran the project across field marketing and the client engineering team from the idea through production. It outlasts my internship, so rather than leave it half-finished I documented the state of it and <b>handed it to a named owner on the team</b> to carry to release.'},
+   {t:'Led the New York State team’s watsonx Challenge entry',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'I found the process gap, ran the first sync and took the build myself, on a team with a full-time technical seller and a managing director.'},
+   {t:'Built the state university system RDR proposal',st:'ok',n:'Worked the solution design with technical specialists and produced the proposal deck.'},
+   {t:'Led an IBM promotional video for state public-sector clients',st:'hnd',n:'Ran it across field marketing and client engineering from idea to production. It outlasts my internship, so I documented the state of it and <b>handed it to a named owner</b>.'},
    {t:'QBR internal syncs, relationship mapping and outreach drafting',st:'ok',n:''},
-   {t:'Scheduled 20+ peer networking conversations',st:'ok',n:'The program asks for two. I used the w3 directory to work across client engineering, product management and cross-brand partner roles.'},
-   {t:'Proposed a structural change to the co-op program',st:'ok',n:'Assign interns to specific sellers for fixed periods so they see one product and one day-to-day properly. You come out understanding the technical seller role and with an actual basis for choosing a brand, instead of a broad blur.'}]}],
+   {t:'Scheduled 20+ peer networking conversations',st:'ok',n:'The program asks for two. Used the w3 directory to reach client engineering, product management and cross-brand partner roles.'},
+   {t:'Proposed a structural change to the co-op program',st:'ok',n:'Assign interns to specific sellers for fixed periods. You come out understanding the technical seller role, with a real basis for choosing a brand.'}]}],
   refl:{l:'Lap 2 · self-assessment, verbatim',p:[
-   'Lap 2 felt more operationally grounded than Lap 1. Engagement and team participation were consistent throughout, engagement planning picked up real traction with new opportunities identified, and the capstone direction is taking shape through the watsonx challenge. The RDR proposal and the QBR internal syncs also represent progress I am proud of.',
-   'The clear gap this lap is the technical resource practice section. Lab environments, the TechZone demo for IBMers and the Transition to Success demo are the most significant required cluster I had not closed out, and Pitch Lab was still fully in progress with nothing finished.']}},
+   'The clear gap this lap is the technical resource practice section. Lab environments, the TechZone demo for IBMers and the Transition to Success demo are the most significant required cluster I have not closed out.']}},
  {id:'lap3',n:'Lap 03',title:'Closing out',wk:'Weeks 8 – 14',
-  sum:'The gap I named at the end of Lap 2 is the thing this lap closed. The capstone shipped, the technical work finished, and the demo validation I was behind on got done.',
   groups:[
   {id:'lg-l3-own',h:'Technical ownership',rows:[
-   {t:'Shipped the KDR Generator as a team asset',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'The program’s requirement reads “develop an asset that solves a team challenge.” Mine turned a three-hour manual close-plan build into <b>under thirty seconds</b>, validated against a 5,000+ SKU pricelist in real time.'},
-   {t:'Designed and delivered a client-specific demo independently',st:'ok',n:'Built to an IBMer’s actual client requirements and aligned to current solution priorities, with a dry run through the Pitch Lab tutor before delivery rather than after.'},
-   {t:'Documented the technical build for reuse',st:'ok',n:'So the team can run and extend it after I leave, which is the only version of this that counts for anything.'},
+   {t:'Shipped the KDR Generator as a team asset',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'A three-hour manual close-plan build cut to <b>under thirty seconds</b>, validated against a 5,000+ SKU pricelist in real time.'},
+   {t:'Designed and delivered a client-specific demo independently',st:'ok',n:'Built to an IBMer’s actual client requirements, dry-run through the Pitch Lab tutor before delivery rather than after.'},
+   {t:'Documented the technical build for reuse',st:'ok',n:'So the team can run and extend it after I leave, which is the only version of this that counts.'},
    {t:'Took feedback from two senior people and shipped a change for each',st:'ok',n:'One from a senior technical seller, one from my manager. Both implemented rather than noted.'}]},
   {id:'lg-l3-fin',h:'Delivery and close',rows:[
-   {t:'Delivered the final program presentation',st:'ok',n:'Experiences, technical skills, client engagement and the capstone, plus two programmatic changes I would make for future interns.'},
-   {t:'Ran Stand and Deliver with my manager',st:'ok',n:'The formal delivery exercise, run for my manager at the end of the program.'},
-   {t:'Completed Level 3 technical training',st:'ok',n:'Picked up as optional advanced training on top of the required track and finished before the program ended.'}]}]}],
- foot:'<b>On redaction.</b> Colleagues appear by role rather than name, and individual institutions appear as descriptors. Account-level and opportunity-level detail has been generalised. Anything already public elsewhere on this site — the New York State public-sector account, Core 2, the OGS pricelist work behind the KDR Generator — stays as written. If you are an IBMer and want the unredacted version, ask me directly.'
+   {t:'Delivered the final program presentation',st:'ok',n:'Experiences, technical skills, client engagement and the capstone, plus two programmatic changes for future interns.'},
+   {t:'Ran Stand and Deliver with my manager',st:'ok',n:'The formal delivery exercise, run at the end of the program.'},
+   {t:'Completed Level 3 technical training',st:'ok',n:'Optional advanced training on top of the required track, finished before the program ended.'}]}]}],
+ foot:'<b>On redaction.</b> Colleagues appear by role, institutions as descriptors, account detail generalised. IBMers who want the unredacted version can ask me directly.'
 }};
 
 /* #ibm-log is the log open over the IBM tile, not a tile of its own */
@@ -4296,13 +4317,12 @@ function buildLedger(key){
     html+='<section class="lglap" id="'+lap.id+'">'
       +'<div class="lglaph"><span class="lgn">'+lap.n+'</span><h3>'+lap.title+'</h3>'
       +'<span class="lgwk">'+lap.wk+'</span></div>'
-      +'<p class="lglapsum">'+lap.sum+'</p>';
+      ;
     lap.groups.forEach(g=>{
       nRows+=g.rows.length;
       railHtml+='<a href="#'+g.id+'" data-g="'+g.id+'">'+g.h+'<em>'+g.rows.length+'</em></a>';
       html+='<div class="lggrp" id="'+g.id+'">'
         +'<button class="lggrph" type="button"><span class="lgcv">▼</span><h4>'+g.h+'</h4>'
-        +'<span class="lgct">'+g.rows.length+(g.rows.length===1?' item':' items')+'</span>'
         +'</button><div class="lgrows">';
       g.rows.forEach(r=>{
         const lbl=r.st==='ok'?'Completed':r.st==='wip'?'In progress':r.st==='hnd'?'Handed off':'Partial';
