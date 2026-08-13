@@ -931,16 +931,10 @@ body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
 /* the one control that stops this reading as a compliance checklist:
    the substantive work is the default view, the program boilerplate
    is one press away for anyone who wants to audit completeness */
-.lgseg{margin-left:auto;display:flex;border:1px solid var(--line-2);flex:none}
-.lgseg button{padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--dim);background:none;border:0;cursor:pointer;
-  transition:background .15s,color .15s;white-space:nowrap}
-.lgseg button+button{border-left:1px solid var(--line-2)}
-.lgseg button:hover{color:var(--ink)}
-.lgseg button.on{background:var(--ax);color:var(--bg)}
 .lgx{flex:none;border:1px solid var(--line-2);background:none;cursor:pointer;
   width:32px;height:32px;display:flex;align-items:center;justify-content:center;
   font-size:14px;color:var(--dim);transition:border-color .15s,color .15s}
+.lgtop .lgx:first-of-type{margin-left:auto}
 .lgx:hover{border-color:var(--ax);color:var(--ax)}
 .lgbody{flex:1;display:flex;min-height:0}
 /* jump rail — every item scrolls this same document. Nothing here
@@ -995,7 +989,6 @@ body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
 .lgrow .lgnote{grid-column:1/-1;font-size:13px;color:var(--dim);font-weight:300;
   line-height:1.6;max-width:72ch}
 .lgrow .lgnote b{color:var(--ink);font-weight:500}
-.lgrow.req .lgt{font-weight:400;color:var(--dim)}
 .lgst{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;
   border:1px solid;flex:none;height:fit-content;white-space:nowrap}
 .lgst.ok{color:var(--ok);border-color:var(--ok)}
@@ -1028,15 +1021,10 @@ body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
 .lgfoot b{color:var(--dim);font-weight:600}
 @media(max-width:1080px){.lgrail{display:none}}
 @media(max-width:720px){
-  .lgtop{height:auto;padding:11px 14px;display:grid;grid-template-columns:1fr auto auto;
-    gap:10px 8px;align-items:center}
-  .lgid{grid-column:1;grid-row:1;flex-wrap:wrap;gap:0 10px}
+  .lgtop{height:auto;padding:11px 14px;gap:10px 8px;flex-wrap:wrap}
+  .lgid{grid-column:1;flex-wrap:wrap;gap:0 10px}
   .lgid span{font-size:11px;flex-basis:100%}
-  .lgtop .lgx:nth-of-type(1){grid-column:2;grid-row:1}
-  .lgtop .lgx:nth-of-type(2){grid-column:3;grid-row:1}
-  .lgseg{grid-column:1/-1;grid-row:2;margin-left:0;width:100%}
-  .lgseg button{flex:1;padding:8px 6px}
-  .lgwrap{padding:24px 16px 0}
+      .lgwrap{padding:24px 16px 0}
   .lghero h1{font-size:27px}
   .lgsum{grid-template-columns:1fr 1fr}
   .lglaph{flex-wrap:wrap;gap:4px 12px}
@@ -1578,7 +1566,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <button class="dlink" data-ledger="ibm">
             <span class="di">▤</span>
             <span class="dt"><span>Delivery log · 14 weeks</span><b>Everything I shipped</b></span>
-            <span class="dc" data-live="ledger-ibm-count">42</span></button>
+            <span class="dc" data-live="ledger-ibm-count">43</span></button>
           <h5>By the numbers</h5>
           <div class="metrics">
             <div class="metric"><b>6</b><span>opportunities advanced</span></div>
@@ -2223,10 +2211,6 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
 <div id="ledger" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Delivery log">
   <div class="lgtop">
     <div class="lgid"><span class="lgm">▤</span><b>Delivery log</b><span id="lgWho"></span></div>
-    <div class="lgseg">
-      <button class="on" id="lgShip" onclick="setLedgerFilter('ship')">What I shipped</button>
-      <button id="lgAll" onclick="setLedgerFilter('all')">Everything</button>
-    </div>
     <button class="lgx" onclick="toggleTheme(event)" aria-label="Toggle light and dark theme">☀</button>
     <button class="lgx" onclick="closeLedger()" aria-label="Close delivery log">✕</button>
   </div>
@@ -4201,12 +4185,15 @@ setTimeout(runMeasure,400);
    below — rail, counts, filter, deep link — follows. The button is the
    only markup involved; nothing here is hard-coded to IBM.
 
-   kind:'req' marks an IBM program requirement (onboarding, timesheets,
-   milestone modules). Those are hidden in the default view. They are
-   not padding and they are not hidden because they are embarrassing —
-   they are hidden because 60 rows where 18 are "submit your timesheet"
-   makes the other 42 read as box-ticking, which is the opposite of
-   what this page is for. "Everything" is one press away.
+   ONE curated list, no filter. An earlier cut kept every IBM program
+   requirement behind a "What I shipped / Everything" toggle; those
+   rows are now deleted outright, because "validated my I-9" and
+   "submitted my timesheet" are true of every intern who turned up and
+   so say nothing about what this one did. With nothing left to hide
+   the toggle was a control that taught a visitor nothing, so it went
+   too. Anything added here should be something a reader would care
+   about having been done — if the answer is "everyone does that",
+   it does not belong in the file.
 
    st: ok = completed · wip = in progress · par = partial
        hnd = handed off (finished by someone else, deliberately)
@@ -4221,7 +4208,7 @@ ibm:{
  who:'IBM · Brand Sales Specialist Intern · May – Aug 2026',
  h1:'Fourteen weeks, <i>unabridged</i>',
  lede:'The dossier is the two-paragraph version. This is the record underneath it: every deliverable, in the order it happened, with what actually came of it. Drawn from my Sales Impact Tracker, the document my manager and I reviewed at each checkpoint. <b>Names and specific accounts are redacted</b>; the work is not.',
- stat:[['3','laps'],['','things I shipped'],['','tracked items'],['5','agencies owned']],
+ stat:[['3','laps'],['','deliverables'],['14','weeks'],['5','agencies owned']],
  laps:[
  {id:'lap1',n:'Lap 01',title:'Landing and getting useful',wk:'Weeks 1 – 4',
   sum:'A ramp period on paper. In practice I took on more account and client work than the program asked for, which is the reason the rest of the summer moved as fast as it did.',
@@ -4242,19 +4229,11 @@ ibm:{
    {t:'Built a healthcare customer reference set',st:'ok',n:'Scraped Seismic and Lighthouse for every watsonx success story in healthcare and packaged them into a reference deck the team could pull from.'},
    {t:'Pulled the Q2 close list against a national reseller partner',st:'ok',n:'Compiled it out of IBM Sales Cloud with values, links and owners, formatted the way my manager needed it for the quarter close.'},
    {t:'IBM Technology Zone Fundamentals badge',st:'ok',n:'Outstanding at the Lap 1 checkpoint. I had not recorded the mock demo yet and I said so at the time rather than letting it sit quietly, then recorded it and closed the badge out later in the summer.'},
-   {t:'Ramped on the internal AI tool stack',st:'ok',kind:'req',n:'AskHR, AskIT, AskIBM, AskSales. Worth noting I settled on IBM Bob as my daily driver over Copilot, which is also what the KDR Generator ended up being built on.'},
-   {t:'Secured access to Seismic, Lighthouse, ISC, TechZone and Copilot',st:'ok',kind:'req',n:''},
-   {t:'Reviewed IBM Design Language, DAM and the writing style guide',st:'ok',kind:'req',n:'Went through it with my mentor, specifically on why the brand rules are enforced as tightly as they are.'}]},
+   {t:'Ramped on the internal AI tool stack',st:'ok',n:'AskHR, AskIT, AskIBM, AskSales. Worth noting I settled on IBM Bob as my daily driver over Copilot, which is also what the KDR Generator ended up being built on.'}]},
   {id:'lg-l1-learn',h:'Core learning and territory',rows:[
    {t:'Mapped IBM’s go-to-market model end to end',st:'ok',n:'Worked the GTM guide, then had my mentor draw the coverage model by hand: Enterprise, Strategic, Select Horizon, Select Territory, and where our Public account sits inside it. Being able to place my own role in that diagram is what made everything after it navigable.'},
    {t:'Ran full client research on two accounts in the territory',st:'ok',n:'An optional module. I took it anyway, profiled the state public account and a private research university, and worked out where IBM could realistically position against each. Both fed straight into later outreach.'},
-   {t:'Networked across roles on the account team',st:'ok',n:'The program asks for two fifteen-minute intros. I ran structured conversations across brand sales, client engineering and partner roles, and asked to be added to recurring meetings I was not on.'},
-   {t:'Completed the IBM Client Engagement Model track',st:'ok',kind:'req',n:'Four and a half hours of the Sales Accelerator plus the assessment. This is the framework I actually used on the agency game plans.'},
-   {t:'How IBM Goes to Market',st:'ok',kind:'req',n:''},
-   {t:'Set a standing cadence with manager and mentor',st:'ok',kind:'req',n:'Bi-weekly with my manager, in person where possible. With my mentor it was closer to three days a week in the office, which is where most of the real learning happened.'},
-   {t:'Onboarding: I-9, w3, laptop, apps, Welcome@IBM',st:'ok',kind:'req',n:''},
-   {t:'Internship Blueprint and Milestone 1 review with manager',st:'ok',kind:'req',n:''},
-   {t:'Weekly hours report and Friday timesheet',st:'ok',kind:'req',n:''}]}],
+   {t:'Networked across roles on the account team',st:'ok',n:'The program asks for two fifteen-minute intros. I ran structured conversations across brand sales, client engineering and partner roles, and asked to be added to recurring meetings I was not on.'}]}],
   refl:{l:'Lap 1 · self-assessment, verbatim',p:[
    'Lap 1 felt strong overall. I came in wanting to contribute beyond the baseline and ended up taking on more ad hoc client and account work than the tracker required, which gave me a much broader view of the territory than I expected this early. I also built good habits around communication: checking in regularly, staying responsive, and getting comfortable navigating IBM’s tools faster than I anticipated.',
    'Where I want to improve heading into Lap 2: I leaned heavily into the ad hoc and client-facing work, and a few of the required learning modules slipped behind as a result. That was a prioritisation choice I made somewhat by default rather than deliberately, and I want to be more intentional about balancing both so foundational items don’t keep trailing behind the visible work.']}},
@@ -4265,29 +4244,24 @@ ibm:{
    {t:'Identified two new opportunities inside existing accounts',st:'ok',n:'Automated meter reading and noise monitoring at a state environmental agency. Both came out of understanding what the agency was actually being asked to deliver that year, not out of walking a product list.'},
    {t:'Re-opened a closed-lost opportunity',st:'ok',n:'A data governance deal at a state insurance fund had been marked lost. I found it going through closed-lost records, worked out what had changed since, and started the re-engagement.'},
    {t:'Generated 20 qualified leads and opened outreach',st:'ok',n:'Built the lists in LinkedIn Sales Navigator and ZoomInfo, had the pitch approved by my mentor, and ran the relationship maps behind the event outreach.'},
-   {t:'Sustained prospecting research at three sessions a week',st:'ok',kind:'req',n:'Research on the QBR accounts, the state university budget work, and the AI report findings all went back to the team rather than staying in my notes.'},
-   {t:'Milestone 2: prospecting via LinkedIn, opportunity identification',st:'ok',kind:'req',n:''}]},
+   {t:'Sustained prospecting research at three sessions a week',st:'ok',n:'Research on the QBR accounts, the state university budget work, and the AI report findings all went back to the team rather than staying in my notes.'}]},
   {id:'lg-l2-pitch',h:'Pitch Lab and client delivery',rows:[
    {t:'Certified on IBM’s Client Zero story through Pitch Lab',st:'ok',n:'Submitted a ten-minute pitch to the Pitch Lab tutor and iterated until it graded <b>Meets or better on every rubric criterion</b>, then took it to my first-line manager for approval.'},
-   {t:'Delivered Client Zero live, internally and to a client audience',st:'ok',n:'Presented to five IBMers for feedback, then delivered the same story to university staff at the Yorktown facility during a quantum tour. Telling an internal transformation story to an external audience is a different exercise, and that is the version I would point to.'},
-   {t:'Enrolled in and attended Pitch Lab sessions',st:'ok',kind:'req',n:''}]},
+   {t:'Delivered Client Zero live, internally and to a client audience',st:'ok',n:'Presented to five IBMers for feedback, then delivered the same story to university staff at the Yorktown facility during a quantum tour. Telling an internal transformation story to an external audience is a different exercise, and that is the version I would point to.'}]},
   {id:'lg-l2-tan',h:'Tandem selling and technical practice',rows:[
    {t:'Delivered a watsonx Orchestrate demo to the account team',st:'ok',n:'Ran it in person for the entire New York State team, walking through the product’s key capabilities live rather than presenting slides about them. This is the requirement I named as my biggest gap at the Lap 2 checkpoint, and it is closed.'},
    {t:'Built and configured two TechZone lab environments',st:'ok',n:'watsonx Orchestrate and Maximo, stood up from scratch rather than cloned.'},
    {t:'Built a demo against the Transition to Success rubric',st:'ok',n:'Constructed to the official rubric instead of freestyled, which is a meaningfully harder constraint than it sounds.'},
    {t:'Shadowed live client and internal calls across five accounts',st:'ok',n:'The deal conversations for a liberal arts college, a large private university, the city university system and the state university system, plus the internal account syncs behind them.'},
    {t:'Contributed to territory planning across five agencies',st:'ok',n:'Initial territory plan with my mentor covering a research university, a flagship campus, an environmental agency, the state court system and a state insurance fund.'},
-   {t:'Stood up a team GitHub repository',st:'ok',n:'For the watsonx Challenge build and the KDR automation tool.'},
-   {t:'Participated in the Quarterly Business Review',st:'ok',kind:'req',n:''}]},
+   {t:'Stood up a team GitHub repository',st:'ok',n:'For the watsonx Challenge build and the KDR automation tool.'}]},
   {id:'lg-l2-ad',h:'Ad hoc impact',rows:[
    {t:'Led the New York State team’s watsonx Challenge entry',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'I identified the process gap, ran the first sync, and took the build myself on a team with a full-time technical seller and a managing director. This became the KDR Generator.'},
    {t:'Built the state university system RDR proposal',st:'ok',n:'Collaborated with technical specialists on the solution design and produced the proposal deck.'},
    {t:'Led an IBM promotional video for state public-sector clients',st:'hnd',n:'Ran the project across field marketing and the client engineering team from the idea through production. It outlasts my internship, so rather than leave it half-finished I documented the state of it and <b>handed it to a named owner on the team</b> to carry to release.'},
    {t:'QBR internal syncs, relationship mapping and outreach drafting',st:'ok',n:''},
    {t:'Scheduled 20+ peer networking conversations',st:'ok',n:'The program asks for two. I used the w3 directory to work across client engineering, product management and cross-brand partner roles.'},
-   {t:'Proposed a structural change to the co-op program',st:'ok',n:'Assign interns to specific sellers for fixed periods so they see one product and one day-to-day properly. You come out understanding the technical seller role and with an actual basis for choosing a brand, instead of a broad blur.'},
-   {t:'Milestone 2: interview a seller opposite your role',st:'ok',kind:'req',n:'Client engineers and product managers, on how the roles collaborate on an opportunity and where the career paths lead.'},
-   {t:'Six-week check-in and evaluation with manager',st:'ok',kind:'req',n:''}]}],
+   {t:'Proposed a structural change to the co-op program',st:'ok',n:'Assign interns to specific sellers for fixed periods so they see one product and one day-to-day properly. You come out understanding the technical seller role and with an actual basis for choosing a brand, instead of a broad blur.'}]}],
   refl:{l:'Lap 2 · self-assessment, verbatim',p:[
    'Lap 2 felt more operationally grounded than Lap 1. Engagement and team participation were consistent throughout, engagement planning picked up real traction with new opportunities identified, and the capstone direction is taking shape through the watsonx challenge. The RDR proposal and the QBR internal syncs also represent progress I am proud of.',
    'The clear gap this lap is the technical resource practice section. Lab environments, the TechZone demo for IBMers and the Transition to Success demo are the most significant required cluster I had not closed out, and Pitch Lab was still fully in progress with nothing finished.']}},
@@ -4298,15 +4272,11 @@ ibm:{
    {t:'Shipped the KDR Generator as a team asset',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'The program’s requirement reads “develop an asset that solves a team challenge.” Mine turned a three-hour manual close-plan build into <b>under thirty seconds</b>, validated against a 5,000+ SKU pricelist in real time.'},
    {t:'Designed and delivered a client-specific demo independently',st:'ok',n:'Built to an IBMer’s actual client requirements and aligned to current solution priorities, with a dry run through the Pitch Lab tutor before delivery rather than after.'},
    {t:'Documented the technical build for reuse',st:'ok',n:'So the team can run and extend it after I leave, which is the only version of this that counts for anything.'},
-   {t:'Took feedback from two senior people and shipped a change for each',st:'ok',n:'One from a senior technical seller, one from my manager. Both implemented rather than noted.'},
-   {t:'Built the ISC report for the team',st:'ok',n:''},
-   {t:'Ran Stand and Deliver with my manager',st:'ok',n:''},
-   {t:'Completed Level 3 technical training',st:'ok',n:'Picked up as optional advanced training on top of the required track and finished before the program ended.'}]},
-  {id:'lg-l3-fin',h:'Final presentation and handover',rows:[
+   {t:'Took feedback from two senior people and shipped a change for each',st:'ok',n:'One from a senior technical seller, one from my manager. Both implemented rather than noted.'}]},
+  {id:'lg-l3-fin',h:'Delivery and close',rows:[
    {t:'Delivered the final program presentation',st:'ok',n:'Experiences, technical skills, client engagement and the capstone, plus two programmatic changes I would make for future interns.'},
-   {t:'Gathered feedback from senior team members and acted on it',st:'ok',kind:'req',n:''},
-   {t:'Presented accomplishments to manager and mentor in the wrap-up',st:'ok',kind:'req',n:''},
-   {t:'Completed offboarding',st:'ok',kind:'req',n:''}]}]}],
+   {t:'Ran Stand and Deliver with my manager',st:'ok',n:'The formal delivery exercise, run for my manager at the end of the program.'},
+   {t:'Completed Level 3 technical training',st:'ok',n:'Picked up as optional advanced training on top of the required track and finished before the program ended.'}]}]}],
  foot:'<b>On redaction.</b> Colleagues appear by role rather than name, and individual institutions appear as descriptors. Account-level and opportunity-level detail has been generalised. Anything already public elsewhere on this site — the New York State public-sector account, Core 2, the OGS pricelist work behind the KDR Generator — stays as written. If you are an IBMer and want the unredacted version, ask me directly.'
 }};
 
@@ -4315,12 +4285,12 @@ function ledgerSlug(h){
   const m=(h||'').replace(/^#/,'').trim().match(/^([a-z0-9]+)-log$/);
   return (m&&LEDGER[m[1]])?m[1]:null;
 }
-let ledgerId=null,ledgerFilter='ship',ledgerBuilt=null;
+let ledgerId=null,ledgerBuilt=null;
 
 function buildLedger(key){
   const D=LEDGER[key];if(!D)return;
   const wrap=document.getElementById('lgWrap'),rail=document.getElementById('lgRail');
-  let html='',railHtml='',nShip=0,nAll=0;
+  let html='',railHtml='',nRows=0;
   D.laps.forEach(lap=>{
     railHtml+='<div class="lgrh">'+lap.n+' · '+lap.wk.replace('Weeks ','wk ')+'</div>';
     html+='<section class="lglap" id="'+lap.id+'">'
@@ -4328,16 +4298,15 @@ function buildLedger(key){
       +'<span class="lgwk">'+lap.wk+'</span></div>'
       +'<p class="lglapsum">'+lap.sum+'</p>';
     lap.groups.forEach(g=>{
-      const ship=g.rows.filter(r=>r.kind!=='req').length;
-      nShip+=ship;nAll+=g.rows.length;
-      railHtml+='<a href="#'+g.id+'" data-g="'+g.id+'">'+g.h+'<em>'+ship+'</em></a>';
+      nRows+=g.rows.length;
+      railHtml+='<a href="#'+g.id+'" data-g="'+g.id+'">'+g.h+'<em>'+g.rows.length+'</em></a>';
       html+='<div class="lggrp" id="'+g.id+'">'
         +'<button class="lggrph" type="button"><span class="lgcv">▼</span><h4>'+g.h+'</h4>'
-        +'<span class="lgct"></span></button><div class="lgrows">';
+        +'<span class="lgct">'+g.rows.length+(g.rows.length===1?' item':' items')+'</span>'
+        +'</button><div class="lgrows">';
       g.rows.forEach(r=>{
-        const kind=r.kind==='req'?'req':'ship';
         const lbl=r.st==='ok'?'Completed':r.st==='wip'?'In progress':r.st==='hnd'?'Handed off':'Partial';
-        html+='<div class="lgrow '+kind+'" data-kind="'+kind+'">'
+        html+='<div class="lgrow">'
           +'<div class="lgt">'+r.t+'</div><span class="lgst '+r.st+'">'+lbl+'</span>';
         const body=(r.n||'')+(r.x?(r.n?'<br>':'')+'<span class="lgx2" data-fly="'+r.x+'">◆ '+r.xl+' →</span>':'');
         if(body)html+='<div class="lgnote">'+body+'</div>';
@@ -4354,7 +4323,7 @@ function buildLedger(key){
   });
   if(D.hand)html+='<div class="lghand"><div class="lghl">'+D.hand.l+'</div><p>'+D.hand.p+'</p></div>';
   if(D.foot)html+='<p class="lgfoot">'+D.foot+'</p>';
-  const st=D.stat.map(([v,l],i)=>'<div><b>'+(v||(i===1?nShip:nAll))+'</b><span>'+l+'</span></div>').join('');
+  const st=D.stat.map(([v,l])=>'<div><b>'+(v||nRows)+'</b><span>'+l+'</span></div>').join('');
   wrap.innerHTML='<div class="lghero"><h1>'+D.h1+'</h1><p>'+D.lede+'</p>'
     +'<div class="lgsum">'+st+'</div></div>'+html;
   rail.innerHTML=railHtml;
@@ -4362,21 +4331,8 @@ function buildLedger(key){
   /* the button's own count is read back from what actually rendered,
      so the tile can never advertise a number the log disagrees with */
   document.querySelectorAll('[data-live="ledger-'+key+'-count"]')
-    .forEach(el=>el.textContent=nShip);
+    .forEach(el=>el.textContent=nRows);
   ledgerBuilt=key;
-}
-
-function setLedgerFilter(f){
-  ledgerFilter=f;
-  document.getElementById('lgShip').classList.toggle('on',f==='ship');
-  document.getElementById('lgAll').classList.toggle('on',f==='all');
-  document.querySelectorAll('#lgWrap .lgrow.req')
-    .forEach(r=>r.style.display=(f==='ship'?'none':''));
-  document.querySelectorAll('#lgWrap .lggrp').forEach(g=>{
-    const vis=[...g.querySelectorAll('.lgrow')].filter(r=>r.style.display!=='none').length;
-    const c=g.querySelector('.lgct');if(c)c.textContent=vis+(vis===1?' item':' items');
-    const a=document.querySelector('.lgrail a[data-g="'+g.id+'"] em');if(a)a.textContent=vis;
-  });
 }
 
 function openLedger(key,replay){
@@ -4385,7 +4341,7 @@ function openLedger(key,replay){
   closeSheet();                       // two stacked overlays is one too many
   closeRec();
   if(innerWidth<=1080)toggleRail(false);
-  if(ledgerBuilt!==key){buildLedger(key);setLedgerFilter('ship')}
+  if(ledgerBuilt!==key)buildLedger(key);
   const lg=document.getElementById('ledger');
   document.body.classList.add('ledger-open');
   lg.setAttribute('aria-hidden','false');
