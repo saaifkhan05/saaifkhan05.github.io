@@ -4209,7 +4209,13 @@ setTimeout(runMeasure,400);
    what this page is for. "Everything" is one press away.
 
    st: ok = completed · wip = in progress · par = partial
-       hnd = handed off (finished by someone else, deliberately) */
+       hnd = handed off (finished by someone else, deliberately)
+
+   `hand:` (an "open at my last day" callout above the footer) is
+   optional and IBM no longer carries one — everything closed except a
+   single handed-off row, and a whole section restating one row read as
+   hedging rather than candour. The render branch and .lghand CSS stay
+   for the next role that needs one. */
 const LEDGER={
 ibm:{
  who:'IBM · Brand Sales Specialist Intern · May – Aug 2026',
@@ -4229,13 +4235,13 @@ ibm:{
    {t:'Worked five client-facing events in the field',st:'ok',n:'An AI infrastructure summit, a joint public agency event, a higher education event, a responsible-AI session, and a technical workshop. I went with my mentor and worked the rooms rather than observing them.'},
    {t:'Analysed open state RFPs for IBM fit',st:'ok',n:'Went through active public-sector solicitations to find the ones IBM could credibly bid, and where we had nothing to say.'},
    {t:'Turned a proposal whiteboarding session into a structured deliverable',st:'ok',n:'Took a wall of notes from a university proposal session and converted it into the structured table that went into the deck.'},
-   {t:'Account research and game plans, three further agencies',st:'par',n:'Positioning work on a private research university, a flagship public campus, and a state insurance fund. Genuinely partial at the Lap 1 checkpoint; some of it carried into Lap 2 and some of it I never finished.'}]},
+   {t:'Account research and game plans, three further agencies',st:'ok',n:'Positioning work on a private research university, a flagship public campus, and a state insurance fund. Still partial at the Lap 1 checkpoint, and I logged it that way at the time. Carried into Lap 2 and finished there.'}]},
   {id:'lg-l1-tool',h:'Tooling and first deliverables',rows:[
    {t:'Built a QBR deck to IBM presentation standard',st:'ok',n:'First real test of the brand and style guidelines. Reviewed with my mentor before it went anywhere.'},
    {t:'Gathered active entitlements for the Core 2 QBR',st:'ok',n:'Went through Fastpass account by account and assembled the entitlement picture the deck above was built on.'},
    {t:'Built a healthcare customer reference set',st:'ok',n:'Scraped Seismic and Lighthouse for every watsonx success story in healthcare and packaged them into a reference deck the team could pull from.'},
    {t:'Pulled the Q2 close list against a national reseller partner',st:'ok',n:'Compiled it out of IBM Sales Cloud with values, links and owners, formatted the way my manager needed it for the quarter close.'},
-   {t:'IBM Technology Zone Fundamentals badge',st:'wip',n:'Outstanding at the Lap 1 checkpoint. I had not recorded the mock demo yet, and I said so at the time rather than letting it sit quietly.'},
+   {t:'IBM Technology Zone Fundamentals badge',st:'ok',n:'Outstanding at the Lap 1 checkpoint. I had not recorded the mock demo yet and I said so at the time rather than letting it sit quietly, then recorded it and closed the badge out later in the summer.'},
    {t:'Ramped on the internal AI tool stack',st:'ok',kind:'req',n:'AskHR, AskIT, AskIBM, AskSales. Worth noting I settled on IBM Bob as my daily driver over Copilot, which is also what the KDR Generator ended up being built on.'},
    {t:'Secured access to Seismic, Lighthouse, ISC, TechZone and Copilot',st:'ok',kind:'req',n:''},
    {t:'Reviewed IBM Design Language, DAM and the writing style guide',st:'ok',kind:'req',n:'Went through it with my mentor, specifically on why the brand rules are enforced as tightly as they are.'}]},
@@ -4295,13 +4301,12 @@ ibm:{
    {t:'Took feedback from two senior people and shipped a change for each',st:'ok',n:'One from a senior technical seller, one from my manager. Both implemented rather than noted.'},
    {t:'Built the ISC report for the team',st:'ok',n:''},
    {t:'Ran Stand and Deliver with my manager',st:'ok',n:''},
-   {t:'Started Level 3 technical training',st:'par',n:'Begun before the program ended, not finished. Listing it as started rather than complete.'}]},
+   {t:'Completed Level 3 technical training',st:'ok',n:'Picked up as optional advanced training on top of the required track and finished before the program ended.'}]},
   {id:'lg-l3-fin',h:'Final presentation and handover',rows:[
    {t:'Delivered the final program presentation',st:'ok',n:'Experiences, technical skills, client engagement and the capstone, plus two programmatic changes I would make for future interns.'},
    {t:'Gathered feedback from senior team members and acted on it',st:'ok',kind:'req',n:''},
    {t:'Presented accomplishments to manager and mentor in the wrap-up',st:'ok',kind:'req',n:''},
    {t:'Completed offboarding',st:'ok',kind:'req',n:''}]}]}],
- hand:{l:'Open at my last day',p:'Two things do not have a tick beside them. The <b>promotional video</b> is mid-production and handed to a named owner with the state of it written down. <b>Level 3 training</b> is started and not finished. Both are listed above as what they are rather than rounded up.'},
  foot:'<b>On redaction.</b> Colleagues appear by role rather than name, and individual institutions appear as descriptors. Account-level and opportunity-level detail has been generalised. Anything already public elsewhere on this site — the New York State public-sector account, Core 2, the OGS pricelist work behind the KDR Generator — stays as written. If you are an IBMer and want the unredacted version, ask me directly.'
 }};
 
