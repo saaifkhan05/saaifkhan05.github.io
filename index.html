@@ -116,6 +116,10 @@
      carried by the ticked edge rule, the ■/◆ mark and the accent title —
      none of which touch text contrast. This is texture, not signal. */
   --gridln:color-mix(in srgb,var(--dimmer) 10%,transparent);
+  /* delivery-log status chips. Reuses the Workiva green and the
+     AKPsi yellow already carried by the context ramps rather than
+     introducing new hexes — the palette audit still holds. */
+  --ok:#66cc66; --wip:#f1c21b;
   --rail:280px;
   /* published by the camera before every flight — the arrival ring and
      the content stagger key off the real duration of THIS move, not a
@@ -127,6 +131,7 @@
   --line:#e0e0e0; --line-2:#c6c6c6;
   --ink:#161616; --dim:#525252; --dimmer:#8d8d8d;
   --ax:#0f62fe;
+  --ok:#2e7d32; --wip:#8e6a00;
   --gridln:color-mix(in srgb,var(--dimmer) 11%,transparent);
 }
 .ax-ibm{--ax:#78a9ff}     .ax-workiva{--ax:#66cc66} .ax-cisco{--ax:#ff7a33}
@@ -483,6 +488,28 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ax);outline-offset:
 .xlink .xt b{font-size:14px;font-weight:600;display:block;line-height:1.2}
 .xlink .xa{font-size:15px;flex:none;transition:transform .15s}
 .xlink:hover .xa{transform:translateX(4px)}
+/* ── DELIVERY LOG ENTRY (.dlink) ─────────────────────────────────
+   Deliberately NOT an .xlink. In this file an accent-FILLED block
+   carrying a ■ or ◆ mark means exactly one thing: the camera is
+   about to fly to another tile. The delivery log opens a panel in
+   place and the camera never moves, so it gets its own shape —
+   outlined, ticked left edge, ▤ mark — and it grows a rule on hover
+   rather than inverting. If the two looked alike the site would be
+   lying about what a click costs, which is the one thing the whole
+   navigation model is built to avoid. */
+.dlink{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:transparent;border:1px solid var(--line-2);
+  border-left:3px solid var(--line-2);padding:12px 13px;transition:background .18s,border-color .18s}
+.dlink:hover{border-color:var(--ax);border-left-color:var(--ax);background:var(--ax-tint)}
+.dlink .di{font-size:14px;flex:none;color:var(--dimmer);transition:color .18s}
+.dlink:hover .di{color:var(--ax)}
+.dlink .dt{flex:1;min-width:0}
+.dlink .dt span{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dimmer);display:block;margin-bottom:2px}
+.dlink .dt b{font-size:14px;font-weight:600;display:block;line-height:1.2}
+.dlink .dc{font-size:11px;color:var(--dimmer);letter-spacing:.06em;font-weight:600;flex:none;
+  font-variant-numeric:tabular-nums}
+.dlink:hover .dc{color:var(--ax)}
 /* editorial-scale stat callouts (8B) */
 .metrics{display:flex;flex-direction:column;gap:14px;margin-top:4px}
 .d-main .metrics{flex-direction:row;gap:26px;flex-wrap:wrap}
@@ -745,6 +772,8 @@ body.rail-open .rail{transform:none}
 .xlink.hovered{background:var(--ax);color:var(--bg)}
 .xlink.hovered .xi,.xlink.hovered .xt span{color:var(--bg)}
 .xlink.hovered .xa{transform:translateX(4px)}
+.dlink.hovered{border-color:var(--ax);border-left-color:var(--ax);background:var(--ax-tint)}
+.dlink.hovered .di,.dlink.hovered .dc{color:var(--ax)}
 .cbtn.hovered{background:var(--ax-tint);border-color:var(--ax)}
 .cbtn.hovered .ca{transform:translateX(4px)}
 .cbtn.primary.hovered{background:var(--blue-hover);border-color:var(--blue-hover)}
@@ -878,6 +907,145 @@ body.touring .topbar,body.touring .rail{pointer-events:none;opacity:.4;transitio
 body.touring{cursor:default}
 
 /* ═══════════ RECRUITER MODE ═══════════ */
+
+/* ═══════════ DELIVERY LOG OVERLAY (#ledger) ═══════════
+   Lives OUTSIDE #world, same as #recruiter / #lensPick / #tourStart.
+   That is the whole reason this is not a tile: the roles already sit
+   at the world floor (data-depth 3), so a log tile would be depth 4
+   and break the "never more than 2 clicks from home" rule; and a long
+   scrolling list of clickable rows inside a preserve-3d frame is
+   precisely the case the geometric pointer engine exists because of.
+   Out here, rows are ordinary DOM and the browser can hit-test them.
+   Also keeps the live frame count (data-live="site-frames") honest. */
+#ledger{position:fixed;inset:0;z-index:210;background:var(--bg);
+  opacity:0;visibility:hidden;transition:opacity .28s,visibility .28s;
+  display:flex;flex-direction:column}
+body.ledger-open #ledger{opacity:1;visibility:visible;transition:opacity .28s}
+.lgtop{flex:none;display:flex;align-items:center;gap:18px;height:48px;padding:0 16px;
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.lgid{display:flex;align-items:baseline;gap:12px;min-width:0}
+.lgid .lgm{font-size:15px;color:var(--ax);flex:none}
+.lgid b{font-size:14px;font-weight:600;white-space:nowrap}
+.lgid span{font-size:11.5px;color:var(--dim);letter-spacing:.02em;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+/* the one control that stops this reading as a compliance checklist:
+   the substantive work is the default view, the program boilerplate
+   is one press away for anyone who wants to audit completeness */
+.lgseg{margin-left:auto;display:flex;border:1px solid var(--line-2);flex:none}
+.lgseg button{padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);background:none;border:0;cursor:pointer;
+  transition:background .15s,color .15s;white-space:nowrap}
+.lgseg button+button{border-left:1px solid var(--line-2)}
+.lgseg button:hover{color:var(--ink)}
+.lgseg button.on{background:var(--ax);color:var(--bg)}
+.lgx{flex:none;border:1px solid var(--line-2);background:none;cursor:pointer;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--dim);transition:border-color .15s,color .15s}
+.lgx:hover{border-color:var(--ax);color:var(--ax)}
+.lgbody{flex:1;display:flex;min-height:0}
+/* jump rail — every item scrolls this same document. Nothing here
+   opens a second view, so there is nowhere to get lost. */
+.lgrail{flex:none;width:250px;border-right:1px solid var(--line);overflow-y:auto;
+  padding:20px 0 40px;background:var(--surface)}
+.lgrail .lgrh{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dimmer);padding:0 22px;margin:20px 0 8px}
+.lgrail .lgrh:first-child{margin-top:0}
+.lgrail a{display:flex;align-items:center;gap:10px;padding:8px 22px;font-size:12.5px;
+  color:var(--dim);text-decoration:none;border-left:2px solid transparent;
+  transition:background .15s,color .15s,border-color .15s}
+.lgrail a:hover{color:var(--ink);background:var(--raise)}
+.lgrail a.on{color:var(--ax);border-left-color:var(--ax)}
+.lgrail a em{font-style:normal;margin-left:auto;font-size:10.5px;color:var(--dimmer);
+  font-variant-numeric:tabular-nums}
+.lgmain{flex:1;overflow-y:auto;padding:0 0 110px}
+.lgwrap{max-width:860px;margin:0 auto;padding:38px 30px 0}
+.lghero h1{font-weight:300;font-size:38px;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
+.lghero h1 i{font-style:normal;color:var(--ax);font-weight:600}
+.lghero>p{font-size:14px;color:var(--dim);font-weight:300;line-height:1.62;max-width:64ch}
+.lghero>p b{color:var(--ink);font-weight:600}
+.lgsum{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);margin:26px 0 6px}
+.lgsum div{background:var(--bg);padding:14px 16px}
+.lgsum b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;color:var(--ax);line-height:1.1}
+.lgsum span{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer)}
+.lglap{margin-top:46px;scroll-margin-top:20px}
+.lglaph{display:flex;align-items:flex-end;gap:14px;padding-bottom:10px;border-bottom:1px solid var(--line-2)}
+.lglaph .lgn{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--ax);
+  text-transform:uppercase;flex:none}
+.lglaph h3{font-size:24px;font-weight:300;letter-spacing:-.02em;flex:1}
+.lglaph .lgwk{font-size:11px;color:var(--dimmer);letter-spacing:.08em;text-transform:uppercase;
+  font-weight:600;flex:none}
+.lglapsum{font-size:13.5px;color:var(--dim);font-weight:300;line-height:1.6;margin:12px 0 4px;max-width:66ch}
+/* groups render OPEN. Someone who opened the log wants the content,
+   not another menu; collapsing is available, never required. */
+.lggrp{margin-top:24px;scroll-margin-top:20px}
+.lggrph{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 0;
+  border-bottom:1px solid var(--line);background:none;border-left:0;border-right:0;border-top:0;cursor:pointer}
+.lggrph .lgcv{font-size:10px;color:var(--dimmer);transition:transform .2s;flex:none;width:10px}
+.lggrp.shut .lggrph .lgcv{transform:rotate(-90deg)}
+.lggrph h4{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.lggrph .lgct{margin-left:auto;font-size:10.5px;color:var(--dimmer);font-weight:600;
+  letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.lggrp.shut .lgrows{display:none}
+.lgrow{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:15px 0 15px 14px;
+  border-bottom:1px solid var(--line);border-left:2px solid transparent;
+  transition:border-color .15s,background .15s}
+.lgrow:hover{border-left-color:var(--ax);background:var(--ax-tint)}
+.lgrow .lgt{font-size:14.5px;font-weight:500;line-height:1.35;letter-spacing:-.005em}
+.lgrow .lgnote{grid-column:1/-1;font-size:13px;color:var(--dim);font-weight:300;
+  line-height:1.6;max-width:72ch}
+.lgrow .lgnote b{color:var(--ink);font-weight:500}
+.lgrow.req .lgt{font-weight:400;color:var(--dim)}
+.lgst{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;
+  border:1px solid;flex:none;height:fit-content;white-space:nowrap}
+.lgst.ok{color:var(--ok);border-color:var(--ok)}
+.lgst.wip{color:var(--wip);border-color:var(--wip)}
+.lgst.par{color:var(--dimmer);border-color:var(--line-2)}
+.lgst.hnd{color:var(--ax);border-color:var(--ax)}
+/* cross-links back into the world are kept rare on purpose — two in
+   the whole document, both pointing at the same project tile */
+.lgrow .lgx2{display:inline-flex;align-items:center;gap:8px;margin-top:9px;border:1px solid var(--ax);
+  background:var(--ax-tint);padding:6px 11px;font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ax);cursor:pointer;transition:background .15s,color .15s}
+.lgrow .lgx2:hover{background:var(--ax);color:var(--bg)}
+/* the self-assessments run verbatim, unflattering halves included.
+   A log where every line is green stops being believed around item
+   fifteen; these two paragraphs are what make the other forty read
+   as a record rather than a pitch. */
+.lgrefl{border-left:3px solid var(--ax);padding:4px 0 4px 16px;margin-top:26px}
+.lgrefl .lgrl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px}
+.lgrefl p{font-size:13.5px;font-style:italic;color:var(--ink);font-weight:300;line-height:1.62;
+  margin-bottom:9px;max-width:70ch}
+.lgrefl p:last-child{margin-bottom:0}
+.lghand{margin-top:46px;border:1px solid var(--line-2);padding:20px 22px;background:var(--surface)}
+.lghand .lghl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--wip);margin-bottom:9px}
+.lghand p{font-size:13.5px;color:var(--dim);font-weight:300;line-height:1.62;max-width:70ch}
+.lghand p b{color:var(--ink);font-weight:500}
+.lgfoot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;
+  color:var(--dimmer);line-height:1.65;max-width:70ch}
+.lgfoot b{color:var(--dim);font-weight:600}
+@media(max-width:1080px){.lgrail{display:none}}
+@media(max-width:720px){
+  .lgtop{height:auto;padding:11px 14px;display:grid;grid-template-columns:1fr auto auto;
+    gap:10px 8px;align-items:center}
+  .lgid{grid-column:1;grid-row:1;flex-wrap:wrap;gap:0 10px}
+  .lgid span{font-size:11px;flex-basis:100%}
+  .lgtop .lgx:nth-of-type(1){grid-column:2;grid-row:1}
+  .lgtop .lgx:nth-of-type(2){grid-column:3;grid-row:1}
+  .lgseg{grid-column:1/-1;grid-row:2;margin-left:0;width:100%}
+  .lgseg button{flex:1;padding:8px 6px}
+  .lgwrap{padding:24px 16px 0}
+  .lghero h1{font-size:27px}
+  .lgsum{grid-template-columns:1fr 1fr}
+  .lglaph{flex-wrap:wrap;gap:4px 12px}
+  .lglaph h3{flex-basis:100%;order:3;font-size:21px}
+  .lglaph .lgwk{margin-left:auto}
+  .lgrow{grid-template-columns:1fr;gap:8px}
+  .lgrow .lgst{justify-self:start;order:3}
+}
+
 #recruiter{position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;
   overscroll-behavior:contain;opacity:0;visibility:hidden;transition:opacity .4s,visibility 0s .4s}
 body.rec-open #recruiter{opacity:1;visibility:visible;transition:opacity .4s}
@@ -1115,6 +1283,7 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
    short version, plus where to get the actual resume. */
 #printcard{display:none}
 @media print{
+  #ledger{display:none!important}
   html,body{height:auto;overflow:visible;background:#fff;color:#000}
   #field,.viewport,.topbar,.rail,.scrim,.boot,#tourBar,#tourStart,#recruiter{display:none!important}
   #printcard{display:block;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:0;max-width:none}
@@ -1405,6 +1574,11 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
           <h5>What I built here</h5>
           <button class="xlink" data-fly="f-kdr">
             <span class="xi">◆</span><span class="xt"><span>Project</span><b>KDR Generator</b></span><span class="xa">→</span></button>
+          <h5>The receipts</h5>
+          <button class="dlink" data-ledger="ibm">
+            <span class="di">▤</span>
+            <span class="dt"><span>Delivery log · 14 weeks</span><b>Everything I shipped</b></span>
+            <span class="dc" data-live="ledger-ibm-count">42</span></button>
           <h5>By the numbers</h5>
           <div class="metrics">
             <div class="metric"><b>6</b><span>opportunities advanced</span></div>
@@ -2046,6 +2220,22 @@ button.tbuilt:hover{border-color:var(--ax);color:var(--ink)}
      behaves exactly as it always did.
      This is also the job itself, run on the person evaluating whether I
      can do it: find out who is in the room before deciding what to show. -->
+<div id="ledger" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Delivery log">
+  <div class="lgtop">
+    <div class="lgid"><span class="lgm">▤</span><b>Delivery log</b><span id="lgWho"></span></div>
+    <div class="lgseg">
+      <button class="on" id="lgShip" onclick="setLedgerFilter('ship')">What I shipped</button>
+      <button id="lgAll" onclick="setLedgerFilter('all')">Everything</button>
+    </div>
+    <button class="lgx" onclick="toggleTheme(event)" aria-label="Toggle light and dark theme">☀</button>
+    <button class="lgx" onclick="closeLedger()" aria-label="Close delivery log">✕</button>
+  </div>
+  <div class="lgbody">
+    <nav class="lgrail" id="lgRail" aria-label="Delivery log sections"></nav>
+    <div class="lgmain" id="lgMain"><div class="lgwrap" id="lgWrap"></div></div>
+  </div>
+</div>
+
 <div id="lensPick" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Who is taking the tour">
   <div class="ts-box">
     <h2>Before we go — who's asking<i>?</i></h2>
@@ -2403,6 +2593,19 @@ function syncHash(id,replay){
 }
 function routeTo(){
   if(hashLock)return;
+  /* #ibm-log is the log open over the IBM tile, not a tile of its own.
+     slugToId would find no f-ibm-log and silently bounce home. */
+  const lg=ledgerSlug(location.hash);
+  if(lg){
+    if(current!=='f-'+lg)flyTo('f-'+lg,true);
+    openLedger(lg,true);
+    /* flyTo's own syncHash just replaced the entry with the bare tile
+       slug. Put the log slug back, or Back-then-refresh would land on
+       the tile with no log — the URL would have quietly lied. */
+    ledgerHash('#'+lg+'-log',true);
+    return;
+  }
+  if(ledgerId)closeLedger(true);
   const id=slugToId(location.hash);
   if(id!==current)flyTo(id,true);
 }
@@ -2506,6 +2709,9 @@ document.getElementById('sheet').addEventListener('click',e=>{
   const dl=e.target.closest('a[download]');
   if(dl){e.preventDefault();downloadResume(dl);return}
   if(e.target.closest('a[href]'))return;      // a real link stays a real link
+  /* the sheet is a clone of .pad, so it carries the .dlink too */
+  const lg=e.target.closest('[data-ledger]');
+  if(lg){e.preventDefault();openLedger(lg.dataset.ledger);return}
   const t=e.target.closest('[data-fly]');
   if(!t)return;
   e.preventDefault();
@@ -2549,6 +2755,10 @@ function jump(id){
 }
 document.addEventListener('keydown',e=>{
   /* overlay keyboard layers, top-most first */
+  if(document.body.classList.contains('ledger-open')){
+    if(e.key==='Escape')closeLedger();
+    return;
+  }
   if(document.body.classList.contains('lens-open')){
     /* backing out of the question is backing out of the tour too — they
        are one flow, and starting a tour someone just escaped from would
@@ -2596,7 +2806,7 @@ document.addEventListener('keydown',e=>{
    flight (and live during one), and clicks, hover, and the cursor
    all resolve the pointer against those boxes directly. Smallest box
    wins, so a row beats the frame that contains it. */
-const INTERACTIVE=[...world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')]
+const INTERACTIVE=[...world.querySelectorAll('[data-fly],.item,.jump,.xlink,.dlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')]
   .map(el=>({el,frame:el.closest('.frame')}));
 let rects=[],rectsStale=true,lastMeasure=0;
 /* PERF: getBoundingClientRect on ~100 elements inside a nested 3D
@@ -2720,13 +2930,14 @@ document.addEventListener('click',e=>{
      this listener sees the same click, so a class test would already be
      stale by now — the world would then geometrically hit-test the tap
      and fly somewhere else, which read as "the button does nothing". */
-  if(T.closest&&T.closest('#tourBar,#tourStart,#lensPick,#recruiter,#sheet')){
+  if(T.closest&&T.closest('#tourBar,#tourStart,#lensPick,#recruiter,#sheet,#ledger')){
     const odl=T.closest('a[download]');
     if(odl){e.preventDefault();downloadResume(odl)}
     return;
   }
   if(document.body.classList.contains('lens-open'))return;
   if(document.body.classList.contains('rec-open'))return;
+  if(document.body.classList.contains('ledger-open'))return;
   /* the sheet owns the screen while it is up; its own listener has
      already had this click, so the world must not also act on it */
   if(document.body.classList.contains('sheet-open'))return;
@@ -2742,6 +2953,7 @@ document.addEventListener('click',e=>{
   e.preventDefault();
   /* pager buttons live inside a frame that itself has data-fly, so they
      must be handled before the "click anywhere in the tile" fallback */
+  if(el.dataset.ledger){openLedger(el.dataset.ledger);return}
   if(el.classList.contains('pgb')){goPage(el);return}
   if(el.dataset.fly){flyTo(el.dataset.fly);return}
   /* Download links must be resolved from the geometric hit-test result
@@ -2802,7 +3014,7 @@ function goPage(btn){
   renderPaged(box);
   rectsStale=true;                      // pager rebuilt: re-measure hit boxes
   INTERACTIVE.length=0;
-  world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
+  world.querySelectorAll('[data-fly],.item,.jump,.xlink,.dlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
     .forEach(el=>INTERACTIVE.push({el,frame:el.closest('.frame')}));
   const c=current;current='';flyTo(c,true);   // refit: page heights differ
 }
@@ -2819,7 +3031,7 @@ pageBoxes().forEach(box=>{
    the click/hover hit-test until some other rebuild happens to run first */
 rectsStale=true;
 INTERACTIVE.length=0;
-world.querySelectorAll('[data-fly],.item,.jump,.xlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
+world.querySelectorAll('[data-fly],.item,.jump,.xlink,.dlink,.art,.cert,.ph,.cbtn,.pgb,.frame.focusable')
   .forEach(el=>INTERACTIVE.push({el,frame:el.closest('.frame')}));
 
 /* hover + cursor — rAF-throttled sweep of the same measured boxes */
@@ -3852,6 +4064,7 @@ recEl.addEventListener('click',e=>{
 function openRec(){
   if(touring)endTour('interrupted');
   closeSheet();                 // two stacked overlays is one too many
+  closeLedger(true);            // (the log sits above this one, so it would win)
   if(innerWidth<=1080)toggleRail(false);
   document.body.classList.add('rec-open');
   recEl.setAttribute('aria-hidden','false');
@@ -3977,6 +4190,258 @@ function runMeasure(){
 }
 setTimeout(runMeasure,400);
 
+/* ═══════════ DELIVERY LOG ═══════════
+   The deep-dive record behind a role tile. Reached from one .dlink in
+   that role's side column; opens as a panel over the world, never as
+   another tile (see the #ledger CSS block for why).
+
+   ADDING ANOTHER ROLE is a data edit, not a build: give LEDGER a new
+   key matching the role's data-ctx, drop a .dlink carrying
+   data-ledger="<key>" into that dossier's side column, and everything
+   below — rail, counts, filter, deep link — follows. The button is the
+   only markup involved; nothing here is hard-coded to IBM.
+
+   kind:'req' marks an IBM program requirement (onboarding, timesheets,
+   milestone modules). Those are hidden in the default view. They are
+   not padding and they are not hidden because they are embarrassing —
+   they are hidden because 60 rows where 18 are "submit your timesheet"
+   makes the other 42 read as box-ticking, which is the opposite of
+   what this page is for. "Everything" is one press away.
+
+   st: ok = completed · wip = in progress · par = partial
+       hnd = handed off (finished by someone else, deliberately) */
+const LEDGER={
+ibm:{
+ who:'IBM · Brand Sales Specialist Intern · May – Aug 2026',
+ h1:'Fourteen weeks, <i>unabridged</i>',
+ lede:'The dossier is the two-paragraph version. This is the record underneath it: every deliverable, in the order it happened, with what actually came of it. Drawn from my Sales Impact Tracker, the document my manager and I reviewed at each checkpoint. <b>Names and specific accounts are redacted</b>; the work is not.',
+ stat:[['3','laps'],['','things I shipped'],['','tracked items'],['5','agencies owned']],
+ laps:[
+ {id:'lap1',n:'Lap 01',title:'Landing and getting useful',wk:'Weeks 1 – 4',
+  sum:'A ramp period on paper. In practice I took on more account and client work than the program asked for, which is the reason the rest of the summer moved as fast as it did.',
+  groups:[
+  {id:'lg-l1-ad',h:'Ad hoc impact',rows:[
+   {t:'NY State budget analysis, 2026–2027',st:'ok',n:'Read the enacted state budget end to end and built an executive leadership deck out of it, weighted toward the state university system at my manager’s request. This was the Lap 1 piece that got reused most by other people on the team.'},
+   {t:'Business value model for a large private university',st:'ok',n:'Deep research on the institution’s financials, then a business case modelling hard-dollar revenue and efficiency value. Presented it in person. The client said the model was accurate and useful, which for a first client-facing model is exactly the outcome I wanted.'},
+   {t:'Agentic AI insights analysis for the Public sector',st:'ok',n:'Read IBM’s agentic AI research specifically hunting for material a seller could open a client conversation with, rather than summarising it. Pulled out a set of findings the team used directly in engagements.'},
+   {t:'Rescued attendance at an IBM-hosted higher education event',st:'ok',n:'Registration was coming in low. I partnered with a colleague, built the target list in ZoomInfo, then drafted and sent <b>20+ personalised emails</b> to education leaders across the state.'},
+   {t:'Initiated a business value assessment for a liberal arts college',st:'ok',n:'Led the outreach that started the BVA process, and shadowed the value practitioner through how the assessments are actually constructed rather than just receiving the output.'},
+   {t:'Worked five client-facing events in the field',st:'ok',n:'An AI infrastructure summit, a joint public agency event, a higher education event, a responsible-AI session, and a technical workshop. I went with my mentor and worked the rooms rather than observing them.'},
+   {t:'Analysed open state RFPs for IBM fit',st:'ok',n:'Went through active public-sector solicitations to find the ones IBM could credibly bid, and where we had nothing to say.'},
+   {t:'Turned a proposal whiteboarding session into a structured deliverable',st:'ok',n:'Took a wall of notes from a university proposal session and converted it into the structured table that went into the deck.'},
+   {t:'Account research and game plans, three further agencies',st:'par',n:'Positioning work on a private research university, a flagship public campus, and a state insurance fund. Genuinely partial at the Lap 1 checkpoint; some of it carried into Lap 2 and some of it I never finished.'}]},
+  {id:'lg-l1-tool',h:'Tooling and first deliverables',rows:[
+   {t:'Built a QBR deck to IBM presentation standard',st:'ok',n:'First real test of the brand and style guidelines. Reviewed with my mentor before it went anywhere.'},
+   {t:'Gathered active entitlements for the Core 2 QBR',st:'ok',n:'Went through Fastpass account by account and assembled the entitlement picture the deck above was built on.'},
+   {t:'Built a healthcare customer reference set',st:'ok',n:'Scraped Seismic and Lighthouse for every watsonx success story in healthcare and packaged them into a reference deck the team could pull from.'},
+   {t:'Pulled the Q2 close list against a national reseller partner',st:'ok',n:'Compiled it out of IBM Sales Cloud with values, links and owners, formatted the way my manager needed it for the quarter close.'},
+   {t:'IBM Technology Zone Fundamentals badge',st:'wip',n:'Outstanding at the Lap 1 checkpoint. I had not recorded the mock demo yet, and I said so at the time rather than letting it sit quietly.'},
+   {t:'Ramped on the internal AI tool stack',st:'ok',kind:'req',n:'AskHR, AskIT, AskIBM, AskSales. Worth noting I settled on IBM Bob as my daily driver over Copilot, which is also what the KDR Generator ended up being built on.'},
+   {t:'Secured access to Seismic, Lighthouse, ISC, TechZone and Copilot',st:'ok',kind:'req',n:''},
+   {t:'Reviewed IBM Design Language, DAM and the writing style guide',st:'ok',kind:'req',n:'Went through it with my mentor, specifically on why the brand rules are enforced as tightly as they are.'}]},
+  {id:'lg-l1-learn',h:'Core learning and territory',rows:[
+   {t:'Mapped IBM’s go-to-market model end to end',st:'ok',n:'Worked the GTM guide, then had my mentor draw the coverage model by hand: Enterprise, Strategic, Select Horizon, Select Territory, and where our Public account sits inside it. Being able to place my own role in that diagram is what made everything after it navigable.'},
+   {t:'Ran full client research on two accounts in the territory',st:'ok',n:'An optional module. I took it anyway, profiled the state public account and a private research university, and worked out where IBM could realistically position against each. Both fed straight into later outreach.'},
+   {t:'Networked across roles on the account team',st:'ok',n:'The program asks for two fifteen-minute intros. I ran structured conversations across brand sales, client engineering and partner roles, and asked to be added to recurring meetings I was not on.'},
+   {t:'Completed the IBM Client Engagement Model track',st:'ok',kind:'req',n:'Four and a half hours of the Sales Accelerator plus the assessment. This is the framework I actually used on the agency game plans.'},
+   {t:'How IBM Goes to Market',st:'ok',kind:'req',n:''},
+   {t:'Set a standing cadence with manager and mentor',st:'ok',kind:'req',n:'Bi-weekly with my manager, in person where possible. With my mentor it was closer to three days a week in the office, which is where most of the real learning happened.'},
+   {t:'Onboarding: I-9, w3, laptop, apps, Welcome@IBM',st:'ok',kind:'req',n:''},
+   {t:'Internship Blueprint and Milestone 1 review with manager',st:'ok',kind:'req',n:''},
+   {t:'Weekly hours report and Friday timesheet',st:'ok',kind:'req',n:''}]}],
+  refl:{l:'Lap 1 · self-assessment, verbatim',p:[
+   'Lap 1 felt strong overall. I came in wanting to contribute beyond the baseline and ended up taking on more ad hoc client and account work than the tracker required, which gave me a much broader view of the territory than I expected this early. I also built good habits around communication: checking in regularly, staying responsive, and getting comfortable navigating IBM’s tools faster than I anticipated.',
+   'Where I want to improve heading into Lap 2: I leaned heavily into the ad hoc and client-facing work, and a few of the required learning modules slipped behind as a result. That was a prioritisation choice I made somewhat by default rather than deliberately, and I want to be more intentional about balancing both so foundational items don’t keep trailing behind the visible work.']}},
+ {id:'lap2',n:'Lap 02',title:'Carrying my own work',wk:'Weeks 4 – 8',
+  sum:'The lap where I stopped supporting other people’s deals and started sourcing things myself. Also the lap with my clearest gap, which is documented below rather than quietly dropped.',
+  groups:[
+  {id:'lg-l2-pros',h:'Prospecting and pipeline',rows:[
+   {t:'Identified two new opportunities inside existing accounts',st:'ok',n:'Automated meter reading and noise monitoring at a state environmental agency. Both came out of understanding what the agency was actually being asked to deliver that year, not out of walking a product list.'},
+   {t:'Re-opened a closed-lost opportunity',st:'ok',n:'A data governance deal at a state insurance fund had been marked lost. I found it going through closed-lost records, worked out what had changed since, and started the re-engagement.'},
+   {t:'Generated 20 qualified leads and opened outreach',st:'ok',n:'Built the lists in LinkedIn Sales Navigator and ZoomInfo, had the pitch approved by my mentor, and ran the relationship maps behind the event outreach.'},
+   {t:'Sustained prospecting research at three sessions a week',st:'ok',kind:'req',n:'Research on the QBR accounts, the state university budget work, and the AI report findings all went back to the team rather than staying in my notes.'},
+   {t:'Milestone 2: prospecting via LinkedIn, opportunity identification',st:'ok',kind:'req',n:''}]},
+  {id:'lg-l2-pitch',h:'Pitch Lab and client delivery',rows:[
+   {t:'Certified on IBM’s Client Zero story through Pitch Lab',st:'ok',n:'Submitted a ten-minute pitch to the Pitch Lab tutor and iterated until it graded <b>Meets or better on every rubric criterion</b>, then took it to my first-line manager for approval.'},
+   {t:'Delivered Client Zero live, internally and to a client audience',st:'ok',n:'Presented to five IBMers for feedback, then delivered the same story to university staff at the Yorktown facility during a quantum tour. Telling an internal transformation story to an external audience is a different exercise, and that is the version I would point to.'},
+   {t:'Enrolled in and attended Pitch Lab sessions',st:'ok',kind:'req',n:''}]},
+  {id:'lg-l2-tan',h:'Tandem selling and technical practice',rows:[
+   {t:'Delivered a watsonx Orchestrate demo to the account team',st:'ok',n:'Ran it in person for the entire New York State team, walking through the product’s key capabilities live rather than presenting slides about them. This is the requirement I named as my biggest gap at the Lap 2 checkpoint, and it is closed.'},
+   {t:'Built and configured two TechZone lab environments',st:'ok',n:'watsonx Orchestrate and Maximo, stood up from scratch rather than cloned.'},
+   {t:'Built a demo against the Transition to Success rubric',st:'ok',n:'Constructed to the official rubric instead of freestyled, which is a meaningfully harder constraint than it sounds.'},
+   {t:'Shadowed live client and internal calls across five accounts',st:'ok',n:'The deal conversations for a liberal arts college, a large private university, the city university system and the state university system, plus the internal account syncs behind them.'},
+   {t:'Contributed to territory planning across five agencies',st:'ok',n:'Initial territory plan with my mentor covering a research university, a flagship campus, an environmental agency, the state court system and a state insurance fund.'},
+   {t:'Stood up a team GitHub repository',st:'ok',n:'For the watsonx Challenge build and the KDR automation tool.'},
+   {t:'Participated in the Quarterly Business Review',st:'ok',kind:'req',n:''}]},
+  {id:'lg-l2-ad',h:'Ad hoc impact',rows:[
+   {t:'Led the New York State team’s watsonx Challenge entry',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'I identified the process gap, ran the first sync, and took the build myself on a team with a full-time technical seller and a managing director. This became the KDR Generator.'},
+   {t:'Built the state university system RDR proposal',st:'ok',n:'Collaborated with technical specialists on the solution design and produced the proposal deck.'},
+   {t:'Led an IBM promotional video for state public-sector clients',st:'hnd',n:'Ran the project across field marketing and the client engineering team from the idea through production. It outlasts my internship, so rather than leave it half-finished I documented the state of it and <b>handed it to a named owner on the team</b> to carry to release.'},
+   {t:'QBR internal syncs, relationship mapping and outreach drafting',st:'ok',n:''},
+   {t:'Scheduled 20+ peer networking conversations',st:'ok',n:'The program asks for two. I used the w3 directory to work across client engineering, product management and cross-brand partner roles.'},
+   {t:'Proposed a structural change to the co-op program',st:'ok',n:'Assign interns to specific sellers for fixed periods so they see one product and one day-to-day properly. You come out understanding the technical seller role and with an actual basis for choosing a brand, instead of a broad blur.'},
+   {t:'Milestone 2: interview a seller opposite your role',st:'ok',kind:'req',n:'Client engineers and product managers, on how the roles collaborate on an opportunity and where the career paths lead.'},
+   {t:'Six-week check-in and evaluation with manager',st:'ok',kind:'req',n:''}]}],
+  refl:{l:'Lap 2 · self-assessment, verbatim',p:[
+   'Lap 2 felt more operationally grounded than Lap 1. Engagement and team participation were consistent throughout, engagement planning picked up real traction with new opportunities identified, and the capstone direction is taking shape through the watsonx challenge. The RDR proposal and the QBR internal syncs also represent progress I am proud of.',
+   'The clear gap this lap is the technical resource practice section. Lab environments, the TechZone demo for IBMers and the Transition to Success demo are the most significant required cluster I had not closed out, and Pitch Lab was still fully in progress with nothing finished.']}},
+ {id:'lap3',n:'Lap 03',title:'Closing out',wk:'Weeks 8 – 14',
+  sum:'The gap I named at the end of Lap 2 is the thing this lap closed. The capstone shipped, the technical work finished, and the demo validation I was behind on got done.',
+  groups:[
+  {id:'lg-l3-own',h:'Technical ownership',rows:[
+   {t:'Shipped the KDR Generator as a team asset',st:'ok',x:'f-kdr',xl:'Open the KDR Generator',n:'The program’s requirement reads “develop an asset that solves a team challenge.” Mine turned a three-hour manual close-plan build into <b>under thirty seconds</b>, validated against a 5,000+ SKU pricelist in real time.'},
+   {t:'Designed and delivered a client-specific demo independently',st:'ok',n:'Built to an IBMer’s actual client requirements and aligned to current solution priorities, with a dry run through the Pitch Lab tutor before delivery rather than after.'},
+   {t:'Documented the technical build for reuse',st:'ok',n:'So the team can run and extend it after I leave, which is the only version of this that counts for anything.'},
+   {t:'Took feedback from two senior people and shipped a change for each',st:'ok',n:'One from a senior technical seller, one from my manager. Both implemented rather than noted.'},
+   {t:'Built the ISC report for the team',st:'ok',n:''},
+   {t:'Ran Stand and Deliver with my manager',st:'ok',n:''},
+   {t:'Started Level 3 technical training',st:'par',n:'Begun before the program ended, not finished. Listing it as started rather than complete.'}]},
+  {id:'lg-l3-fin',h:'Final presentation and handover',rows:[
+   {t:'Delivered the final program presentation',st:'ok',n:'Experiences, technical skills, client engagement and the capstone, plus two programmatic changes I would make for future interns.'},
+   {t:'Gathered feedback from senior team members and acted on it',st:'ok',kind:'req',n:''},
+   {t:'Presented accomplishments to manager and mentor in the wrap-up',st:'ok',kind:'req',n:''},
+   {t:'Completed offboarding',st:'ok',kind:'req',n:''}]}]}],
+ hand:{l:'Open at my last day',p:'Two things do not have a tick beside them. The <b>promotional video</b> is mid-production and handed to a named owner with the state of it written down. <b>Level 3 training</b> is started and not finished. Both are listed above as what they are rather than rounded up.'},
+ foot:'<b>On redaction.</b> Colleagues appear by role rather than name, and individual institutions appear as descriptors. Account-level and opportunity-level detail has been generalised. Anything already public elsewhere on this site — the New York State public-sector account, Core 2, the OGS pricelist work behind the KDR Generator — stays as written. If you are an IBMer and want the unredacted version, ask me directly.'
+}};
+
+/* #ibm-log is the log open over the IBM tile, not a tile of its own */
+function ledgerSlug(h){
+  const m=(h||'').replace(/^#/,'').trim().match(/^([a-z0-9]+)-log$/);
+  return (m&&LEDGER[m[1]])?m[1]:null;
+}
+let ledgerId=null,ledgerFilter='ship',ledgerBuilt=null;
+
+function buildLedger(key){
+  const D=LEDGER[key];if(!D)return;
+  const wrap=document.getElementById('lgWrap'),rail=document.getElementById('lgRail');
+  let html='',railHtml='',nShip=0,nAll=0;
+  D.laps.forEach(lap=>{
+    railHtml+='<div class="lgrh">'+lap.n+' · '+lap.wk.replace('Weeks ','wk ')+'</div>';
+    html+='<section class="lglap" id="'+lap.id+'">'
+      +'<div class="lglaph"><span class="lgn">'+lap.n+'</span><h3>'+lap.title+'</h3>'
+      +'<span class="lgwk">'+lap.wk+'</span></div>'
+      +'<p class="lglapsum">'+lap.sum+'</p>';
+    lap.groups.forEach(g=>{
+      const ship=g.rows.filter(r=>r.kind!=='req').length;
+      nShip+=ship;nAll+=g.rows.length;
+      railHtml+='<a href="#'+g.id+'" data-g="'+g.id+'">'+g.h+'<em>'+ship+'</em></a>';
+      html+='<div class="lggrp" id="'+g.id+'">'
+        +'<button class="lggrph" type="button"><span class="lgcv">▼</span><h4>'+g.h+'</h4>'
+        +'<span class="lgct"></span></button><div class="lgrows">';
+      g.rows.forEach(r=>{
+        const kind=r.kind==='req'?'req':'ship';
+        const lbl=r.st==='ok'?'Completed':r.st==='wip'?'In progress':r.st==='hnd'?'Handed off':'Partial';
+        html+='<div class="lgrow '+kind+'" data-kind="'+kind+'">'
+          +'<div class="lgt">'+r.t+'</div><span class="lgst '+r.st+'">'+lbl+'</span>';
+        const body=(r.n||'')+(r.x?(r.n?'<br>':'')+'<span class="lgx2" data-fly="'+r.x+'">◆ '+r.xl+' →</span>':'');
+        if(body)html+='<div class="lgnote">'+body+'</div>';
+        html+='</div>';
+      });
+      html+='</div></div>';
+    });
+    if(lap.refl){
+      html+='<div class="lgrefl"><div class="lgrl">'+lap.refl.l+'</div>';
+      lap.refl.p.forEach(p=>html+='<p>“'+p+'”</p>');
+      html+='</div>';
+    }
+    html+='</section>';
+  });
+  if(D.hand)html+='<div class="lghand"><div class="lghl">'+D.hand.l+'</div><p>'+D.hand.p+'</p></div>';
+  if(D.foot)html+='<p class="lgfoot">'+D.foot+'</p>';
+  const st=D.stat.map(([v,l],i)=>'<div><b>'+(v||(i===1?nShip:nAll))+'</b><span>'+l+'</span></div>').join('');
+  wrap.innerHTML='<div class="lghero"><h1>'+D.h1+'</h1><p>'+D.lede+'</p>'
+    +'<div class="lgsum">'+st+'</div></div>'+html;
+  rail.innerHTML=railHtml;
+  document.getElementById('lgWho').textContent=D.who;
+  /* the button's own count is read back from what actually rendered,
+     so the tile can never advertise a number the log disagrees with */
+  document.querySelectorAll('[data-live="ledger-'+key+'-count"]')
+    .forEach(el=>el.textContent=nShip);
+  ledgerBuilt=key;
+}
+
+function setLedgerFilter(f){
+  ledgerFilter=f;
+  document.getElementById('lgShip').classList.toggle('on',f==='ship');
+  document.getElementById('lgAll').classList.toggle('on',f==='all');
+  document.querySelectorAll('#lgWrap .lgrow.req')
+    .forEach(r=>r.style.display=(f==='ship'?'none':''));
+  document.querySelectorAll('#lgWrap .lggrp').forEach(g=>{
+    const vis=[...g.querySelectorAll('.lgrow')].filter(r=>r.style.display!=='none').length;
+    const c=g.querySelector('.lgct');if(c)c.textContent=vis+(vis===1?' item':' items');
+    const a=document.querySelector('.lgrail a[data-g="'+g.id+'"] em');if(a)a.textContent=vis;
+  });
+}
+
+function openLedger(key,replay){
+  if(!LEDGER[key])return;
+  if(typeof touring!=='undefined'&&touring)endTour('interrupted');
+  closeSheet();                       // two stacked overlays is one too many
+  closeRec();
+  if(innerWidth<=1080)toggleRail(false);
+  if(ledgerBuilt!==key){buildLedger(key);setLedgerFilter('ship')}
+  const lg=document.getElementById('ledger');
+  document.body.classList.add('ledger-open');
+  lg.setAttribute('aria-hidden','false');
+  document.getElementById('lgMain').scrollTop=0;
+  setHover(null);
+  ledgerId=key;
+  if(!replay)ledgerHash('#'+key+'-log',false);
+}
+function closeLedger(replay){
+  if(!ledgerId)return;
+  const key=ledgerId;ledgerId=null;
+  document.body.classList.remove('ledger-open');
+  document.getElementById('ledger').setAttribute('aria-hidden','true');
+  if(!replay)ledgerHash('#'+key,true);
+}
+/* the log owns the hash while it is up, so a link to it survives a
+   refresh. hashLock is the same guard flyTo uses — writing the hash
+   fires hashchange, which would otherwise route straight back in. */
+function ledgerHash(next,replay){
+  if(location.hash===next)return;
+  hashLock=true;
+  try{replay?history.replaceState(null,'',next):history.pushState(null,'',next)}catch(_){}
+  setTimeout(()=>{hashLock=false},0);
+}
+
+/* everything inside the panel is the panel's business, never the world's */
+document.getElementById('ledger').addEventListener('click',e=>{
+  e.stopPropagation();
+  const gh=e.target.closest('.lggrph');
+  if(gh){gh.parentNode.classList.toggle('shut');return}
+  const jump=e.target.closest('.lgrail a');
+  if(jump){
+    e.preventDefault();
+    const el=document.getElementById(jump.dataset.g);
+    if(el)document.getElementById('lgMain').scrollTo({top:el.offsetTop-60,
+      behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+    return;
+  }
+  /* a cross-link leaves the log and flies the camera — the log is an
+     appendix to the map, not a second one */
+  const x=e.target.closest('.lgx2');
+  if(x){closeLedger(true);flyTo(x.dataset.fly);return}
+});
+/* rail highlight follows the scroll. Every rail item moves this one
+   document; there is no second view to be lost in. */
+(function(){
+  const main=document.getElementById('lgMain');
+  let q=false;
+  main.addEventListener('scroll',()=>{
+    if(q)return;q=true;
+    requestAnimationFrame(()=>{q=false;
+      let cur=null;
+      document.querySelectorAll('.lgrail a').forEach(a=>{
+        const el=document.getElementById(a.dataset.g);
+        if(el&&el.getBoundingClientRect().top<200)cur=a;
+      });
+      document.querySelectorAll('.lgrail a').forEach(a=>a.classList.toggle('on',a===cur));
+    });
+  },{passive:true});
+})();
+
 /* boot: honour a deep link if there is one, otherwise land on home →
    offer the tour on first visit (never when someone arrived via a
    deep link — they came for that one section, not the guided tour) */
@@ -3986,14 +4451,16 @@ applyRail();
    into place a moment later */
 const savedLens=lsGet('sk-lens');
 if(savedLens&&LENSES[savedLens])applyLens(savedLens);
-const bootId=slugToId(location.hash);
+const bootLog=ledgerSlug(location.hash);
+const bootId=bootLog?('f-'+bootLog):slugToId(location.hash);
 current='';flyTo(bootId,true);hist=[];chrome();
+if(bootLog)openLedger(bootLog);
 setTimeout(()=>{
   /* the only thing a first-time visitor is ever asked, and only on the
      home screen: someone who arrived on a deep link came for that one
      section, not for an offer. "Who's asking" comes later, and only to
      someone who has already said yes to this. */
-  if(bootId==='f-home'&&!lsGet('sk-tour-seen'))openTourStart();
+  if(bootId==='f-home'&&!bootLog&&!lsGet('sk-tour-seen'))openTourStart();
 },1800);
 </script>
 </body>
