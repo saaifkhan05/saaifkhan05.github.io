@@ -2456,7 +2456,27 @@ function flightMs(cx,cy,cz){
   return Math.round(Math.max(620,Math.min(620+travel(cx,cy,cz)*.165,1680)));
 }
 let wcTimer,flying=false;
-function cam(cx,cy,cz,ms){
+/* SHARPNESS — why the zoom is a scale() and not a dolly. The zoom used
+   to come entirely from the perspective divide: the world moved forward
+   on z until the focused plane projected at fitScale. Chromium rasters
+   a 3D-transformed layer at its LAYOUT size — perspective contributes
+   nothing to raster scale — so any projected scale above 1 was a 1×
+   texture upscaled. On a 1× external monitor, where fitScale hits the
+   1.5 cap, every glyph went soft; Retina laptops hid it because their
+   2× raster left headroom, which is why it only ever showed on big
+   monitors. A 2D scale() in the transform IS part of the raster-scale
+   calculation, so the compositor re-rasters text at the displayed
+   resolution. z now only cancels the target's own plane depth
+   (zp = -fz puts the focused plane at z:0, where perspective is a
+   no-op): the landing is pixel-identical — centered, at fitScale —
+   just sharp. Unfocused planes keep their depth offsets so flights
+   still parallax; at S>1 they project a touch smaller than the old
+   dolly did (never larger, so nothing new looms into frame, and
+   setPhases' passed-threshold stays conservative).
+   cz still carries the old dolly value: it is the flight METRIC —
+   duration, warp, easing direction, setPhases — and must stay
+   comparable across flights. Only the transform stopped using it. */
+function cam(cx,cy,cz,ms,S,zp){
   const b=safeBox();
   const back=cz<camZ-2, far=camSet&&travel(cx,cy,cz)>2600;
   world.style.transitionDuration=ms+'ms';
@@ -2464,7 +2484,7 @@ function cam(cx,cy,cz,ms){
     reduce?'linear':(back?EASE_OUT:(far?EASE_FAR:EASE_IN));
   world.style.willChange='transform';
   world.style.transform=
-    `translate3d(${b.cx}px,${b.cy}px,0) translate3d(${-cx}px,${-cy}px,${cz}px)`;
+    `translate3d(${b.cx}px,${b.cy}px,0) scale(${S.toFixed(4)}) translate3d(${-cx}px,${-cy}px,${zp}px)`;
   camX=cx;camY=cy;camZ=cz;camSet=true;
   rectsStale=true;flying=true;
   clearTimeout(wcTimer);
@@ -2614,13 +2634,16 @@ function flyTo(id,replay){
   if(!replay&&current){hist.push(current);if(hist.length>60)hist.shift()}
   current=id;
   const cz=czFor(f), [cx,cy]=centerOf(f);
+  /* the sharp camera (see cam) takes the fit and the plane depth
+     separately; cz above remains the flight metric only */
+  const S=Math.max(fitScale(f),minScale()), zp=-(+f.dataset.fz);
   /* published BEFORE .here lands: the arrival ring and the content
      stagger both key off --fdur, and both are armed by that class */
   const ms=flightMs(cx,cy,cz);
   root.style.setProperty('--fdur',ms+'ms');
   warp(Math.abs(cz-lastCz)); lastCz=cz;
   setPhases(id,cz); setCtx(id);
-  cam(cx,cy,cz,ms);
+  cam(cx,cy,cz,ms,S,zp);
   /* Armed to fire a hair BEFORE the side column fades in, not after the
      camera lands. Zeroing a number that is already on screen and then
      counting it back up reads as a glitch; zeroing one that is still at
