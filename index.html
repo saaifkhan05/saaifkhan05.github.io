@@ -2455,7 +2455,31 @@ function flightMs(cx,cy,cz){
   if(!camSet)return 900;                            // the boot dive
   return Math.round(Math.max(620,Math.min(620+travel(cx,cy,cz)*.165,1680)));
 }
-let wcTimer,flying=false;
+let wcTimer,flying=false,lastCam=null;
+/* PIXEL SNAP — the second half of the sharpness work. Rasterizing at
+   the right scale (see the scale() note below) is necessary but not
+   sufficient: if the settled layer lands on a fractional device pixel,
+   the compositor bilinear-shifts the whole texture and hands back a
+   measured ~44% of edge contrast at 1× DPR. A landing is fractional
+   whenever S×offset isn't whole — 720×1.2827 never is. So once a
+   flight settles, nudge the outer translate by the sub-pixel remainder
+   of the focused frame's rect (<1 device px, invisible as motion) so
+   texels map 1:1 onto screen pixels. Idempotent — it measures the live
+   rect — and re-run when the tilt levels, because the rect under a
+   rotation is not the rect at rest. Transition is zeroed for the nudge;
+   the next cam() sets its own duration anyway. */
+function snapSettle(){
+  if(flying||!lastCam)return;
+  const f=document.getElementById(current); if(!f)return;
+  const r=f.getBoundingClientRect(), d=devicePixelRatio||1;
+  const dx=Math.round(r.left*d)/d-r.left, dy=Math.round(r.top*d)/d-r.top;
+  if(Math.abs(dx)<.004&&Math.abs(dy)<.004)return;
+  lastCam.bcx+=dx;lastCam.bcy+=dy;
+  world.style.transitionDuration='0ms';
+  world.style.transform=
+    `translate3d(${lastCam.bcx}px,${lastCam.bcy}px,0) scale(${lastCam.S.toFixed(4)}) translate3d(${-lastCam.cx}px,${-lastCam.cy}px,${lastCam.zp}px)`;
+  rectsStale=true;
+}
 /* SHARPNESS — why the zoom is a scale() and not a dolly. The zoom used
    to come entirely from the perspective divide: the world moved forward
    on z until the focused plane projected at fitScale. Chromium rasters
@@ -2485,6 +2509,7 @@ function cam(cx,cy,cz,ms,S,zp){
   world.style.willChange='transform';
   world.style.transform=
     `translate3d(${b.cx}px,${b.cy}px,0) scale(${S.toFixed(4)}) translate3d(${-cx}px,${-cy}px,${zp}px)`;
+  lastCam={bcx:b.cx,bcy:b.cy,cx,cy,S,zp};
   camX=cx;camY=cy;camZ=cz;camSet=true;
   rectsStale=true;flying=true;
   clearTimeout(wcTimer);
@@ -2504,7 +2529,10 @@ function endFlight(){
      as a hitch at the end of every flight. Deferring to idle moves it
      into dead time; hitAt() re-measures on demand if a click beats it. */
   rectsStale=true;
-  (window.requestIdleCallback||(cb=>setTimeout(cb,60)))(()=>{if(!flying)measure()});
+  (window.requestIdleCallback||(cb=>setTimeout(cb,60)))(()=>{if(!flying){snapSettle();measure()}});
+  /* a flight can end with the mouse parked off-center from before it
+     began; arm the same idle level-out the tilt uses (no-op on LOWPOWER) */
+  if(typeof restLevel==='function')restLevel();
 }
 world.addEventListener('transitionend',e=>{
   if(e.target===world&&e.propertyName==='transform')endFlight();
@@ -3143,11 +3171,24 @@ const LOWPOWER=reduce||COARSE||CORES<=4||innerWidth<=760;
      · it is skipped entirely on low-power/touch devices
      · updates are capped to ~30fps instead of every frame; the motion
        is a slow drift, so nobody can tell, and it halves the work. */
-let tiltRAF=0,tiltLast=0;
+let tiltRAF=0,tiltLast=0,tiltIdle=0;
+/* LEVEL AT REST — a rastered texture under even rotateY(.3deg) is
+   resampled off its pixel grid: measured ~36% of edge contrast gone at
+   1× DPR, which read as "slightly blurry" on external monitors no
+   matter how correct the raster scale was (Retina has the headroom to
+   hide it, which is why laptops always looked fine). So the tilt is
+   now a motion effect, not a pose: while the mouse travels the scene
+   leans exactly as before, and 1.6s after it stops the scene eases
+   level, lands on identity — cleared, not 0.000deg — and snapSettle()
+   re-aligns the world to the device pixel grid. Reading happens at
+   rest, and at rest every glyph is pixel-true. */
 function tiltLoop(ts){
   if(flying){tiltRAF=0;return}                                  // yield to the camera
   const dx=tmx-mx,dy=tmy-my;
-  if(Math.abs(dx)<2e-4&&Math.abs(dy)<2e-4){tiltRAF=0;return}     // settled: stop
+  if(Math.abs(dx)<2e-4&&Math.abs(dy)<2e-4){                      // settled: stop
+    tiltRAF=0;
+    if(tmx===0&&tmy===0){mx=0;my=0;tilt.style.transform='';snapSettle()}
+    return}
   if(ts-tiltLast>32){                                           // ~30fps ceiling
     tiltLast=ts;
     mx+=dx*.12;my+=dy*.12;
@@ -3155,9 +3196,16 @@ function tiltLoop(ts){
   }
   tiltRAF=requestAnimationFrame(tiltLoop);
 }
+function restLevel(){
+  if(LOWPOWER)return;
+  clearTimeout(tiltIdle);
+  tiltIdle=setTimeout(()=>{tmx=0;tmy=0;
+    if(!tiltRAF&&!flying)tiltRAF=requestAnimationFrame(tiltLoop)},1600);
+}
 if(!LOWPOWER){
   addEventListener('mousemove',e=>{
     tmx=(e.clientX/innerWidth-.5);tmy=(e.clientY/innerHeight-.5);
+    restLevel();
     if(!tiltRAF&&!flying)tiltRAF=requestAnimationFrame(tiltLoop);
   },{passive:true});
 }
