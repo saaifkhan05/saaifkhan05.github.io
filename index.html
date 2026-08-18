@@ -2503,6 +2503,20 @@ function snapSettle(){
 function cam(cx,cy,cz,ms,S,zp){
   const b=safeBox();
   const back=cz<camZ-2, far=camSet&&travel(cx,cy,cz)>2600;
+  /* LEVEL BEFORE LIFTOFF — tiltLoop's own "if(flying)return" (below)
+     only stops FUTURE ticks; it never clears whatever rotateX/rotateY
+     #tilt already carries the instant a flight starts. Reaching a tile
+     to click it means the mouse just moved, so it's rarely at rest
+     then — left alone, that residual rotation rides as a live 3D
+     ancestor of #world for the whole transition, reopening exactly the
+     raster-scale problem the scale()-not-dolly fix solved for #world's
+     own transform (see SHARPNESS, below). Clearing it here reuses
+     tiltLoop's own settled-branch idiom, just run synchronously up
+     front instead of waited for. */
+  if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}
+  clearTimeout(tiltIdle);
+  mx=my=tmx=tmy=0;
+  tilt.style.transform='';
   world.style.transitionDuration=ms+'ms';
   world.style.transitionTimingFunction=
     reduce?'linear':(back?EASE_OUT:(far?EASE_FAR:EASE_IN));
@@ -3162,6 +3176,15 @@ let mx=0,my=0,tmx=0,tmy=0;
 const CORES=navigator.hardwareConcurrency||4;
 const COARSE=matchMedia('(pointer:coarse)').matches;
 const LOWPOWER=reduce||COARSE||CORES<=4||innerWidth<=760;
+/* HIDPI — the tilt's own raster cost (see LEVEL AT REST below) is
+   invisible on a Retina-class display and measurably lossy on a 1x
+   one; 1.5 is the line because Windows' common 150% laptop-panel
+   scaling already tests clean while a 1x external monitor — by far
+   the most common external-monitor configuration — does not. This is
+   separate from LOWPOWER (a weak GPU/CPU signal): a beefy desktop
+   driving a plain 1x monitor is not "low power", it just has no raster
+   headroom to hide the tilt in. */
+let HIDPI=(devicePixelRatio||1)>=1.5;   // re-checked live — see DPR WATCH below
 
 /* PERF — THE BIG ONE: #tilt is the parent of the entire 9000×6400
    preserve-3d scene, so every write to its transform re-composites
@@ -3181,7 +3204,15 @@ let tiltRAF=0,tiltLast=0,tiltIdle=0;
    leans exactly as before, and 1.6s after it stops the scene eases
    level, lands on identity — cleared, not 0.000deg — and snapSettle()
    re-aligns the world to the device pixel grid. Reading happens at
-   rest, and at rest every glyph is pixel-true. */
+   rest, and at rest every glyph is pixel-true.
+   That still leaves the scene soft for as long as the mouse is moving
+   plus the 1.6s decay — on a big external monitor, where reaching a
+   tile means travelling much further than a laptop trackpad's range,
+   that window is most of an active session, not a rare edge case. The
+   HIDPI gate below is the actual fix for that: on a screen with no
+   raster headroom the effect never engages at all, so there is no
+   window to be caught in. Everything in this function still runs
+   as-is for HIDPI screens, where the tilt is genuinely free. */
 function tiltLoop(ts){
   if(flying){tiltRAF=0;return}                                  // yield to the camera
   const dx=tmx-mx,dy=tmy-my;
@@ -3197,13 +3228,14 @@ function tiltLoop(ts){
   tiltRAF=requestAnimationFrame(tiltLoop);
 }
 function restLevel(){
-  if(LOWPOWER)return;
+  if(LOWPOWER||!HIDPI)return;
   clearTimeout(tiltIdle);
   tiltIdle=setTimeout(()=>{tmx=0;tmy=0;
     if(!tiltRAF&&!flying)tiltRAF=requestAnimationFrame(tiltLoop)},1600);
 }
 if(!LOWPOWER){
   addEventListener('mousemove',e=>{
+    if(!HIDPI)return;                    // re-checked live, not just at boot
     tmx=(e.clientX/innerWidth-.5);tmy=(e.clientY/innerHeight-.5);
     restLevel();
     if(!tiltRAF&&!flying)tiltRAF=requestAnimationFrame(tiltLoop);
@@ -3440,6 +3472,39 @@ addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
   rz();rectsStale=true;applyRail();
   const c=current;current='';flyTo(c,true);
 },120)});
+
+/* DPR WATCH — dragging the window from the laptop panel (commonly
+   125-150% Windows scaling) to an external monitor (commonly 100%)
+   changes devicePixelRatio with the window's CSS/DIP size often
+   unchanged, so the resize listener above can fire with a 0px delta
+   or not at all — the one signal it watches never fires. matchMedia
+   on an exact dppx value is the standard way to catch a DPR-only
+   change; it only ever matches once, so it has to be re-armed after
+   every fire. On a hit: re-derive HIDPI (the tilt gate right above)
+   against the live value rather than the boot-time snapshot, clear
+   any tilt already engaged if the new screen has no raster headroom
+   for it, and re-run the same recovery the resize handler already
+   trusts so the compositor is asked to re-evaluate #world's raster
+   scale rather than trusting whatever survived the monitor change. */
+function watchDPR(){
+  matchMedia(`(resolution: ${devicePixelRatio}dppx)`)
+    .addEventListener('change',()=>{
+      watchDPR();
+      HIDPI=(devicePixelRatio||1)>=1.5;
+      if(!HIDPI){
+        if(tiltRAF){cancelAnimationFrame(tiltRAF);tiltRAF=0}
+        clearTimeout(tiltIdle);
+        mx=my=tmx=tmy=0;
+        tilt.style.transform='';
+      }
+      rz();rectsStale=true;applyRail();
+      world.style.willChange='auto';
+      void world.offsetHeight;          // force a style/layout flush
+      world.style.willChange='transform';
+      const c=current;current='';flyTo(c,true);
+    },{once:true});
+}
+watchDPR();
 
 /* ═══════════ LIVE STATUS + BUILD MARKER ═══════════
    EDIT HERE — CHAPTERS is the only thing to keep current. Each entry is
